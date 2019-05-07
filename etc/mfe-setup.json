@@ -1,7 +1,7 @@
 [
     {
-        "name": "msentityname",
-        "src": "frontend/frontendid/msentityname",
+        "name": "lottery",
+        "src": "frontend/emi/lottery",
         "groups": [
             {
               "id": "GROUP_NAME",
@@ -16,15 +16,15 @@
         "contents": [
             {
                 "groupId": "GROUP_NAME",
-                "id": "msentityname",
+                "id": "lottery",
                 "icon": "dashboard",
                 "translate": {
-                    "en": "msentityname_en",
-                    "es": "msentityname_es"
+                    "en": "lottery_en",
+                    "es": "lottery_es"
                 },
-                "navURL": "/msentityname",
-                "path": "msentityname",
-                "loadChildren": "./main/content/msentityname/msentityname.module#msentitypascalModule",
+                "navURL": "/lottery",
+                "path": "lottery",
+                "loadChildren": "./main/content/lottery/lottery.module#LotteryModule",
                 "priority": 1000,
                 "roles" : ["PLATFORM-ADMIN"],
                 "default" : false

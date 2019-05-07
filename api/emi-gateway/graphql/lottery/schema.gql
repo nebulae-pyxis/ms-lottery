@@ -1,0 +1,95 @@
+type CommandResponse {
+  "Response code"
+  code: Int
+  "Response message"
+  message: String
+}
+
+type LotteryLottery {
+  "Lottery ID"
+  _id: ID!
+  "User general info"
+  generalInfo: LotteryLotteryGeneralInfo
+  "Lottery state"
+  state: Boolean!
+  "Creation timestamp"
+  creationTimestamp: BigInt!
+  "Creator user"
+  creatorUser: String!
+  "Modification timestamp"
+  modificationTimestamp: BigInt!
+  "Modifier user"
+  modifierUser: String!
+  "Business ID"
+  businessId: String!
+}
+
+type LotteryLotteryGeneralInfo {
+  "Lottery name"
+  name: String!,
+  "Lottery description"
+  description: String!
+}
+
+input LotteryLotteryFilterInput {
+  "ID of the business"
+  businessId: String
+  "Name"
+  name: String
+  "State"
+  state: Boolean
+  "Creator user"
+  creatorUser: String
+  "modifier user"
+  modifierUser: String
+  "get data created after indicated timestamp"
+  creationTimestamp: BigInt
+}
+
+input LotteryLotteryPaginationInput {
+  "Page"
+  page: Int!
+  "Count"
+  count: Int!
+  "Sort, default: ASC"
+  sort: Int
+}
+
+input LotteryLotteryInput {
+  "Lottery general info"
+  generalInfo: LotteryLotteryGeneralInfoInput!
+  "Lottery status"
+  state: Boolean!
+  "Business ID"
+  businessId: String!
+}
+
+input LotteryLotteryGeneralInfoInput {
+  "Lottery name"
+  name: String!,
+  "Lottery description"
+  description: String!
+}
+
+type Query {
+  "Get Lotteries filtered "
+  LotteryLotteries(filterInput: LotteryLotteryFilterInput!, paginationInput: LotteryLotteryPaginationInput!): [LotteryLottery]
+  "Get the amount of Lotteries filtered "
+  LotteryLotteriesSize(filterInput: LotteryLotteryFilterInput!): Int!
+  "Get Lottery by its id"
+  LotteryLottery(id: String!): LotteryLottery
+}
+
+type Mutation {
+  "Create a new Lottery"
+  LotteryCreateLottery(input: LotteryLotteryInput!): CommandResponse
+  "Update the Lottery generalInfo"
+  LotteryUpdateLotteryGeneralInfo(id:ID!, input: LotteryLotteryGeneralInfoInput!): CommandResponse
+  "Update the Lottery state"
+  LotteryUpdateLotteryState(id: ID!, newState: Boolean!): CommandResponse
+}
+
+type Subscription {
+  "This events is triggered when a Lottery is created or updated"
+  LotteryLotteryUpdatedSubscription: LotteryLottery  
+}

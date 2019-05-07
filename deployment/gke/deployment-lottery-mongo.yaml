@@ -1,0 +1,53 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: lott-mongo
+spec:
+  ports:
+  - port: 27017
+    name: lott-mongo
+  selector:
+    app: lott-mongo
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: lott-mongo-pv-claim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 0.5Gi
+---
+apiVersion: apps/v1beta2 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: lott-mongo
+spec:
+  selector:
+    matchLabels:
+      app: lott-mongo
+  strategy:
+    type: Recreate      
+  template:
+    metadata:
+      labels:
+        app: lott-mongo
+    spec:
+      containers:
+      - image: mongo:4
+        name: lott-mongo        
+        ports:
+        - containerPort: 27017
+          name: lott-mongo
+        volumeMounts:
+        - name: lott-mongo-persistent-storage
+          mountPath: /data/db
+        resources:
+          requests:
+            cpu: "50m"
+      volumes:
+      - name: lott-mongo-persistent-storage
+        persistentVolumeClaim:
+          claimName: lott-mongo-pv-claim      
