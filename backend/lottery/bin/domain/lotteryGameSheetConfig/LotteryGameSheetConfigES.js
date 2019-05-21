@@ -46,7 +46,6 @@ class LotteryGameSheetConfigES {
      * @param {*} LotteryGameStateUpdatedEvent events that indicates the new state of the lotteryGame
      */
     handleLotteryGameSheetConfigApproved$(LotteryGameSheetConfigApprovedEvent) {      
-        console.log('Approve data: ', LotteryGameSheetConfigApprovedEvent.data);
         return LotteryGameSheetConfigDA.approveLotteryGameSheetConfig$(LotteryGameSheetConfigApprovedEvent.data)
         .pipe(
             mergeMap(result => broker.send$(MATERIALIZED_VIEW_TOPIC, `LotteryGameSheetConfigUpdatedSubscription`, result))

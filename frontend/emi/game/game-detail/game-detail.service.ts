@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable, BehaviorSubject, of, Subject } from 'rxjs';
-import { startWith, tap, mergeMap } from 'rxjs/operators';
+import { Observable, BehaviorSubject, of, Subject, from } from 'rxjs';
+import { startWith, tap, mergeMap, map, reduce } from 'rxjs/operators';
 import { GatewayService } from '../../../../api/gateway.service';
 import {
   LotteryCreateGame,
@@ -18,6 +18,9 @@ import {
   LotteryGameSheetConfigList,
   LotteryGameSheetConfigUpdatedSubscription
 } from '../gql/game.js';
+import { Router, ActivatedRoute } from '@angular/router';
+
+import { Location } from '@angular/common';
 
 @Injectable()
 export class GameDetailService {
@@ -30,7 +33,8 @@ export class GameDetailService {
 
   selectedConfigSheetChanged$ = new BehaviorSubject(undefined);
 
-  constructor(private gateway: GatewayService) {
+  constructor(private gateway: GatewayService, private location: Location,
+    private route: ActivatedRoute) {
 
   }
 

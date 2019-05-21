@@ -18,6 +18,8 @@ import {
 
 import { Router, ActivatedRoute } from '@angular/router';
 
+import { Location } from '@angular/common';
+
 ////////// RXJS ///////////
 import {
   map,
@@ -30,10 +32,11 @@ import {
   startWith,
   debounceTime,
   distinctUntilChanged,
-  take
+  take,
+  reduce
 } from 'rxjs/operators';
 
-import { Subject, fromEvent, of, forkJoin, Observable, concat, combineLatest, iif } from 'rxjs';
+import { Subject, fromEvent, of, forkJoin, Observable, concat, combineLatest, iif, from } from 'rxjs';
 
 //////////// ANGULAR MATERIAL ///////////
 import {
@@ -55,6 +58,7 @@ import { KeycloakService } from 'keycloak-angular';
 import { GameDetailService } from '../game-detail.service';
 import { DialogComponent } from '../../dialog/dialog.component';
 import { ToolbarService } from '../../../../toolbar/toolbar.service';
+import { R_OK } from 'constants';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -89,7 +93,9 @@ export class GameSheetConfigComponent implements OnInit, OnDestroy {
     private translationLoader: FuseTranslationLoaderService,
     private translate: TranslateService,
     public snackBar: MatSnackBar,
-    private gameDetailService: GameDetailService
+    private gameDetailService: GameDetailService,
+    private location: Location,
+    private route: ActivatedRoute
   ) {
     this.translationLoader.loadTranslations(english, spanish);
     this.onResize();
@@ -101,6 +107,24 @@ export class GameSheetConfigComponent implements OnInit, OnDestroy {
     this.refreshTable();
     this.subscribeGameSheetConfigUpdated();
     this.subuscribeToSelectedSheetConfigChange();
+
+  }
+
+  updateGameRoute(requiredParams: string[], newSegment: string) {
+    this.route.params
+      .pipe(
+        mergeMap(params => {
+          return from(requiredParams).pipe(
+            reduce((acc, val) => {
+              return acc + '/' + params[val];
+             }, 'game')
+          );
+         })
+    )
+      .subscribe((url: any) => {
+        this.location.go(url + '/' + newSegment);
+    }, e => console.log(e));
+
   }
 
   refreshTable() {
@@ -110,11 +134,22 @@ export class GameSheetConfigComponent implements OnInit, OnDestroy {
     this.gameDetailService.lotteryGameSheetConfigList$(filterInput).pipe(
       map(result => {
         return result && result.data && result.data.LotteryGameSheetConfigList ? result.data.LotteryGameSheetConfigList : [];
+      }),
+      filter(result => result && result.length > 0),
+      tap(result => this.dataSource.data = result),
+      mergeMap(result => {
+        return this.route.params.pipe(
+          map(params => params['itemId']),
+          map(param => {
+            console.log('ItemID:', param);
+            return param ? result.filter(r => r._id === param)[0] : result[0];
+          })
+        );
       })
     ).subscribe(result => {
-      this.selectedSheetConfig = result[0];
-      this.gameDetailService.selectedConfigSheetChanged$.next(result[0]);
-      this.dataSource.data = result;
+      this.selectedSheetConfig = result;
+      this.gameDetailService.selectedConfigSheetChanged$.next(result);
+
     });
   }
 
@@ -128,7 +163,7 @@ export class GameSheetConfigComponent implements OnInit, OnDestroy {
     this.gameDetailService.selectedConfigSheetChanged$.next(undefined);
   }
 
-  subscribeGameSheetConfigUpdated(){
+  subscribeGameSheetConfigUpdated() {
     this.gameDetailService.subscribeLotteryGameSheetConfigUpdatedSubscription$()
       .pipe(
         map(subscription => subscription.data.LotteryGameSheetConfigUpdatedSubscription),
@@ -145,13 +180,14 @@ export class GameSheetConfigComponent implements OnInit, OnDestroy {
    */
   selectSheetConfigRow(sheetConfig) {
     this.selectedSheetConfig = sheetConfig;
+    this.updateGameRoute(['id', 'section'], sheetConfig._id);
     this.gameDetailService.selectedConfigSheetChanged$.next(sheetConfig);
   }
 
 
   @HostListener('window:resize', ['$event'])
   onResize(event?) {
-    this.heightContent = ((window.innerHeight) - 271);
+    this.heightContent = ((window.innerHeight) - 310);
   }
 
   ngOnDestroy() {

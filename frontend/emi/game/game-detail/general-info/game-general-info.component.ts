@@ -29,10 +29,11 @@ import {
   startWith,
   debounceTime,
   distinctUntilChanged,
-  take
+  take,
+  reduce
 } from 'rxjs/operators';
 
-import { Subject, fromEvent, of, forkJoin, Observable, concat, combineLatest, iif } from 'rxjs';
+import { Subject, fromEvent, of, forkJoin, Observable, concat, combineLatest, iif, from } from 'rxjs';
 
 //////////// ANGULAR MATERIAL ///////////
 import {
@@ -53,6 +54,7 @@ import { KeycloakService } from 'keycloak-angular';
 import { GameDetailService } from '../game-detail.service';
 import { DialogComponent } from '../../dialog/dialog.component';
 import { ToolbarService } from '../../../../toolbar/toolbar.service';
+import { Location } from '@angular/common';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -86,7 +88,9 @@ export class GameDetailGeneralInfoComponent implements OnInit, OnDestroy {
     private activatedRouter: ActivatedRoute,
     private GameDetailService: GameDetailService,
     private dialog: MatDialog,
-    private toolbarService: ToolbarService
+    private toolbarService: ToolbarService,
+    private location: Location,
+    private route: ActivatedRoute
   ) {
     this.translationLoader.loadTranslations(english, spanish);
   }
@@ -97,6 +101,28 @@ export class GameDetailGeneralInfoComponent implements OnInit, OnDestroy {
       this.selectedType = this.game.generalInfo.type;
     }
     this.subscribeEventUpdated();
+    this.buildForms();
+    this.buildLotteryNameFilterCtrl();
+  }
+
+  updateGameRoute(requiredParams: [string], newSegment: string) {
+    this.route.params
+      .pipe(
+        mergeMap(params => {
+          return from(requiredParams).pipe(
+            reduce((acc, val) => {
+              return acc + '/' + params[val];
+             }, 'game')
+          );
+         })
+    )
+      .subscribe((url: any) => {
+        this.location.replaceState(url + '/' + newSegment);
+    }, e => console.log(e));
+
+  }
+
+  buildForms() {
     this.gameGeneralInfoForm = new FormGroup({
       name: new FormControl(this.game ? (this.game.generalInfo || {}).name : ''),
       description: new FormControl(this.game ? (this.game.generalInfo || {}).description : ''),
@@ -106,7 +132,6 @@ export class GameDetailGeneralInfoComponent implements OnInit, OnDestroy {
     this.gameStateForm = new FormGroup({
       state: new FormControl(this.game ? this.game.state : true)
     });
-    this.buildLotteryNameFilterCtrl();
   }
 
   buildLotteryNameFilterCtrl() {
