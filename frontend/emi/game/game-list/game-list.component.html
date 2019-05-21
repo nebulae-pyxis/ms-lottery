@@ -1,0 +1,154 @@
+<div id="lottery" class="page-layout carded left-sidenav" fusePerfectScrollbar>
+  <!-- TOP BACKGROUND -->
+  <div class="top-bg mat-accent-bg"></div>
+  <!-- / TOP BACKGROUND -->
+
+  <mat-sidenav-container>
+    <!-- SIDENAV -->
+    <mat-sidenav class="sidenav" align="start" mode="side" opened="true" fuseMatSidenavHelper="carded-left-sidenav"
+      mat-is-locked-open="gt-md">
+      <!-- SIDENAV HEADER -->
+      <div fxLayout="column" fxLayoutAlign="space-between start" class="header p-24 pb-4" ngClass="mat-accent-bg"
+        ngClass.gt-md="white-fg">
+        <div class="logo" fxFlex fxLayout="row" fxLayoutAlign="start center">
+          <mat-icon class="logo-icon s-32" *fuseIfOnDom
+            [@animate]="{ value: '*', params: { delay: '50ms', scale: '0.2' } }">create</mat-icon>
+          <span class="logo-text" *fuseIfOnDom
+            [@animate]="{ value: '*', params: { delay: '100ms', x: '-25px' } }">{{ "LOTTERY.TITLE" | translate }}</span>
+        </div>
+
+        <div class="account" fxFlex fxFill fxLayout="row" fxLayoutAlign="space-between end">
+          <span class="mat-title" *fuseIfOnDom
+            [@animate]="{ value: '*', params: { delay: '100ms', x: '-25px' } }">{{ "LOTTERY.FILTER" | translate }}
+          </span>
+        </div>
+      </div>
+      <!-- / SIDENAV HEADER -->
+
+      <!-- SIDENAV CONTENT -->
+      <div class="content" fusePerfectScrollbar *fuseIfOnDom [@animate]="{ value: '*', params: { y: '50px' } }">
+        <div class="nav mt-20" fxLayout="column">
+          <form fxLayout="column" fxLayoutAlign="start" fxFlex="100" name="form" [formGroup]="filterForm">
+            <div fxLayout="column" fxLayoutAlign="space-between center" fxFlex="100">
+              <mat-form-field>
+                <input matInput placeholder="{{'LOTTERY.NAME' | translate}}" formControlName="name" id="name"
+                  maxlength="20" />
+              </mat-form-field>
+
+              <mat-form-field fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
+                <input matInput formControlName="gameLottery" placeholder="{{ 'LOTTERY.DETAILS.LOTTERY' | translate }}"
+                  [matAutocomplete]="auto" cdkFocusInitial>
+
+                <mat-autocomplete panelWidth="200" #auto="matAutocomplete" autoActiveFirstOption
+                  (optionSelected)='onLotterySelected($event.option.value)' [displayWith]="lotteryDisplayFn">
+                  <mat-option *ngFor="let lottery of queriedLotteriesByAutocomplete$ | async" [value]="lottery">
+                    <mat-icon>business</mat-icon>
+                    <span class="text-boxed text-uppercase">{{ lottery.generalInfo.name }} </span>
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+
+            </div>
+          </form>
+
+          <div class="p-24">
+            <button fxFlex mat-raised-button mat-button class="mat-accent compose-dialog-button" aria-label="Filter"
+              (click)="resetFilter()">
+              {{ "LOTTERY.RESET_FILTER" | translate }}
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- / SIDENAV CONTENT -->
+    </mat-sidenav>
+    <!-- / SIDENAV -->
+
+    <!-- CENTER -->
+    <div class="center">
+      <!-- CONTENT HEADER -->
+      <div class="header" fxLayout="row" fxLayoutAlign="space-between center">
+        <div class="search-wrapper" fxLayout="row" fxLayoutAlign="start center">
+          <button mat-button class="mat-icon-button sidenav-toggle" fuseMatSidenavToggler="carded-left-sidenav"
+            fxHide.gt-md aria-label="Toggle Sidenav">
+            <mat-icon>menu</mat-icon>
+          </button>
+
+        </div>
+
+        <button mat-raised-button class="mat-white-bg" (click)="goToDetail()">
+          <span>{{ "LOTTERY.ADD_NEW" | translate }}</span>
+        </button>
+      </div>
+      <!-- / CONTENT HEADER -->
+
+      <!-- CONTENT CARD -->
+      <div class="content-card mat-white-bg">
+        <mat-table id="entity-table" class="item-table" #table [dataSource]="dataSource" fusePerfectScrollbar>
+
+          <!-- Name Column -->
+          <ng-container cdkColumnDef="name">
+            <mat-header-cell *cdkHeaderCellDef fxFlex="80">{{
+              "LOTTERY.NAME" | translate
+            }}</mat-header-cell>
+            <mat-cell *cdkCellDef="let element" fxFlex="80">
+              <p class="text-truncate">
+                {{ element.generalInfo.name }}
+              </p>
+            </mat-cell>
+          </ng-container>
+
+          <!-- Lottery Column -->
+          <ng-container cdkColumnDef="lottery">
+            <mat-header-cell *cdkHeaderCellDef fxFlex="80">{{
+              "LOTTERY.DETAILS.LOTTERY" | translate
+            }}</mat-header-cell>
+            <mat-cell *cdkCellDef="let element" fxFlex="80">
+              <p class="text-truncate">
+                {{ element.generalInfo.lotteryName }}
+              </p>
+            </mat-cell>
+          </ng-container>
+
+          <!-- Type Column -->
+          <ng-container cdkColumnDef="type">
+            <mat-header-cell *cdkHeaderCellDef fxFlex="80">{{
+              "LOTTERY.DETAILS.GAME_TYPE" | translate
+            }}</mat-header-cell>
+            <mat-cell *cdkCellDef="let element" fxFlex="80">
+              <p class="text-truncate">
+                {{ "LOTTERY.DETAILS." + element.generalInfo.type | translate }}
+              </p>
+            </mat-cell>
+          </ng-container>
+
+          <!-- Active Column -->
+          <ng-container cdkColumnDef="state">
+            <mat-header-cell *cdkHeaderCellDef fxFlex="20">{{
+              "LOTTERY.ACTIVE" | translate
+              }}</mat-header-cell>
+            <mat-cell *cdkCellDef="let element" fxFlex="20">
+              <mat-icon *ngIf="element.state" class="active-icon mat-green-600-bg s-16">check</mat-icon>
+              <mat-icon *ngIf="!element.state" class="active-icon mat-red-500-bg s-16">close</mat-icon>
+            </mat-cell>
+          </ng-container>
+
+
+          <mat-header-row *cdkHeaderRowDef="displayedColumns"></mat-header-row>
+
+          <mat-row *cdkRowDef="let row; columns: displayedColumns" class="selectedElement" (click)="selectgameRow(row)"
+            [ngClass]="{
+              highlight:
+              selectedGame &&
+              selectedGame._id == row._id
+            }" [routerLink]="row._id" matRipple>
+          </mat-row>
+        </mat-table>
+        <mat-paginator #paginator [length]="tableSize" [pageIndex]="tablePage" [pageSize]="tableCount"
+          [pageSizeOptions]="[5, 10, 25, 100]">
+        </mat-paginator>
+      </div>
+      <!-- / CONTENT CARD -->
+    </div>
+    <!-- / CENTER -->
+  </mat-sidenav-container>
+</div>
