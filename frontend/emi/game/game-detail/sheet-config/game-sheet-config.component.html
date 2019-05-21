@@ -6,7 +6,7 @@
     <div class="center" fusePerfectScrollbar>
 
       <!-- HEADER -->
-      <div class="p-12" style="height: 30px; margin-top: 30px" fxLayout="row" fxLayoutAlign="start center">
+      <div class="p-12" style="height: 30px; margin-top: 30px; width: 100%" fxLayout="row" fxLayoutAlign="start center">
 
         <button mat-button class="mat-icon-button sidenav-toggle" fuseMatSidenavToggler="simple-right-sidenav-2"
           fxHide.gt-md>
@@ -14,7 +14,7 @@
         </button>
         <h3 *ngIf="selectedSheetConfig" matSubheader>
           {{'LOTTERY.DETAILS.CONFIG_SHEET.SHEET_CONFIG_VERSION' | translate}}: {{selectedSheetConfig.version}} </h3>
-        <button mat-raised-button style="position: absolute; right: 20px;" *ngIf="!selectedSheetConfig || selectedSheetConfig.approved === 'APPROVED'" (click)="clearSelected()">
+        <button mat-raised-button style="margin-left:auto; margin-right:0;" *ngIf="!selectedSheetConfig || selectedSheetConfig.approved === 'APPROVED'" [routerLink]="lotteryName">
             {{'LOTTERY.DETAILS.CONFIG_SHEET.CREATE_VERSION' | translate}}
         </button>
       </div>

@@ -60,7 +60,6 @@ class LotteryGameDA {
       query.modifierUser = { $regex: filter.modifierUser, $options: "i" };
     }
 
-    console.log(query);
     const cursor = collection
       .find(query)
       .skip(pagination.count * pagination.page)

@@ -38,7 +38,7 @@
 
       <!-- CONTENT CARD -->
       <div class="content-card mat-white-bg">
-        <mat-tab-group>
+        <mat-tab-group  [selectedIndex]="selectedTab" (selectedTabChange)="onTabChange($event)">
 
           <mat-tab label="{{'LOTTERY.DETAILS.TABS.GENERAL_INFO' | translate}}">
             <game-general-info [pageType]="pageType" [game]="game" *ngIf="pageType">

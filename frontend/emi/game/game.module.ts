@@ -31,6 +31,14 @@ const routes: Routes = [
   {
     path: ':id',
     component: GameDetailComponent,
+  },
+  {
+    path: ':id/:section',
+    component: GameDetailComponent,
+  },
+  {
+    path: ':id/:section/:itemId',
+    component: GameDetailComponent,
   }
 ];
 
