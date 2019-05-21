@@ -4,23 +4,23 @@
         "src": "frontend/emi/lottery",
         "groups": [
             {
-              "id": "GROUP_NAME",
+              "id": "LOTTERY",
               "icon": "location_searching",
               "translate": {
-                "en": "Group Name",
-                "es": "Nombre de Grupo"
+                "en": "Lotteries",
+                "es": "Loterias"
               },
               "priority": 1000
             }
           ],
         "contents": [
             {
-                "groupId": "GROUP_NAME",
+                "groupId": "LOTTERY",
                 "id": "lottery",
-                "icon": "dashboard",
+                "icon": "business",
                 "translate": {
-                    "en": "lottery_en",
-                    "es": "lottery_es"
+                    "en": "Lottery admin",
+                    "es": "Gestion de loterias"
                 },
                 "navURL": "/lottery",
                 "path": "lottery",
@@ -28,10 +28,34 @@
                 "priority": 1000,
                 "roles" : ["PLATFORM-ADMIN"],
                 "default" : false
-            }            
+            }             
         ],
         "preBuildCommands": [],
         "environmentVars": {
         }
-    }
+    },
+    {
+      "name": "game",
+      "src": "frontend/emi/game",
+      "contents": [
+          {
+              "groupId": "LOTTERY",
+              "id": "game",
+              "icon": "chrome_reader_mode",
+              "translate": {
+                  "en": "Games admin",
+                  "es": "Gestion de Juegos"
+              },
+              "navURL": "/game",
+              "path": "game",
+              "loadChildren": "./main/content/game/game.module#GameModule",
+              "priority": 1000,
+              "roles" : ["PLATFORM-ADMIN"],
+              "default" : false
+          }            
+      ],
+      "preBuildCommands": [ "npm install ng2-currency-mask"],
+      "environmentVars": {
+      }
+  }
 ]

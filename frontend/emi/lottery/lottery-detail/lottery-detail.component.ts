@@ -84,12 +84,13 @@ export class LotteryDetailComponent implements OnInit, OnDestroy {
       ),
       takeUntil(this.ngUnsubscribe)
     )
-    .subscribe((lottery: any) => {
+      .subscribe((lottery: any) => {
+        console.log('Carga loteria: ', lottery);
       this.lottery = lottery;
-      this.pageType = (lottery && lottery._id) ? 'edit' : 'new'
+        this.pageType = (lottery && lottery._id) ? 'edit' : 'new';
     }, e => console.log(e));
   }
-  
+
   subscribeLotteryUpdated(){
     this.LotteryDetailservice.subscribeLotteryLotteryUpdatedSubscription$()
     .pipe(
@@ -106,7 +107,7 @@ export class LotteryDetailComponent implements OnInit, OnDestroy {
     if(this.LotteryDetailservice.lastOperation == 'CREATE'){
 
       //Fields that will be compared to check if the entity was created
-      if(newlottery.generalInfo.name == this.LotteryDetailservice.lottery.generalInfo.name 
+      if(newlottery.generalInfo.name == this.LotteryDetailservice.lottery.generalInfo.name
         && newlottery.generalInfo.description == this.LotteryDetailservice.lottery.generalInfo.description){
         //Show message entity created and redirect to the main page
         this.showSnackBar('LOTTERY.ENTITY_CREATED');

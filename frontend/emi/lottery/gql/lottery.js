@@ -7,6 +7,11 @@ export const LotteryLottery = gql`
       _id
       generalInfo {
         name
+        lotteryCode
+        vat
+        contactName
+        contactPhone
+        address
         description
       }
       state
@@ -24,6 +29,11 @@ export const LotteryLotteries = gql`
       _id
       generalInfo {
         name
+        lotteryCode
+        vat
+        contactName
+        contactPhone
+        address
         description
       }
       state
@@ -75,6 +85,10 @@ export const LotteryLotteryUpdatedSubscription = gql`
       _id
       generalInfo {
         name
+        vat
+        contactName
+        contactPhone
+        address
         description
       }
       state

@@ -72,10 +72,11 @@ export class LotteryDetailService {
           errorPolicy: 'all'
         });
       })
-    )
+    );
   }
 
   updateLotteryLotteryGeneralInfo$(id: String, lotteryGeneralInfo: any) {
+    console.log('General info to update: ', lotteryGeneralInfo);
     return this.updateOperation$(lotteryGeneralInfo)
     .pipe(
       mergeMap(() => {
@@ -89,7 +90,7 @@ export class LotteryDetailService {
           errorPolicy: 'all'
         });
       })
-    )
+    );
   }
 
   updateLotteryLotteryState$(id: String, newState: boolean) {
@@ -110,8 +111,8 @@ export class LotteryDetailService {
       variables: {
         id: entityId
       },
-      fetchPolicy: "network-only",
-      errorPolicy: "all"
+      fetchPolicy: 'network-only',
+      errorPolicy: 'all'
     });
   }
 

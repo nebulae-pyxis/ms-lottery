@@ -55,7 +55,7 @@ import { FuseTranslationLoaderService } from '../../../../../core/services/trans
 import { KeycloakService } from 'keycloak-angular';
 import { LotteryDetailService } from '../lottery-detail.service';
 import { DialogComponent } from '../../dialog/dialog.component';
-import { ToolbarService } from "../../../../toolbar/toolbar.service";
+import { ToolbarService } from '../../../../toolbar/toolbar.service';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -87,14 +87,19 @@ export class LotteryDetailGeneralInfoComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private toolbarService: ToolbarService
   ) {
-      this.translationLoader.loadTranslations(english, spanish);
+    this.translationLoader.loadTranslations(english, spanish);
   }
 
 
   ngOnInit() {
     this.subscribeEventUpdated();
     this.lotteryGeneralInfoForm = new FormGroup({
-      name: new FormControl(this.lottery ? (this.lottery.generalInfo || {}).name : ''),
+      name: new FormControl(this.lottery ? (this.lottery.generalInfo || {}).name : '', [Validators.required]),
+      lotteryCode: new FormControl(this.lottery ? (this.lottery.generalInfo || {}).lotteryCode : '', [Validators.required, Validators.pattern('[^ ]*')]),
+      vat: new FormControl(this.lottery ? (this.lottery.generalInfo || {}).vat : '', [Validators.required] ),
+      contactName: new FormControl(this.lottery ? (this.lottery.generalInfo || {}).contactName : '', [Validators.required]),
+      contactPhone: new FormControl(this.lottery ? (this.lottery.generalInfo || {}).contactPhone : '', [Validators.required]),
+      address: new FormControl(this.lottery ? (this.lottery.generalInfo || {}).address : '', [Validators.required]),
       description: new FormControl(this.lottery ? (this.lottery.generalInfo || {}).description : '')
     });
 
@@ -103,61 +108,56 @@ export class LotteryDetailGeneralInfoComponent implements OnInit, OnDestroy {
     });
   }
 
-  subscribeEventUpdated(){
+
+  subscribeEventUpdated() {
     this.LotteryDetailService.notifyLotteryLotteryUpdated$
-    .pipe(
-      takeUntil(this.ngUnsubscribe)
-    )
-    .subscribe(data => {
-      if(this.timeoutMessage){
-        clearTimeout(this.timeoutMessage);
-      }      
-    })
+      .pipe(
+        takeUntil(this.ngUnsubscribe)
+      )
+      .subscribe(data => {
+        if (this.timeoutMessage) {
+          clearTimeout(this.timeoutMessage);
+        }
+      });
   }
 
   createLottery() {
-    this.toolbarService.onSelectedBusiness$
-    .pipe(
-      tap(selectedBusiness => {
-        if(!selectedBusiness){
-          this.showSnackBar('LOTTERY.SELECT_BUSINESS');
-        }
-      }),
-      take(1),
-      filter(selectedBusiness => selectedBusiness != null && selectedBusiness.id != null),
-      mergeMap(selectedBusiness => {
-        return this.showConfirmationDialog$("LOTTERY.CREATE_MESSAGE", "LOTTERY.CREATE_TITLE")
-        .pipe(
-          tap(ok => this.showWaitOperationMessage()), 
-          mergeMap(ok => {
-            this.lottery = {
-              generalInfo: this.lotteryGeneralInfoForm.getRawValue(),
-              state: this.lotteryStateForm.getRawValue().state,
-              businessId: selectedBusiness.id
-            };
-            this.lottery.generalInfo.name = this.lottery.generalInfo.name.toUpperCase();
-            return this.LotteryDetailService.createLotteryLottery$(this.lottery);
-          }),
-          mergeMap(resp => this.graphQlAlarmsErrorHandler$(resp)),
-          filter((resp: any) => !resp.errors || resp.errors.length === 0),          
-        )
-      }),
-      takeUntil(this.ngUnsubscribe)
-    ).subscribe(result => {},
+    this.showConfirmationDialog$('LOTTERY.CREATE_MESSAGE', 'LOTTERY.CREATE_TITLE')
+      .pipe(
+        tap(ok => this.showWaitOperationMessage()),
+        mergeMap(ok => {
+          this.lottery = {
+            generalInfo: this.lotteryGeneralInfoForm.getRawValue(),
+            state: this.lotteryStateForm.getRawValue().state,
+          };
+          this.lottery.generalInfo.name = this.lottery.generalInfo.name.toUpperCase();
+
+          return this.LotteryDetailService.createLotteryLottery$(this.lottery);
+        }),
+        mergeMap(resp => this.graphQlAlarmsErrorHandler$(resp)),
+        filter((resp: any) => !resp.errors || resp.errors.length === 0),
+        takeUntil(this.ngUnsubscribe)
+      ).subscribe(result => { },
         error => {
           this.showErrorOperationMessage();
           console.log('Error ==> ', error);
         }
-    );
+      );
   }
 
+
   updateLotteryGeneralInfo() {
-    this.showConfirmationDialog$("LOTTERY.UPDATE_MESSAGE", "LOTTERY.UPDATE_TITLE")
+    this.showConfirmationDialog$('LOTTERY.UPDATE_MESSAGE', 'LOTTERY.UPDATE_TITLE')
       .pipe(
-        tap(ok => this.showWaitOperationMessage()), 
+        tap(ok => this.showWaitOperationMessage()),
         mergeMap(ok => {
           const generalInfoinput = {
             name: this.lotteryGeneralInfoForm.getRawValue().name.toUpperCase(),
+            lotteryCode: this.lotteryGeneralInfoForm.getRawValue().lotteryCode,
+            address: this.lotteryGeneralInfoForm.getRawValue().address,
+            contactName: this.lotteryGeneralInfoForm.getRawValue().contactName,
+            contactPhone: this.lotteryGeneralInfoForm.getRawValue().contactPhone,
+            vat: this.lotteryGeneralInfoForm.getRawValue().vat,
             description: this.lotteryGeneralInfoForm.getRawValue().description
           };
           return this.LotteryDetailService.updateLotteryLotteryGeneralInfo$(this.lottery._id, generalInfoinput);
@@ -166,7 +166,7 @@ export class LotteryDetailGeneralInfoComponent implements OnInit, OnDestroy {
         filter((resp: any) => !resp.errors || resp.errors.length === 0),
         takeUntil(this.ngUnsubscribe)
       )
-      .subscribe(result => {},
+      .subscribe(result => { },
         error => {
           this.showErrorOperationMessage();
           console.log('Error ==> ', error);
@@ -176,30 +176,39 @@ export class LotteryDetailGeneralInfoComponent implements OnInit, OnDestroy {
   }
 
   onLotteryStateChange() {
-    this.showConfirmationDialog$("LOTTERY.UPDATE_MESSAGE", "LOTTERY.UPDATE_TITLE")
+    this.showConfirmationDialog$('LOTTERY.UPDATE_MESSAGE', 'LOTTERY.UPDATE_TITLE')
       .pipe(
-        tap(ok => this.showWaitOperationMessage()), 
-        mergeMap(ok => {        
+        tap(ok => this.showWaitOperationMessage()),
+        mergeMap(ok => {
           return this.LotteryDetailService.updateLotteryLotteryState$(this.lottery._id, this.lotteryStateForm.getRawValue().state);
         }),
         mergeMap(resp => this.graphQlAlarmsErrorHandler$(resp)),
         filter((resp: any) => !resp.errors || resp.errors.length === 0),
         takeUntil(this.ngUnsubscribe)
-      ).subscribe(result => {},
+      ).subscribe(result => { },
         error => {
           this.showErrorOperationMessage();
           console.log('Error ==> ', error);
         });
   }
 
-  showWaitOperationMessage(){
+  numberOnly(event): boolean {
+    const charCode = (event.which) ? event.which : event.keyCode;
+    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+      return false;
+    }
+    return true;
+
+  }
+
+  showWaitOperationMessage() {
     this.timeoutMessage = setTimeout(() => {
       this.showSnackBar('LOTTERY.WAIT_OPERATION');
     }, 2000);
   }
 
-  showErrorOperationMessage(){
-    if(this.timeoutMessage){
+  showErrorOperationMessage() {
+    if (this.timeoutMessage) {
       clearTimeout(this.timeoutMessage);
     }
     this.showSnackBar('LOTTERY.ERROR_OPERATION');
@@ -207,7 +216,7 @@ export class LotteryDetailGeneralInfoComponent implements OnInit, OnDestroy {
 
   showConfirmationDialog$(dialogMessage, dialogTitle) {
     return this.dialog
-      //Opens confirm dialog
+      // Opens confirm dialog
       .open(DialogComponent, {
         data: {
           dialogMessage,
@@ -244,7 +253,7 @@ export class LotteryDetailGeneralInfoComponent implements OnInit, OnDestroy {
    */
   showSnackBarError(response) {
     if (response.errors) {
-      if(this.timeoutMessage){
+      if (this.timeoutMessage) {
         clearTimeout(this.timeoutMessage);
       }
       if (Array.isArray(response.errors)) {
@@ -269,7 +278,7 @@ export class LotteryDetailGeneralInfoComponent implements OnInit, OnDestroy {
    * @param detailMessageKey Key of the detail message to i18n
    */
   showMessageSnackbar(messageKey, detailMessageKey?) {
-    let translationData = [];
+    const translationData = [];
     if (messageKey) {
       translationData.push(messageKey);
     }

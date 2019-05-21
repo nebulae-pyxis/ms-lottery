@@ -4,5 +4,11 @@
         "type": "graphql",        
         "src": "api/emi-gateway/graphql/lottery",
         "preBuildCommands": []
+    },
+    {
+        "name": "lottery-game",
+        "type": "graphql",        
+        "src": "api/emi-gateway/graphql/lottery-game",
+        "preBuildCommands": []
     }
 ]

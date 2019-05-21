@@ -83,33 +83,6 @@
               />
             </mat-form-field>
 
-              <mat-form-field>
-                  <input
-                    matInput
-                    placeholder="{{'LOTTERY.CREATOR_USER' | translate}}"
-                    formControlName="creatorUser"
-                    id="creatorUser"
-                    maxlength="20"
-                  />
-              </mat-form-field>
-
-              <mat-form-field>
-                <input
-                  matInput
-                  [matDatepicker]="pickerCreationDate"
-                  placeholder="{{'LOTTERY.CREATION_DATE' | translate}}"
-                  formControlName="creationTimestamp"/>
-                <mat-datepicker-toggle
-                  matSuffix
-                  [for]="pickerCreationDate"
-                ></mat-datepicker-toggle>
-                <mat-datepicker
-                  [twelveHour]="false"
-                  type="datetime"
-                  #pickerCreationDate
-                ></mat-datepicker>
-              </mat-form-field>
-
             </div>
           </form>
 
@@ -178,6 +151,18 @@
             </mat-cell>
           </ng-container>
 
+          <!-- Name Column -->
+          <ng-container cdkColumnDef="lotteryCode">
+            <mat-header-cell *cdkHeaderCellDef fxFlex="80" fxFlex.gt-xs="18">{{
+              "LOTTERY.DETAILS.LOTTERY_CODE" | translate
+            }}</mat-header-cell>
+            <mat-cell *cdkCellDef="let element" fxFlex="80" fxFlex.gt-xs="18">
+              <p class="text-truncate">
+                {{ element.generalInfo.lotteryCode }}
+              </p>
+            </mat-cell>
+          </ng-container>
+
           <!-- Active Column -->
           <ng-container cdkColumnDef="state">
             <mat-header-cell *cdkHeaderCellDef fxFlex="20" fxFlex.gt-xs="8">{{
@@ -189,27 +174,7 @@
             </mat-cell>
           </ng-container>
 
-          <!-- Creation timestamp Column -->
-          <ng-container cdkColumnDef="creationTimestamp">
-              <mat-header-cell *cdkHeaderCellDef fxHide fxShow.gt-xs fxFlex="20" fxFlex.gt-xs="16">{{
-                "LOTTERY.CREATION_TIMESTAMP" | translate
-              }}</mat-header-cell>
-              <mat-cell *cdkCellDef="let element" fxHide fxShow.gt-xs fxFlex="20" fxFlex.gt-xs="16">
-                <p class="text-truncate">
-                  {{ element.creationTimestamp | date: "dd/MM/y HH:mm:ss" }}
-                </p>
-              </mat-cell>
-          </ng-container>
 
-          <!-- Creator user Column -->
-          <ng-container cdkColumnDef="creatorUser">
-              <mat-header-cell *cdkHeaderCellDef fxHide fxShow.gt-xs fxFlex="20" fxFlex.gt-xs="16">{{
-                "LOTTERY.CREATOR_USER" | translate
-              }}</mat-header-cell>
-              <mat-cell *cdkCellDef="let element" fxHide fxShow.gt-xs fxFlex="20" fxFlex.gt-xs="16">
-                <p class="text-truncate">{{  element.creatorUser }}</p>
-              </mat-cell>
-          </ng-container>
 
           <!-- Last modification timestamp Column -->
           <ng-container cdkColumnDef="modificationTimestamp">
@@ -231,7 +196,7 @@
               <mat-cell *cdkCellDef="let element" fxHide fxShow.gt-xs fxFlex="20" fxFlex.gt-xs="16">
                 <p class="text-truncate">{{  element.modifierUser }}</p>
               </mat-cell>
-          </ng-container>  
+          </ng-container>
 
 
           <mat-header-row *cdkHeaderRowDef="displayedColumns"></mat-header-row>

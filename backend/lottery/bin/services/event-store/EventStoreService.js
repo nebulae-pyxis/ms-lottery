@@ -2,6 +2,8 @@
 const { of, from, concat } = require("rxjs");
 const eventSourcing = require("../../tools/EventSourcing")();
 const { LotteryES } = require("../../domain/lottery");
+const { LotteryGameES } = require("../../domain/lotterygame");
+const { LotteryGameSheetConfigES } = require("../../domain/lotteryGameSheetConfig");
 const { map, switchMap, filter, mergeMap, concatMap } = require('rxjs/operators');
 /**
  * Singleton instance
@@ -60,11 +62,11 @@ class EventStoreService {
      * @param {{aggregateType, eventType, onErrorHandler, onCompleteHandler}} params
      * @return { aggregateType, eventType, handlerName  }
      */
-  subscribeEventHandler({ aggregateType, eventType, onErrorHandler, onCompleteHandler }) {
+  subscribeEventHandler({ aggregateType, eventType, onErrorHandler, onCompleteHandler }) {    
     const handler = this.functionMap[eventType];
     const subscription =
       //MANDATORY:  AVOIDS ACK REGISTRY DUPLICATIONS
-      eventSourcing.eventStore.ensureAcknowledgeRegistry$(aggregateType).pipe(
+      eventSourcing.eventStore.ensureAcknowledgeRegistry$(aggregateType,mbeKey).pipe(
         mergeMap(() => eventSourcing.eventStore.getEventListener$(aggregateType, mbeKey, false)),
         filter(evt => evt.et === eventType),
         mergeMap(evt => concat(
@@ -79,7 +81,7 @@ class EventStoreService {
           },
           onErrorHandler,
           onCompleteHandler
-        );
+      );
     this.subscriptions.push({ aggregateType, eventType, handlerName: handler.fn.name, subscription });
     return { aggregateType, eventType, handlerName: `${handler.obj.name}.${handler.fn.name}` };
   }
@@ -104,7 +106,7 @@ class EventStoreService {
   subscribeEventRetrieval$({ aggregateType, eventType }) {
     const handler = this.functionMap[eventType];
     //MANDATORY:  AVOIDS ACK REGISTRY DUPLICATIONS
-    return eventSourcing.eventStore.ensureAcknowledgeRegistry$(aggregateType).pipe(
+    return eventSourcing.eventStore.ensureAcknowledgeRegistry$(aggregateType,mbeKey).pipe(
       switchMap(() => eventSourcing.eventStore.retrieveUnacknowledgedEvents$(aggregateType, mbeKey)),
       filter(evt => evt.et === eventType),
       concatMap(evt => concat(
@@ -121,6 +123,7 @@ class EventStoreService {
 
   generateFunctionMap() {
     return {
+      //LOTTERY
       LotteryCreated: {
         fn: LotteryES.handleLotteryCreated$,
         obj: LotteryES
@@ -134,6 +137,36 @@ class EventStoreService {
         obj: LotteryES
       },
 
+      //GAME
+      LotteryGameCreated: {
+        fn: LotteryGameES.handleLotteryGameCreated$,
+        obj: LotteryGameES
+      },
+      LotteryGameGeneralInfoUpdated: {
+        fn: LotteryGameES.handleLotteryGameGeneralInfoUpdated$,
+        obj: LotteryGameES
+      },
+      LotteryGameStateUpdated: {
+        fn: LotteryGameES.handleLotteryGameStateUpdated$,
+        obj: LotteryGameES
+      },
+      //SHEET CONFIG
+      LotteryGameSheetConfigCreated: {
+        fn: LotteryGameSheetConfigES.handleLotteryGameSheetConfigCreated$,
+        obj: LotteryGameSheetConfigES
+      },
+      LotteryGameSheetConfigUpdated: {
+        fn: LotteryGameSheetConfigES.handleLotteryGameSheetConfigUpdated$,
+        obj: LotteryGameSheetConfigES
+      },
+      LotteryGameSheetConfigApproved: {
+        fn: LotteryGameSheetConfigES.handleLotteryGameSheetConfigApproved$,
+        obj: LotteryGameSheetConfigES
+      },
+      LotteryGameSheetConfigRevoked: {
+        fn: LotteryGameSheetConfigES.handleLotteryGameSheetConfigRevoked$,
+        obj: LotteryGameSheetConfigES
+      },
     };
   }
 
@@ -142,6 +175,7 @@ class EventStoreService {
   */
   generateAggregateEventsArray() {
     return [
+      // LOTTERY
       {
         aggregateType: "Lottery",
         eventType: "LotteryCreated"
@@ -153,6 +187,36 @@ class EventStoreService {
       {
         aggregateType: "Lottery",
         eventType: "LotteryStateUpdated"
+      },
+      //GAME
+      {
+        aggregateType: "LotteryGame",
+        eventType: "LotteryGameCreated"
+      },
+      {
+        aggregateType: "LotteryGame",
+        eventType: "LotteryGameGeneralInfoUpdated"
+      },
+      {
+        aggregateType: "LotteryGame",
+        eventType: "LotteryGameStateUpdated"
+      },
+      //SHEET CONFIG
+      {
+        aggregateType: "LotteryGameSheetConfig",
+        eventType: "LotteryGameSheetConfigCreated"
+      },
+      {
+        aggregateType: "LotteryGameSheetConfig",
+        eventType: "LotteryGameSheetConfigUpdated"
+      },
+      {
+        aggregateType: "LotteryGameSheetConfig",
+        eventType: "LotteryGameSheetConfigApproved"
+      },
+      {
+        aggregateType: "LotteryGameSheetConfig",
+        eventType: "LotteryGameSheetConfigRevoked"
       },
     ]
   }

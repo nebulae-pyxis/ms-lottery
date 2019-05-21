@@ -24,16 +24,12 @@ class LotteryDA {
   /**
    * Gets an user by its username
    */
-  static getLottery$(id, businessId) {
+  static getLottery$(id) {
     const collection = mongoDB.db.collection(CollectionName);
 
     const query = {
       _id: id      
     };
-    if(businessId){
-      query.businessId = businessId;
-    }
-
     return defer(() => collection.findOne(query));
   }
 
@@ -106,6 +102,7 @@ class LotteryDA {
    * @param {*} lottery lottery to create
    */
   static createLottery$(lottery) {
+    lottery.generalInfo.lotteryCode = lottery.generalInfo.lotteryCode.toLowerCase();
     const collection = mongoDB.db.collection(CollectionName);
     return defer(() => collection.insertOne(lottery));
   }
@@ -116,6 +113,9 @@ class LotteryDA {
    * @param {*} LotteryGeneralInfo  New general information of the Lottery
    */
   static updateLotteryGeneralInfo$(id, LotteryGeneralInfo) {
+    if (LotteryGeneralInfo.generalInfo && LotteryGeneralInfo.generalInfo.lotteryCode) { 
+      LotteryGeneralInfo.generalInfo.lotteryCode = LotteryGeneralInfo.generalInfo.lotteryCode.toLowerCase();
+    }    
     const collection = mongoDB.db.collection(CollectionName);
 
     return defer(()=>

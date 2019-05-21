@@ -1,6 +1,8 @@
 "use strict";
 
 const { LotteryCQRS } = require("../../domain/lottery");
+const { LotteryGameCQRS } = require("../../domain/lotterygame");
+const { LotteryGameSheetConfigCQRS } = require("../../domain/lotteryGameSheetConfig");
 const broker = require("../../tools/broker/BrokerFactory")();
 const { of, from } = require("rxjs");
 const jsonwebtoken = require("jsonwebtoken");
@@ -145,6 +147,7 @@ class GraphQlService {
   getSubscriptionDescriptors() {
     console.log("GraphQl Service starting ...");
     return [
+      // LOTTERY
       {
         aggregateType: "Lottery",
         messageType: "emigateway.graphql.query.LotteryLotteries"
@@ -169,6 +172,56 @@ class GraphQlService {
         aggregateType: "Lottery",
         messageType: "emigateway.graphql.mutation.LotteryUpdateLotteryState"
       },
+      //GAME
+      {
+        aggregateType: "LotteryGame",
+        messageType: "emigateway.graphql.query.LotteryGames"
+      },
+      {
+        aggregateType: "LotteryGame",
+        messageType: "emigateway.graphql.query.LotteryGamesSize"
+      },
+      {
+        aggregateType: "LotteryGame",
+        messageType: "emigateway.graphql.query.LotteryGame"
+      },
+      {
+        aggregateType: "LotteryGame",
+        messageType: "emigateway.graphql.mutation.LotteryCreateLotteryGame"
+      },
+      {
+        aggregateType: "LotteryGame",
+        messageType: "emigateway.graphql.mutation.LotteryUpdateLotteryGameGeneralInfo"
+      },
+      {
+        aggregateType: "LotteryGame",
+        messageType: "emigateway.graphql.mutation.LotteryUpdateLotteryGameState"
+      },
+      //SHEET CONFIG
+      {
+        aggregateType: "LotteryGameSheetConfig",
+        messageType: "emigateway.graphql.query.LotteryGameSheetConfig"
+      },
+      {
+        aggregateType: "LotteryGameSheetConfig",
+        messageType: "emigateway.graphql.query.LotteryGameSheetConfigList"
+      },
+      {
+        aggregateType: "LotteryGameSheetConfig",
+        messageType: "emigateway.graphql.mutation.CreateLotteryGameSheetConfig"
+      },
+      {
+        aggregateType: "LotteryGameSheetConfig",
+        messageType: "emigateway.graphql.mutation.UpdateLotteryGameSheetConfig"
+      },
+      {
+        aggregateType: "LotteryGameSheetConfig",
+        messageType: "emigateway.graphql.mutation.ApproveLotteryGameSheetConfig"
+      },
+      {
+        aggregateType: "LotteryGameSheetConfig",
+        messageType: "emigateway.graphql.mutation.RevokeLotteryGameSheetConfig"
+      }
     ];
   }
 
@@ -178,6 +231,7 @@ class GraphQlService {
    */
   generateFunctionMap() {    
     return {
+      // LOTTERY
       "emigateway.graphql.query.LotteryLotteries": {
         fn: LotteryCQRS.getLotteryList$,
         obj: LotteryCQRS
@@ -201,6 +255,56 @@ class GraphQlService {
       "emigateway.graphql.mutation.LotteryUpdateLotteryState": {
         fn: LotteryCQRS.updateLotteryState$,
         obj: LotteryCQRS
+      },
+      // GAME 
+      "emigateway.graphql.query.LotteryGames": {
+        fn: LotteryGameCQRS.getLotteryGameList$,
+        obj: LotteryGameCQRS
+      },
+      "emigateway.graphql.query.LotteryGamesSize": {
+        fn: LotteryGameCQRS.getLotteryGameListSize$,
+        obj: LotteryGameCQRS
+      },
+      "emigateway.graphql.query.LotteryGame": {
+        fn: LotteryGameCQRS.getLotteryGame$,
+        obj: LotteryGameCQRS
+      },
+      "emigateway.graphql.mutation.LotteryCreateLotteryGame": {
+        fn: LotteryGameCQRS.createLotteryGame$,
+        obj: LotteryGameCQRS
+      }, 
+      "emigateway.graphql.mutation.LotteryUpdateLotteryGameGeneralInfo": {
+        fn: LotteryGameCQRS.updateLotteryGameGeneralInfo$,
+        obj: LotteryGameCQRS
+      },
+      "emigateway.graphql.mutation.LotteryUpdateLotteryGameState": {
+        fn: LotteryGameCQRS.updateLotteryGameState$,
+        obj: LotteryGameCQRS
+      },
+      //SHEET CONFIG
+      "emigateway.graphql.query.LotteryGameSheetConfig": {
+        fn: LotteryGameSheetConfigCQRS.getLotteryGameSheetConfig$,
+        obj: LotteryGameSheetConfigCQRS
+      },
+      "emigateway.graphql.query.LotteryGameSheetConfigList": {
+        fn: LotteryGameSheetConfigCQRS.getLotteryGameSheetConfigList$,
+        obj: LotteryGameSheetConfigCQRS
+      },
+      "emigateway.graphql.mutation.CreateLotteryGameSheetConfig": {
+        fn: LotteryGameSheetConfigCQRS.createLotteryGameSheetConfig$,
+        obj: LotteryGameSheetConfigCQRS
+      },
+      "emigateway.graphql.mutation.UpdateLotteryGameSheetConfig": {
+        fn: LotteryGameSheetConfigCQRS.updateLotteryGameSheetConfig$,
+        obj: LotteryGameSheetConfigCQRS
+      },
+      "emigateway.graphql.mutation.ApproveLotteryGameSheetConfig": {
+        fn: LotteryGameSheetConfigCQRS.approveLotteryGameSheetConfig$,
+        obj: LotteryGameSheetConfigCQRS
+      },
+      "emigateway.graphql.mutation.RevokeLotteryGameSheetConfig": {
+        fn: LotteryGameSheetConfigCQRS.revokeLotteryGameSheetConfig$,
+        obj: LotteryGameSheetConfigCQRS
       }
     };
   }

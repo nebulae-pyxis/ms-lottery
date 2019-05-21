@@ -66,11 +66,7 @@ class LotteryCQRS {
       ["PLATFORM-ADMIN"]
     ).pipe(
       mergeMap(roles => {
-        const isPlatformAdmin = roles["PLATFORM-ADMIN"];
-        //If an user does not have the role to get the Lottery from other business, the query must be filtered with the businessId of the user
-        const businessId = !isPlatformAdmin? (authToken.businessId || ''): args.filterInput.businessId;
         const filterInput = args.filterInput;
-        filterInput.businessId = businessId;
 
         return LotteryDA.getLotteryList$(filterInput, args.paginationInput);
       }),

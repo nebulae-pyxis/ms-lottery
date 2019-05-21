@@ -19,11 +19,11 @@
 
           <div fxLayout="column" fxLayoutAlign="start start" *fuseIfOnDom>
 
-            <div class="h2" *ngIf="lottery && lottery._id">
-              {{lottery.name}}
+            <div class="h2" *ngIf="lottery">
+              {{lottery.generalInfo.name}}
             </div>
 
-            <div class="h2" *ngIf="!lottery || (lottery && !lottery._id)">
+            <div class="h2" *ngIf="!lottery">
               {{'LOTTERY.DETAIL_HEADER_NEW' | translate}}
             </div>
 
