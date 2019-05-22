@@ -126,7 +126,9 @@ export class GameDetailComponent implements OnInit, OnDestroy {
         this.updateGameRoute(['id'], 'general-info');
         break;
       case 1:
-        this.updateGameRoute(['id'], 'sheet-config/' + this.GameDetailservice.selectedConfigSheetChanged$.value._id);
+          this.updateGameRoute(['id'], 'sheet-config' +
+            (this.GameDetailservice.selectedConfigSheetChanged$.value ? '/' + this.GameDetailservice.selectedConfigSheetChanged$.value._id : '')
+            );
         break;
     }
   }

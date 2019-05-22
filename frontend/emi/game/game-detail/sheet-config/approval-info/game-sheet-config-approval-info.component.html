@@ -37,7 +37,7 @@
     <input readonly matInput name="revokedNotes" formControlName="revokedNotes"
       placeholder="{{'LOTTERY.DETAILS.CONFIG_SHEET.REVOKED_NOTES' | translate}}">
   </mat-form-field>
-  <div class="mt-16">
+  <div class="mt-16" *ngIf="isApproveButtonsAllowed()">
     <button *ngIf="selectedConfigSheet && selectedConfigSheet.approved === 'PENDING'" (click)="approveSheetConfig()" mat-raised-button style="margin-right: 10px" color="primary">
       {{'LOTTERY.DETAILS.CONFIG_SHEET.APPROVE' | translate}}
     </button>

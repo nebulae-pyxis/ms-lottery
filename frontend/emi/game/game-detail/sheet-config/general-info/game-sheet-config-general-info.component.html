@@ -36,7 +36,7 @@
       placeholder="{{'LOTTERY.DETAILS.CONFIG_SHEET.VALID_UNTIL_DRAW' | translate}}">
   </mat-form-field>
 
-  <div class="mt-16">
+  <div class="mt-16" *ngIf="isGeneralInfoButtonsAllowed()">
       <button mat-raised-button style="margin-right: 10px"
       [disabled]="gameGeneralInfoForm.invalid"
       (click)="createConfigSheet()"

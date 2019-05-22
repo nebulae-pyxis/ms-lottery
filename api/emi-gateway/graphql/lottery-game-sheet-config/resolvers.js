@@ -33,57 +33,13 @@ module.exports = {
     //// QUERY ///////
 
     Query: {
-        LotteryGames(root, args, context) {
-            return RoleValidator.checkPermissions$(context.authToken.realm_access.roles, 'ms-' + 'Lottery', 'LotteryGames', PERMISSION_DENIED_ERROR_CODE, 'Permission denied', ["PLATFORM-ADMIN"])
-                .pipe(
-                    mergeMap(() =>
-                        broker
-                            .forwardAndGetReply$(
-                                "LotteryGame",
-                                "emigateway.graphql.query.LotteryGames",
-                                { root, args, jwt: context.encodedToken },
-                                2000
-                            )
-                    ),
-                    catchError(err => handleError$(err, "LotteryGames")),
-                    mergeMap(response => getResponseFromBackEnd$(response))
-                ).toPromise();
-        },
-        LotteryGamesSize(root, args, context) {
-            return RoleValidator.checkPermissions$(context.authToken.realm_access.roles, 'ms-' + 'Lottery', 'LotteryGamesSize', PERMISSION_DENIED_ERROR_CODE, 'Permission denied', ["PLATFORM-ADMIN"])
-                .pipe(
-                    mergeMap(() =>
-                        broker
-                            .forwardAndGetReply$(
-                                "LotteryGame",
-                                "emigateway.graphql.query.LotteryGamesSize",
-                                { root, args, jwt: context.encodedToken },
-                                2000
-                            )
-                    ),
-                    catchError(err => handleError$(err, "LotteryGamesSize")),
-                    mergeMap(response => getResponseFromBackEnd$(response))
-                ).toPromise();
-        },
-        LotteryGame(root, args, context) {
-            return RoleValidator.checkPermissions$(context.authToken.realm_access.roles, 'ms-' + 'Lottery', 'LotteryGame', PERMISSION_DENIED_ERROR_CODE, 'Permission denied', ["PLATFORM-ADMIN"])
-                .pipe(
-                    mergeMap(() =>
-                        broker
-                            .forwardAndGetReply$(
-                                "LotteryGame",
-                                "emigateway.graphql.query.LotteryGame",
-                                { root, args, jwt: context.encodedToken },
-                                2000
-                            )
-                    ),
-                    catchError(err => handleError$(err, "LotteryGame")),
-                    mergeMap(response => getResponseFromBackEnd$(response))
-                ).toPromise();
-        },
-
         LotteryGameSheetConfigList(root, args, context) {
-            return RoleValidator.checkPermissions$(context.authToken.realm_access.roles, 'ms-' + 'Lottery', 'LotteryGameSheetConfig', PERMISSION_DENIED_ERROR_CODE, 'Permission denied', ["PLATFORM-ADMIN"])
+            console.log('Roles: ', context.authToken.realm_access.roles);
+            return RoleValidator.checkPermissions$(context.authToken.realm_access.roles,
+                'ms-' + 'Lottery',
+                'LotteryGameSheetConfig',
+                PERMISSION_DENIED_ERROR_CODE,
+                'Permission denied', ["PLATFORM-ADMIN", "LOTTERY-ADMIN", "LOTTERY-APPROVER"])
                 .pipe(
                     mergeMap(() =>
                         broker
@@ -99,7 +55,11 @@ module.exports = {
                 ).toPromise();
         },
         LotteryGameSheetConfig(root, args, context) {
-            return RoleValidator.checkPermissions$(context.authToken.realm_access.roles, 'ms-' + 'Lottery', 'LotteryGameSheetConfig', PERMISSION_DENIED_ERROR_CODE, 'Permission denied', ["PLATFORM-ADMIN"])
+            return RoleValidator.checkPermissions$(context.authToken.realm_access.roles,
+                'ms-' + 'Lottery',
+                'LotteryGameSheetConfig',
+                PERMISSION_DENIED_ERROR_CODE,
+                'Permission denied', ["PLATFORM-ADMIN", "LOTTERY-ADMIN", "LOTTERY-APPROVER"])
                 .pipe(
                     mergeMap(() =>
                         broker
@@ -118,70 +78,6 @@ module.exports = {
 
     //// MUTATIONS ///////
     Mutation: {
-        LotteryCreateGame(root, args, context) {
-            return RoleValidator.checkPermissions$(
-                context.authToken.realm_access.roles,
-                "LotteryGame",
-                "LotteryCreateGame",
-                PERMISSION_DENIED_ERROR_CODE,
-                "Permission denied",
-                ["PLATFORM-ADMIN"]
-            )
-                .pipe(
-                    mergeMap(() =>
-                        context.broker.forwardAndGetReply$(
-                            "LotteryGame",
-                            "emigateway.graphql.mutation.LotteryCreateLotteryGame",
-                            { root, args, jwt: context.encodedToken },
-                            2000
-                        )
-                    ),
-                    catchError(err => handleError$(err, "LotteryCreateGame")),
-                    mergeMap(response => getResponseFromBackEnd$(response))
-                ).toPromise();
-        },
-        LotteryUpdateGameGeneralInfo(root, args, context) {
-            return RoleValidator.checkPermissions$(
-                context.authToken.realm_access.roles,
-                "LotteryGame",
-                "LotteryUpdateGameGeneralInfo",
-                PERMISSION_DENIED_ERROR_CODE,
-                "Permission denied",
-                ["PLATFORM-ADMIN"]
-            ).pipe(
-                mergeMap(() =>
-                    context.broker.forwardAndGetReply$(
-                        "LotteryGame",
-                        "emigateway.graphql.mutation.LotteryUpdateLotteryGameGeneralInfo",
-                        { root, args, jwt: context.encodedToken },
-                        2000
-                    )
-                ),
-                catchError(err => handleError$(err, "updateGameGeneralInfo")),
-                mergeMap(response => getResponseFromBackEnd$(response))
-            ).toPromise();
-        },
-        LotteryUpdateGameState(root, args, context) {
-            return RoleValidator.checkPermissions$(
-                context.authToken.realm_access.roles,
-                "LotteryGame",
-                "LotteryUpdateGameState",
-                PERMISSION_DENIED_ERROR_CODE,
-                "Permission denied",
-                ["PLATFORM-ADMIN"]
-            ).pipe(
-                mergeMap(() =>
-                    context.broker.forwardAndGetReply$(
-                        "LotteryGame",
-                        "emigateway.graphql.mutation.LotteryUpdateLotteryGameState",
-                        { root, args, jwt: context.encodedToken },
-                        2000
-                    )
-                ),
-                catchError(err => handleError$(err, "updateGameState")),
-                mergeMap(response => getResponseFromBackEnd$(response))
-            ).toPromise();
-        },
         CreateLotteryGameSheetConfig(root, args, context) {
             return RoleValidator.checkPermissions$(
                 context.authToken.realm_access.roles,
@@ -189,7 +85,7 @@ module.exports = {
                 "CreateLotteryGameSheetConfig",
                 PERMISSION_DENIED_ERROR_CODE,
                 "Permission denied",
-                ["PLATFORM-ADMIN"]
+                ["PLATFORM-ADMIN", "LOTTERY-ADMIN"]
             ).pipe(
                 mergeMap(() =>
                     context.broker.forwardAndGetReply$(
@@ -210,7 +106,7 @@ module.exports = {
                 "UpdateLotteryGameSheetConfig",
                 PERMISSION_DENIED_ERROR_CODE,
                 "Permission denied",
-                ["PLATFORM-ADMIN"]
+                ["PLATFORM-ADMIN", "LOTTERY-ADMIN"]
             ).pipe(
                 mergeMap(() =>
                     context.broker.forwardAndGetReply$(
@@ -231,7 +127,7 @@ module.exports = {
                 "ApproveLotteryGameSheetConfig",
                 PERMISSION_DENIED_ERROR_CODE,
                 "Permission denied",
-                ["PLATFORM-ADMIN"]
+                ["PLATFORM-ADMIN", "LOTTERY-APPROVER"]
             ).pipe(
                 mergeMap(() =>
                     context.broker.forwardAndGetReply$(
@@ -252,7 +148,7 @@ module.exports = {
                 "RevokeLotteryGameSheetConfig",
                 PERMISSION_DENIED_ERROR_CODE,
                 "Permission denied",
-                ["PLATFORM-ADMIN"]
+                ["PLATFORM-ADMIN", "LOTTERY-APPROVER"]
             ).pipe(
                 mergeMap(() =>
                     context.broker.forwardAndGetReply$(

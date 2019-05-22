@@ -39,7 +39,7 @@ class LotteryCQRS {
       "Lottery",
       "getLottery",
       PERMISSION_DENIED,
-      ["PLATFORM-ADMIN"]
+      ["PLATFORM-ADMIN", "LOTTERY-ADMIN", "LOTTERY-APPROVER"]
     ).pipe(
       mergeMap(roles => {
         const isPlatformAdmin = roles["PLATFORM-ADMIN"];
@@ -63,7 +63,7 @@ class LotteryCQRS {
       "Lottery",
       "getLotteryList",
       PERMISSION_DENIED,
-      ["PLATFORM-ADMIN"]
+      ["PLATFORM-ADMIN", "LOTTERY-ADMIN", "LOTTERY-APPROVER"]
     ).pipe(
       mergeMap(roles => {
         const filterInput = args.filterInput;
@@ -87,7 +87,7 @@ class LotteryCQRS {
       "Lottery",
       "getLotteryListSize",
       PERMISSION_DENIED,
-      ["PLATFORM-ADMIN"]
+      ["PLATFORM-ADMIN", "LOTTERY-ADMIN", "LOTTERY-APPROVER"]
     ).pipe(
       mergeMap(roles => {
         const isPlatformAdmin = roles["PLATFORM-ADMIN"];
@@ -119,7 +119,7 @@ class LotteryCQRS {
       "Lottery",
       "createLottery$",
       PERMISSION_DENIED,
-      ["PLATFORM-ADMIN"]
+      ["PLATFORM-ADMIN", "LOTTERY-ADMIN"]
     ).pipe(
       mergeMap(() => eventSourcing.eventStore.emitEvent$(
         new Event({
@@ -153,7 +153,7 @@ class LotteryCQRS {
       "Lottery",
       "updateLotteryGeneralInfo$",
       PERMISSION_DENIED,
-      ["PLATFORM-ADMIN"]
+      ["PLATFORM-ADMIN", "LOTTERY-ADMIN"]
     ).pipe(
       mergeMap(() => eventSourcing.eventStore.emitEvent$(
         new Event({
@@ -189,7 +189,7 @@ class LotteryCQRS {
       "Lottery",
       "updateLotteryState$",
       PERMISSION_DENIED,
-      ["PLATFORM-ADMIN"]
+      ["PLATFORM-ADMIN", "LOTTERY-ADMIN"]
     ).pipe(
       mergeMap(() => eventSourcing.eventStore.emitEvent$(
         new Event({

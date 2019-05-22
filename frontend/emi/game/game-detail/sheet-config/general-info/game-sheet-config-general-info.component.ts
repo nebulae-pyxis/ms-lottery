@@ -52,6 +52,7 @@ import { FuseTranslationLoaderService } from '../../../../../../core/services/tr
 //////////// Others ////////////
 import { DialogComponent } from '../../../dialog/dialog.component';
 import { GameDetailService } from '../../game-detail.service';
+import { KeycloakService } from 'keycloak-angular';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -85,7 +86,8 @@ export class GameSheetConfigGeneralInfoComponent implements OnInit, OnDestroy {
     private translate: TranslateService,
     public snackBar: MatSnackBar,
     private dialog: MatDialog,
-    private gameDetailService: GameDetailService
+    private gameDetailService: GameDetailService,
+    private keycloakService: KeycloakService
   ) {
     this.translationLoader.loadTranslations(english, spanish);
   }
@@ -108,6 +110,12 @@ export class GameSheetConfigGeneralInfoComponent implements OnInit, OnDestroy {
       return false;
     }
     return true;
+  }
+
+  isGeneralInfoButtonsAllowed() {
+    const roles = this.keycloakService.getUserRoles()
+      .filter(role => role === 'PLATFORM-ADMIN' || role === 'LOTTERY-ADMIN');
+    return  roles && roles.length > 0;
   }
 
   subuscribeToSelectedSheetConfigChange() {
