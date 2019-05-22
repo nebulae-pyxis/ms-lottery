@@ -91,20 +91,19 @@ module.exports = {
         ])
         .toPromise();
     },
-
     lotteryAvailableSeriesForNumber(root, args, context) {
       const requiredRoles = [];     
       return of([
-       { serie: 'DE45-JI45-KO12', availableTickets: 157 },
-       { serie: 'J9E3-5G9T-6F9G', availableTickets: 159 },
-       { serie: '5G8A-1A1S-1E1F', availableTickets: 567 },
-       { serie: '2Q2W-3E3D-5D9A', availableTickets: 856 },
-       { serie: '6F6T-9T5G-5D9G', availableTickets: 125 },
-       { serie: '4D8V-2W8H-Q96F', availableTickets: 598 },      
+       { series: 'DE45-JI45-KO12', availableTickets: 157 },
+       { series: 'J9E3-5G9T-6F9G', availableTickets: 159 },
+       { series: '5G8A-1A1S-1E1F', availableTickets: 567 },
+       { series: '2Q2W-3E3D-5D9A', availableTickets: 856 },
+       { series: '6F6T-9T5G-5D9G', availableTickets: 125 },
+       { series: '4D8V-2W8H-Q96F', availableTickets: 598 },      
       ])
       .toPromise();
     },
-    loteries(root, args, context) {
+    lotteries(root, args, context) {
       const requiredRoles = [];     
       return of([
        { id: 'DE45-JI45-KO12', name: 'Quindío' },
@@ -156,6 +155,7 @@ module.exports = {
     },
     lotterySoldTickets(root, args, context) {
       const requiredRoles = [];     
+
       return of([
        {
         id: 'q1w2-2we3-r4t5',
@@ -189,7 +189,8 @@ module.exports = {
     },
     lotteryBoughtTickets(root, args, context) {
       const requiredRoles = [];     
-      return of({
+      return of([
+      {
         id: '5d8f-9drt-d7c8',
         drawId: 's5f6-dd45-nj67',
         ticketNumber: 'C4582',
@@ -199,64 +200,96 @@ module.exports = {
         clientDocumentId: '15896588',
         clientPhoneNumber: 3125889988,
         transactionId: 'se45-de45-sd38'
-       })
+      },
+      {
+        id: 'sd34-d5g7-2s3d',
+        drawId: 's5f6-dd45-nj67',
+        ticketNumber: 'C4582',
+        ticketSeries: '6d9f',
+        ticketCount: 125,
+        clientName: 'Armando Rendon',
+        clientDocumentId: '1059865985',
+        clientPhoneNumber: 3125248965,
+        transactionId: 'se45-de45-sd38'
+      },
+      ])
       .toPromise();
     },
     lotteryRedeemedPrizes(root, args, context){
       return of([
         {
-         id: 'q1w2-2we3-r4t5',
-         drawId: 'qa09-dd45-nj67',
-         ticketNumber: 'B12520',
-         ticketSeries: '2345',
-         ticketCount: 125,
-         clientName: 'Juan Santa',
-         clientDocumentId: '1045050988',
-         clientPhoneNumber: 3128588812,
-         transactionId: 'sw23-de45-fr56',
-         terminal: {
-           id: 'w2e-2de',
-           userId: '158f-69df-58fg-5f7j-69hu',
-           userName: 'juan.santa'
-         }
+          ticketNumber: '5698',
+          ticketSeries: 'B563',
+          ticketId: '1q2w-d4f5-b6b4',
+          prizeId: '1qxs-2cfr-45gt-45rf',
+          prizeName: 'Premio mayor',
+          prizeTotal: 2254000000,
+          prizePayment: 974000000,
+          prizeClaimed: true,
+          terminal: {
+            id: 'w2e-2de',
+            userId: '158f-69df-58fg-5f7j-69hu',
+            userName: 'juan.santa'
+          }
         },
         {
-         id: '5d8f-9drt-d7c8',
-         drawId: 's5f6-dd45-nj67',
-         ticketNumber: 'C4582',
-         ticketSeries: '6d9f',
-         ticketCount: 125,
-         clientName: 'Lucas Parra',
-         clientDocumentId: '15896588',
-         clientPhoneNumber: 3125889988,
-         transactionId: 'se45-de45-sd38'
+          ticketNumber: '5698',
+          ticketSeries: 'B563',
+          ticketId: '1q2w-d4f5-b6b4',
+          prizeId: '1qxs-2cfr-45gt-45rf',
+          prizeName: 'Premio mayor',
+          prizeTotal: 1254000000,
+          prizePayment: 974000000,
+          prizeClaimed: true,
+          terminal: {
+            id: 'w2e-2de',
+            userId: '158f-69df-58fg-5f7j-69hu',
+            userName: 'juan.santa'
+          }
         },
        ])
        .toPromise();
     },
     lotteryClaimedPrizes(root, args, context) {
       const requiredRoles = [];     
-      return of({
-        id: '5d8f-9drt-d7c8',
-        drawId: 's5f6-dd45-nj67',
-        ticketNumber: 'C4582',
-        ticketSeries: '6d9f',
-        ticketCount: 125,
-        clientName: 'Lucas Parra',
-        clientDocumentId: '15896588',
-        clientPhoneNumber: 3125889988,
-        transactionId: 'se45-de45-sd38'
-       })
+      return of([
+      {
+        ticketNumber: '5698',
+        ticketSeries: 'B563',
+        ticketId: '1q2w-d4f5-b6b4',
+        prizeId: '1qxs-2cfr-45gt-45rf',
+        prizeName: 'Premio mayor',
+        prizeTotal: 2254000000,
+        prizePayment: 974000000,
+        prizeClaimed: true,
+        terminal: {
+          id: 'w2e-2de',
+          userId: '158f-69df-58fg-5f7j-69hu',
+          userName: 'juan.santa'
+        }
+      },
+      {
+        ticketNumber: '5698',
+        ticketSeries: 'F2548',
+        ticketId: '6f9v-d4f5-b6b4',
+        prizeId: '1qxs-6d9g-45gt-45rf',
+        prizeName: 'Premio menor',
+        prizeTotal: 520000000,
+        prizePayment: 325000000,
+        prizeClaimed: true,
+        terminal: {
+          id: 'w2e-2de',
+          userId: '158f-69df-58fg-5f7j-69hu',
+          userName: 'juan.santa'
+        }
+      },
+    ])
       .toPromise();
     }
-
-
-
-
   },
   // MUTATIONS //
   Mutation: {
-    lotteryBuyTicket(root, args, context) {
+    lotteryBuyTicket(root, args, context) {      
       const requiredRoles = [];     
       return of({
         id: 'l3m5-d9f7-2k0m-j8c8',        
@@ -283,7 +316,11 @@ module.exports = {
         prizeTotal: 580000,
         prizePayment: 495000,
         prizeClaimed: true,
-        // terminal: LotteryTerminal
+        terminal: {
+          id: "RS23-FR34-GH67",
+          userId: "l30d-5f6g-9h7y",
+          userName:"juan.santa"
+        }
       })
       .toPromise();      
     },
@@ -295,7 +332,6 @@ module.exports = {
       })
       .toPromise();      
     },
-
   },
   //// SUBSCRIPTIONS ///////
   // Subscription: {

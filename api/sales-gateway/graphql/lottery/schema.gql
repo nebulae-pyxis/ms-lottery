@@ -43,7 +43,7 @@ input LotteryTicketInput{
   ticketCount: Int
   clientName: String
   clientDocumentId: String
-  clientPhoneNumber: Int
+  clientPhoneNumber: BigInt
   transactionId: String
   divipolaCode: String
   terminal: LotteryTerminalInput
@@ -69,7 +69,7 @@ type LotteryTicket {
   ticketCount: Int
   clientName: String
   clientDocumentId: String
-  clientPhoneNumber: Int
+  clientPhoneNumber: BigInt
   transactionId: String
   terminal: LotteryTerminal
 }
@@ -85,8 +85,8 @@ type LotteryPrize {
   ticketId: String
   prizeId: String
   prizeName: String
-  prizeTotal: Int
-  prizePayment: Int
+  prizeTotal: BigInt
+  prizePayment: BigInt
   prizeClaimed: Boolean
   # terminal is optional
   terminal: LotteryTerminal 
@@ -136,9 +136,9 @@ type Query {
   lotteryPrizes(drawId: String, documentId: String, claimCode: String): [LotteryPrize] @requireAuth
 
   "query for sold tickets"
-  lotterySoldTickets(input: LotterySoldTicketInput!): LotteryTicket
+  lotterySoldTickets(input: LotterySoldTicketInput!): [LotteryTicket]
   "query for bought tickets"
-  lotteryBoughtTickets(drawId: String, documentId: String): LotteryTicket
+  lotteryBoughtTickets(drawId: String, documentId: String): [LotteryTicket]
   "Query for redeemed prizes"
   lotteryRedeemedPrizes(input: LotteryRedeemedPrizesInput): [LotteryPrize]
   "query for Calimed prizes"
