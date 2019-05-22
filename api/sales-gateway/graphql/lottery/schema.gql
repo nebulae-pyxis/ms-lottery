@@ -1,0 +1,156 @@
+type CommandResponse {
+  "Response code"
+  code: Int
+  "Response message"
+  message: String
+}
+
+"Lottery Draw"
+type LotteryDraw{
+  id: String
+  name: String
+  number: String
+}
+
+"Lottery and its opens draws"
+type LotteryOpenDraws {
+  id: String
+  name: String
+  openDraws: [LotteryDraw]
+}
+
+type LotterySeries{
+  series: String
+  availableTickets: Int
+}
+
+type LotteryTerminal {
+  id: String
+  userId: String
+  userName: String
+}
+
+input LotteryTerminalInput {
+  id: String
+  userId: String
+  userName: String
+}
+
+input LotteryTicketInput{
+  drawId: String!
+  ticketNumber: String!
+  ticketSeries: String!
+  ticketCount: Int
+  clientName: String
+  clientDocumentId: String
+  clientPhoneNumber: Int
+  transactionId: String
+  divipolaCode: String
+  terminal: LotteryTerminalInput
+}
+
+input PrizeInput {
+  ticketNumber: String
+  ticketSeries: String
+  ticketId: String
+  prizeId: String
+  prizeName: String
+  prizeTotal: Int
+  prizePayment: Int
+  prizeCalimed: Boolean
+  
+}
+
+type LotteryTicket {
+  id: String
+  drawId: String
+  ticketNumber: String
+  ticketSeries: String
+  ticketCount: Int
+  clientName: String
+  clientDocumentId: String
+  clientPhoneNumber: Int
+  transactionId: String
+  terminal: LotteryTerminal
+}
+
+type Lottery {
+  id: String
+  name: String
+}
+
+type LotteryPrize {
+  ticketNumber: String
+  ticketSeries: String
+  ticketId: String
+  prizeId: String
+  prizeName: String
+  prizeTotal: Int
+  prizePayment: Int
+  prizeClaimed: Boolean
+  # terminal is optional
+  terminal: LotteryTerminal 
+}
+
+input lotteryClaimPrizeInput{
+  drawId: String
+  documentId: String
+  prizeId: String
+  claimCode: String
+  transactionId: String
+  divipolaCode: String
+  terminal: LotteryTerminalInput
+}
+
+input LotterySoldTicketInput {
+  transactionId: String
+  drawId: String
+  fromTimestamp: BigInt
+  toTimestamp: BigInt
+  page: Int
+  pageSize: Int
+  terminal: LotteryTerminalInput
+}
+
+input LotteryRedeemedPrizesInput {
+  transactionId: String
+  drawId: String
+  fromTimestamp: BigInt
+  toTimestamp: BigInt
+  page: Int
+  pageSize: Int
+  terminal: LotteryTerminalInput
+}
+
+type Query {  
+  "Request for Lotteries anf its open draws"
+  lotteryOpenDraws: [LotteryOpenDraws] @requireAuth
+  "Request for available series for number"
+  lotteryAvailableSeriesForNumber(drawId: String, number: String): [LotterySeries] @requireAuth
+
+  "query lottery"
+  lotteries: [Lottery] @requireAuth
+  "Query closed lotteries available to claim prize"
+  lotteryClosedDraws(lotteryId: String!): [LotteryDraw] @requireAuth
+  "Gets the Prizes available to claim"
+  lotteryPrizes(drawId: String, documentId: String, claimCode: String): [LotteryPrize] @requireAuth
+
+  "query for sold tickets"
+  lotterySoldTickets(input: LotterySoldTicketInput!): LotteryTicket
+  "query for bought tickets"
+  lotteryBoughtTickets(drawId: String, documentId: String): LotteryTicket
+  "Query for redeemed prizes"
+  lotteryRedeemedPrizes(input: LotteryRedeemedPrizesInput): [LotteryPrize]
+  "query for Calimed prizes"
+  lotteryClaimedPrizes(drawId: String, documentId: String): [LotteryPrize]
+}
+
+type Mutation {
+  "Buy lottery Ticket"
+  lotteryBuyTicket(input: LotteryTicketInput!): LotteryTicket @requireAuth
+  "Claim prize"
+  lotteryClaimPrize(input: lotteryClaimPrizeInput!): LotteryPrize @requireAuth
+  "Re-Send prize caim code"
+  lotteryreSendPrizeClaimCode(drawId: String, documentId: String, terminal: LotteryTerminalInput): CommandResponse @requireAuth
+}
+
