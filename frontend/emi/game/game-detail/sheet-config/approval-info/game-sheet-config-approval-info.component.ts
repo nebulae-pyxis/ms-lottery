@@ -55,6 +55,7 @@ import { DialogComponent } from '../../../dialog/dialog.component';
 import { GameDetailService } from '../../game-detail.service';
 import { NoteDialogComponent } from './note-dialog/note-dialog.component';
 import { DatePipe } from '@angular/common';
+import { KeycloakService } from 'keycloak-angular';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -84,7 +85,8 @@ export class GameSheetConfigApprovalInfoComponent implements OnInit, OnDestroy {
     public snackBar: MatSnackBar,
     private dialog: MatDialog,
     private gameDetailService: GameDetailService,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private keycloakService: KeycloakService
   ) {
     this.translationLoader.loadTranslations(english, spanish);
   }
@@ -94,6 +96,12 @@ export class GameSheetConfigApprovalInfoComponent implements OnInit, OnDestroy {
     this.initializeForm();
     this.subscribeToSelectedVersion();
     this.subscribeGameSheetConfigUpdated();
+  }
+
+  isApproveButtonsAllowed() {
+    const roles = this.keycloakService.getUserRoles()
+      .filter(role => role === 'PLATFORM-ADMIN' || role === 'LOTTERY-APPROVER');
+    return  roles && roles.length > 0;
   }
 
   subscribeGameSheetConfigUpdated() {

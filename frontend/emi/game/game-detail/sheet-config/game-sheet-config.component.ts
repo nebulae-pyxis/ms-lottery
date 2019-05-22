@@ -141,7 +141,6 @@ export class GameSheetConfigComponent implements OnInit, OnDestroy {
         return this.route.params.pipe(
           map(params => params['itemId']),
           map(param => {
-            console.log('ItemID:', param);
             return param ? result.filter(r => r._id === param)[0] : result[0];
           })
         );
@@ -180,7 +179,7 @@ export class GameSheetConfigComponent implements OnInit, OnDestroy {
    */
   selectSheetConfigRow(sheetConfig) {
     this.selectedSheetConfig = sheetConfig;
-    this.updateGameRoute(['id', 'section'], sheetConfig._id);
+    this.updateGameRoute(['id'], 'sheet-config/' + sheetConfig._id);
     this.gameDetailService.selectedConfigSheetChanged$.next(sheetConfig);
   }
 

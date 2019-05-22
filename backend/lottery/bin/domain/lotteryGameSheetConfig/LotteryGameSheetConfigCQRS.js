@@ -40,7 +40,7 @@ class LotteryGameSheetConfigCQRS {
       "LotteryGameSheetConfig",
       "getLotteryGameSheetConfig",
       PERMISSION_DENIED,
-      ["PLATFORM-ADMIN"]
+      ["PLATFORM-ADMIN", "LOTTERY-ADMIN", "LOTTERY-APPROVER"]
     ).pipe(
       mergeMap(roles => {
         const isPlatformAdmin = roles["PLATFORM-ADMIN"];
@@ -64,9 +64,10 @@ class LotteryGameSheetConfigCQRS {
       "LotteryGameSheetConfig",
       "getLotteryGameSheetConfigList",
       PERMISSION_DENIED,
-      ["PLATFORM-ADMIN"]
+      ["PLATFORM-ADMIN", "LOTTERY-ADMIN", "LOTTERY-APPROVER"]
     ).pipe(
       mergeMap(roles => {
+        console.log('Llega a la consulta en el backend');
         const filterInput = args.filterInput;
 
         return LotteryGameSheetConfigDA.getLotteryGameSheetConfigList$(filterInput);
@@ -97,7 +98,7 @@ class LotteryGameSheetConfigCQRS {
       "LotteryGameSheetConfig",
       "createLotteryGameSheetConfig$",
       PERMISSION_DENIED,
-      ["PLATFORM-ADMIN"]
+      ["PLATFORM-ADMIN", "LOTTERY-ADMIN"]
     ).pipe(
       mergeMap(() => eventSourcing.eventStore.emitEvent$(
         new Event({
@@ -131,7 +132,7 @@ class LotteryGameSheetConfigCQRS {
       "LotteryGameSheetConfig",
       "updateLotteryGameSheetConfig$",
       PERMISSION_DENIED,
-      ["PLATFORM-ADMIN"]
+      ["PLATFORM-ADMIN", "LOTTERY-ADMIN"]
     ).pipe(
       mergeMap(() => eventSourcing.eventStore.emitEvent$(
         new Event({
@@ -170,7 +171,7 @@ class LotteryGameSheetConfigCQRS {
       "LotteryGameSheetConfig",
       "approveLotteryGameSheetConfig$",
       PERMISSION_DENIED,
-      ["PLATFORM-ADMIN"]
+      ["PLATFORM-ADMIN", "LOTTERY-APPROVER"]
     ).pipe(
       mergeMap(() => eventSourcing.eventStore.emitEvent$(
         new Event({
@@ -208,7 +209,7 @@ class LotteryGameSheetConfigCQRS {
       "LotteryGameSheetConfig",
       "revokeLotteryGameSheetConfig$",
       PERMISSION_DENIED,
-      ["PLATFORM-ADMIN"]
+      ["PLATFORM-ADMIN", "LOTTERY-APPROVER"]
     ).pipe(
       mergeMap(() => eventSourcing.eventStore.emitEvent$(
         new Event({
