@@ -38,6 +38,7 @@ import { FuseTranslationLoaderService } from '../../../../core/services/translat
 import { KeycloakService } from 'keycloak-angular';
 import { GameDetailService } from './game-detail.service';
 import { Location } from '@angular/common';
+import { PrizeProgramService } from './prize-program/prize-program.service';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -62,7 +63,8 @@ export class GameDetailComponent implements OnInit, OnDestroy {
     public snackBar: MatSnackBar,
     private router: Router,
     private activatedRouter: ActivatedRoute,
-    private GameDetailservice: GameDetailService,
+    private gameDetailservice: GameDetailService,
+    private prizeProgramService: PrizeProgramService,
     private route: ActivatedRoute,
     private location: Location
   ) {
@@ -83,18 +85,21 @@ export class GameDetailComponent implements OnInit, OnDestroy {
           const section = params['section'];
           if (section) {
             switch (section) {
+              case 'general-info':
+                this.selectedTab = 0;
+                break;
               case 'sheet-config':
                 this.selectedTab = 1;
                 break;
-              case 'general-info':
-                this.selectedTab = 0;
+              case 'prize-program':
+                this.selectedTab = 2;
                 break;
             }
           }
         }),
         map(params => params['id']),
         mergeMap(entityId => entityId !== 'new' ?
-          this.GameDetailservice.getLotteryGame$(entityId).pipe(
+          this.gameDetailservice.getLotteryGame$(entityId).pipe(
             map(res => res.data.LotteryGame)
           ) : of(null)
         ),
@@ -107,7 +112,7 @@ export class GameDetailComponent implements OnInit, OnDestroy {
   }
 
   subscribeGameUpdated() {
-    this.GameDetailservice.subscribeLotteryGameUpdatedSubscription$()
+    this.gameDetailservice.subscribeLotteryGameUpdatedSubscription$()
       .pipe(
         map(subscription => {
           return subscription.data.LotteryGameUpdatedSubscription;
@@ -115,7 +120,7 @@ export class GameDetailComponent implements OnInit, OnDestroy {
         takeUntil(this.ngUnsubscribe)
       )
       .subscribe((game: any) => {
-        this.GameDetailservice.notifymsentityUpdated(game);
+        this.gameDetailservice.notifymsentityUpdated(game);
         this.checkIfEntityHasBeenUpdated(game);
       });
   }
@@ -126,9 +131,14 @@ export class GameDetailComponent implements OnInit, OnDestroy {
         this.updateGameRoute(['id'], 'general-info');
         break;
       case 1:
-          this.updateGameRoute(['id'], 'sheet-config' +
-            (this.GameDetailservice.selectedConfigSheetChanged$.value ? '/' + this.GameDetailservice.selectedConfigSheetChanged$.value._id : '')
-            );
+        this.updateGameRoute(['id'], 'sheet-config' +
+          (this.gameDetailservice.selectedConfigSheetChanged$.value ? '/' + this.gameDetailservice.selectedConfigSheetChanged$.value._id : '')
+        );
+        break;
+      case 2:
+        this.updateGameRoute(['id'], 'prize-program' +
+          (this.gameDetailservice.selectedConfigSheetChanged$.value ? '/' + this.prizeProgramService.selectedPrizeProgramChanged$.value._id : '')
+        );
         break;
     }
   }
@@ -151,17 +161,17 @@ export class GameDetailComponent implements OnInit, OnDestroy {
   }
 
   checkIfEntityHasBeenUpdated(newgame) {
-    if (this.GameDetailservice.lastOperation === 'CREATE') {
+    if (this.gameDetailservice.lastOperation === 'CREATE') {
 
       // Fields that will be compared to check if the entity was created
-      if (newgame.generalInfo.name === this.GameDetailservice.game.generalInfo.name
-        && newgame.generalInfo.description === this.GameDetailservice.game.generalInfo.description) {
+      if (newgame.generalInfo.name === this.gameDetailservice.game.generalInfo.name
+        && newgame.generalInfo.description === this.gameDetailservice.game.generalInfo.description) {
         // Show message entity created and redirect to the main page
         this.showSnackBar('LOTTERY.ENTITY_CREATED');
         this.router.navigate(['game/']);
       }
 
-    } else if (this.GameDetailservice.lastOperation === 'UPDATE') {
+    } else if (this.gameDetailservice.lastOperation === 'UPDATE') {
       // Just comparing the ids is enough to recognise if it is the same entity
       if (newgame._id === this.game._id) {
         // Show message entity updated and redirect to the main page
@@ -180,7 +190,7 @@ export class GameDetailComponent implements OnInit, OnDestroy {
   stopWaitingOperation() {
     this.ngUnsubscribe.pipe(
       take(1),
-      mergeMap(() => this.GameDetailservice.resetOperation$())
+      mergeMap(() => this.gameDetailservice.resetOperation$())
     ).subscribe(val => {
       // console.log('Reset operation');
     });

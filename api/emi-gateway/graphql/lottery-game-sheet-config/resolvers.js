@@ -34,7 +34,6 @@ module.exports = {
 
     Query: {
         LotteryGameSheetConfigList(root, args, context) {
-            console.log('Roles: ', context.authToken.realm_access.roles);
             return RoleValidator.checkPermissions$(context.authToken.realm_access.roles,
                 'ms-' + 'Lottery',
                 'LotteryGameSheetConfig',

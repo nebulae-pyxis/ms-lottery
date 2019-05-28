@@ -10,6 +10,7 @@ const mongoDB = require('./data/MongoDB').singleton();
 const LotteryDA = require('./data/LotteryDA');
 const LotteryGameDA = require('./data/LotteryGameDA');
 const LotteryGameSheetConfigDA = require('./data/LotteryGameSheetConfigDA');
+const LotteryGamePrizeProgramDA = require('./data/LotteryGamePrizeProgramDA');
 const graphQlService = require('./services/emi-gateway/GraphQlService')();
 const Rx = require('rxjs');
 
@@ -21,6 +22,7 @@ const start = () => {
         LotteryDA.start$(),
         LotteryGameDA.start$(),
         LotteryGameSheetConfigDA.start$(),
+        LotteryGamePrizeProgramDA.start$(),
         graphQlService.start$()
     ).subscribe(
         (evt) => {

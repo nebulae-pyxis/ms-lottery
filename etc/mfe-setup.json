@@ -54,7 +54,7 @@
               "default" : false
           }            
       ],
-      "preBuildCommands": [ "npm install ng2-currency-mask"],
+      "preBuildCommands": [ "npm install ng2-currency-mask", "npm install --save @types/uuid"],
       "environmentVars": {
       }
   }

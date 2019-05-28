@@ -52,6 +52,13 @@
           </ng-template>
           </mat-tab>
 
+          <mat-tab label="{{'LOTTERY.DETAILS.TABS.PRIZE_PROGRAM' | translate}}">
+            <ng-template matTabContent>
+          <game-prize-program [game]="game" *ngIf="pageType">
+          </game-prize-program>
+        </ng-template>
+        </mat-tab>
+
         </mat-tab-group>
 
         <!-- / CONTENT -->

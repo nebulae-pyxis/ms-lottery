@@ -1,0 +1,88 @@
+<mat-accordion>
+  <mat-expansion-panel expanded="true">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        {{'LOTTERY.DETAILS.GENERAL_INFO' | translate}}
+      </mat-panel-title>
+      <mat-panel-description *ngIf="gameGeneralInfoForm.invalid" style="color: #f44336">
+        {{'LOTTERY.DETAILS.PRIZE_PROGRAM.VERIFY_FORM' | translate}}
+        <mat-icon style="margin-left: 5px; margin-top: -1px; color: #f44336">error_outline</mat-icon>
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <form name="gameGeneralInfoForm" [formGroup]="gameGeneralInfoForm" class="w-100-p" fxLayout="column"
+      class="mat-white-bg mr-24 mb-24">
+      <mat-form-field fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
+        <input matInput name="prizeClaimThreshold" formControlName="prizeClaimThreshold" maxlength="15"
+          placeholder="{{'LOTTERY.DETAILS.PRIZE_PROGRAM.PRIZE_CLAIM_THRESHOLD' | translate}}" currencyMask
+          [options]="{ prefix: '$ ', thousands: '.', precision: '0', align: 'left' }" [(ngModel)]="prizeClaimThreshold">
+        <mat-error *ngIf="gameGeneralInfoForm.hasError('required', ['prizeClaimThreshold'])">
+          {{'LOTTERY.LOTTERY_FIELD_REQUIRED' | translate}}
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
+        <input matInput name="validFromDraw" formControlName="validFromDraw" maxlength="15"
+          placeholder="{{'LOTTERY.DETAILS.PRIZE_PROGRAM.VALID_FROM_DRAW' | translate}}">
+        <mat-error *ngIf="gameGeneralInfoForm.hasError('required', ['validFromDraw'])">
+          {{'LOTTERY.LOTTERY_FIELD_REQUIRED' | translate}}
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
+        <input matInput name="validUntilDraw" formControlName="validUntilDraw" maxlength="15"
+          placeholder="{{'LOTTERY.DETAILS.PRIZE_PROGRAM.VALID_UNTIL_DRAW' | translate}}">
+      </mat-form-field>
+    </form>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel>
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        {{'LOTTERY.DETAILS.PRIZE_PROGRAM.GRAND_PRIZE' | translate}}
+      </mat-panel-title>
+      <mat-panel-description *ngIf="!grandPrizeFormValid" style="color: #f44336">
+        {{'LOTTERY.DETAILS.PRIZE_PROGRAM.VERIFY_FORM' | translate}}
+        <mat-icon style="margin-left: 5px; margin-top: -1px; color: #f44336">error_outline</mat-icon>
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <prize-program-grand-prize></prize-program-grand-prize>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel *ngIf="selectedPrizeProgram">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        {{'LOTTERY.DETAILS.PRIZE_PROGRAM.SECONDARY_PRICES' | translate}}
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <prize-program-secondary-prize></prize-program-secondary-prize>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel *ngIf="selectedPrizeProgram && selectedPrizeProgram.creationTimestamp">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        {{'LOTTERY.DETAILS.PRIZE_PROGRAM.TWO_OUT_OF_THREE' | translate}}
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <prize-program-two-out-of-three></prize-program-two-out-of-three>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel *ngIf="selectedPrizeProgram && selectedPrizeProgram.creationTimestamp">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        {{'LOTTERY.DETAILS.PRIZE_PROGRAM.APPROXIMATIONS' | translate}}
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <prize-program-approximation></prize-program-approximation>
+  </mat-expansion-panel>
+</mat-accordion>
+
+<div class="mt-16" *ngIf="isGeneralInfoButtonsAllowed()">
+  <button mat-raised-button style="margin-right: 10px"
+    [disabled]="gameGeneralInfoForm.invalid || !grandPrizeFormValid"
+    (click)="createPrizeProgram()" *ngIf="showSaveButton">
+    {{'LOTTERY.UPDATE' | translate}}
+  </button>
+  <button mat-raised-button (click)="duplicateSelected()" style="margin-right: 10px" color="primary"
+    *ngIf="showDuplicateButton">
+    {{'LOTTERY.DETAILS.PRIZE_PROGRAM.DUPLICATE' | translate}}
+  </button>
+</div>

@@ -3,38 +3,38 @@
 
 
   <mat-form-field fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
-    <input readonly matInput name="approved" formControlName="approved"
+    <input  autocomplete="off" readonly matInput name="approved" formControlName="approved"
       placeholder="{{'LOTTERY.DETAILS.CONFIG_SHEET.APPROVAL_STATE' | translate}}">
   </mat-form-field>
 
   <mat-form-field *ngIf="selectedConfigSheet && selectedConfigSheet.approvedTimestamp" fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
-    <input readonly matInput name="approvedIn" formControlName="approvedIn"
+    <input  autocomplete="off" readonly matInput name="approvedIn" formControlName="approvedIn"
       placeholder="{{'LOTTERY.DETAILS.CONFIG_SHEET.APPROVED_IN' | translate}}">
   </mat-form-field>
 
   <mat-form-field *ngIf="selectedConfigSheet && selectedConfigSheet.approvedUsername" fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
-    <input  readonly matInput name="approvalUsername" formControlName="approvalUsername"
+    <input  autocomplete="off"  readonly matInput name="approvalUsername" formControlName="approvalUsername"
       placeholder="{{'LOTTERY.DETAILS.CONFIG_SHEET.APPROVAL_USERNAME' | translate}}">
   </mat-form-field>
 
   <mat-form-field *ngIf="selectedConfigSheet && selectedConfigSheet.approvedNotes" fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
-    <input  readonly matInput name="approvalNotes" formControlName="approvalNotes"
+    <input  autocomplete="off"  readonly matInput name="approvalNotes" formControlName="approvalNotes"
       placeholder="{{'LOTTERY.DETAILS.CONFIG_SHEET.APPROVAL_NOTES' | translate}}">
   </mat-form-field>
 
   <mat-form-field *ngIf="selectedConfigSheet && selectedConfigSheet.revokedTimestamp" fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
-    <input  readonly matInput name="revokedIn" formControlName="revokedIn"
+    <input  autocomplete="off"  readonly matInput name="revokedIn" formControlName="revokedIn"
       placeholder="{{'LOTTERY.DETAILS.CONFIG_SHEET.REVOKED_IN' | translate}}">
   </mat-form-field>
 
 
   <mat-form-field *ngIf="selectedConfigSheet && selectedConfigSheet.revokedUsername" fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
-    <input  readonly matInput name="revokedUsername" formControlName="revokedUsername"
+    <input  autocomplete="off"  readonly matInput name="revokedUsername" formControlName="revokedUsername"
       placeholder="{{'LOTTERY.DETAILS.CONFIG_SHEET.REVOKED_USERNAME' | translate}}">
   </mat-form-field>
 
   <mat-form-field *ngIf="selectedConfigSheet && selectedConfigSheet.revokedNotes" fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
-    <input readonly matInput name="revokedNotes" formControlName="revokedNotes"
+    <input  autocomplete="off" readonly matInput name="revokedNotes" formControlName="revokedNotes"
       placeholder="{{'LOTTERY.DETAILS.CONFIG_SHEET.REVOKED_NOTES' | translate}}">
   </mat-form-field>
   <div class="mt-16" *ngIf="isApproveButtonsAllowed()">

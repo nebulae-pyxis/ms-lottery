@@ -53,7 +53,7 @@ import { FuseTranslationLoaderService } from '../../../../../../core/services/tr
 //////////// Others ////////////
 import { DialogComponent } from '../../../dialog/dialog.component';
 import { GameDetailService } from '../../game-detail.service';
-import { NoteDialogComponent } from './note-dialog/note-dialog.component';
+import { NoteDialogComponent } from '../../../note-dialog/note-dialog.component';
 import { DatePipe } from '@angular/common';
 import { KeycloakService } from 'keycloak-angular';
 

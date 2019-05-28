@@ -1,0 +1,42 @@
+@import "src/app/core/scss/fuse";
+.mat-add-button-color {
+  background-color: rgb(255, 255, 255);
+  color: rgb(114, 114, 114);
+}
+
+.responsive-table {
+  overflow: auto;
+}
+
+table {
+  width: 100%;
+  border-spacing: 0;
+  border-collapse: collapse;
+  white-space:nowrap;
+}
+
+table th {
+  background: #BDBDBD;
+}
+
+table tr:nth-child(odd) {
+  background-color: #F2F2F2;
+}
+table tr:nth-child(even) {
+  background-color: #E6E6E6;
+}
+
+th, tr, td {
+  text-align: center;
+  border: 1px solid #E0E0E0;
+  padding: 5px;
+}
+
+img {
+  font-style: italic;
+  font-size: 11px;
+}
+
+.fa-bars{
+  cursor: move;
+}

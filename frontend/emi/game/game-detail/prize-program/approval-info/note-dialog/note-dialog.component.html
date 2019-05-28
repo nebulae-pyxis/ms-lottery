@@ -1,0 +1,14 @@
+<h1 mat-dialog-title>{{data.dialogTitle | translate}}</h1>
+<mat-dialog-content>
+  <p>{{data.dialogMessage | translate}}</p>
+</mat-dialog-content>
+<form name="notesForm" [formGroup]="notesForm" class="w-100-p" fxLayout="column"
+  class="mat-white-bg mr-24 mb-24">
+  <mat-form-field style="width: 100%">
+    <textarea matInput name="notes" formControlName="notes" placeholder="{{'LOTTERY.DETAILS.PRIZE_PROGRAM.NOTES' | translate}}"></textarea>
+  </mat-form-field>
+</form>
+<mat-dialog-actions>
+  <button mat-raised-button [disabled]="notesForm.invalid" (click)="pushButton(true)">Ok</button>
+  <button mat-raised-button mat-dialog-close color="warn" (click)="pushButton(false)">{{'LOTTERY.CANCEL' | translate}}</button>
+</mat-dialog-actions>

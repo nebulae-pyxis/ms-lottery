@@ -3,6 +3,7 @@
 const { LotteryCQRS } = require("../../domain/lottery");
 const { LotteryGameCQRS } = require("../../domain/lotterygame");
 const { LotteryGameSheetConfigCQRS } = require("../../domain/lotteryGameSheetConfig");
+const { LotteryGamePrizeProgramCQRS } = require("../../domain/lotteryGamePrizeProgram")
 const broker = require("../../tools/broker/BrokerFactory")();
 const { of, from } = require("rxjs");
 const jsonwebtoken = require("jsonwebtoken");
@@ -221,7 +222,32 @@ class GraphQlService {
       {
         aggregateType: "LotteryGameSheetConfig",
         messageType: "emigateway.graphql.mutation.RevokeLotteryGameSheetConfig"
-      }
+      },
+      //PRIZE PROGRAM
+      {
+        aggregateType: "LotteryGamePrizeProgram",
+        messageType: "emigateway.graphql.query.LotteryGamePrizeProgram"
+      },
+      {
+        aggregateType: "LotteryGamePrizeProgram",
+        messageType: "emigateway.graphql.query.LotteryGamePrizeProgramList"
+      },
+      {
+        aggregateType: "LotteryGamePrizeProgram",
+        messageType: "emigateway.graphql.mutation.CreateLotteryGamePrizeProgram"
+      },
+      {
+        aggregateType: "LotteryGamePrizeProgram",
+        messageType: "emigateway.graphql.mutation.UpdateLotteryGamePrizeProgram"
+      },
+      {
+        aggregateType: "LotteryGamePrizeProgram",
+        messageType: "emigateway.graphql.mutation.ApproveLotteryGamePrizeProgram"
+      },
+      {
+        aggregateType: "LotteryGamePrizeProgram",
+        messageType: "emigateway.graphql.mutation.RevokeLotteryGamePrizeProgram"
+      },
     ];
   }
 
@@ -305,6 +331,31 @@ class GraphQlService {
       "emigateway.graphql.mutation.RevokeLotteryGameSheetConfig": {
         fn: LotteryGameSheetConfigCQRS.revokeLotteryGameSheetConfig$,
         obj: LotteryGameSheetConfigCQRS
+      },
+      //PRIZE PROGRAM
+      "emigateway.graphql.query.LotteryGamePrizeProgram": {
+        fn: LotteryGamePrizeProgramCQRS.getLotteryGamePrizeProgram$,
+        obj: LotteryGamePrizeProgramCQRS
+      },
+      "emigateway.graphql.query.LotteryGamePrizeProgramList": {
+        fn: LotteryGamePrizeProgramCQRS.getLotteryGamePrizeProgramList$,
+        obj: LotteryGamePrizeProgramCQRS
+      },
+      "emigateway.graphql.mutation.CreateLotteryGamePrizeProgram": {
+        fn: LotteryGamePrizeProgramCQRS.createLotteryGamePrizeProgram$,
+        obj: LotteryGamePrizeProgramCQRS
+      },
+      "emigateway.graphql.mutation.UpdateLotteryGamePrizeProgram": {
+        fn: LotteryGamePrizeProgramCQRS.updateLotteryGamePrizeProgram$,
+        obj: LotteryGamePrizeProgramCQRS
+      },
+      "emigateway.graphql.mutation.ApproveLotteryGamePrizeProgram": {
+        fn: LotteryGamePrizeProgramCQRS.approveLotteryGamePrizeProgram$,
+        obj: LotteryGamePrizeProgramCQRS
+      },
+      "emigateway.graphql.mutation.RevokeLotteryGamePrizeProgram": {
+        fn: LotteryGamePrizeProgramCQRS.revokeLotteryGamePrizeProgram$,
+        obj: LotteryGamePrizeProgramCQRS
       }
     };
   }

@@ -67,7 +67,6 @@ class LotteryGameSheetConfigCQRS {
       ["PLATFORM-ADMIN", "LOTTERY-ADMIN", "LOTTERY-APPROVER"]
     ).pipe(
       mergeMap(roles => {
-        console.log('Llega a la consulta en el backend');
         const filterInput = args.filterInput;
 
         return LotteryGameSheetConfigDA.getLotteryGameSheetConfigList$(filterInput);
