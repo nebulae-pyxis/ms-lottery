@@ -1,0 +1,25 @@
+<form name="gameGeneralInfoForm" [formGroup]="gameGeneralInfoForm" class="w-100-p" fxLayout="column"
+  class="mat-white-bg mr-24 mb-24">
+
+
+  <mat-form-field *ngIf="selectedPrizeProgram && selectedPrizeProgram.creationTimestamp" fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
+    <input readonly matInput name="creationDate" formControlName="creationDate"
+      placeholder="{{'LOTTERY.DETAILS.PRIZE_PROGRAM.CREATION_DATE' | translate}}">
+  </mat-form-field>
+
+  <mat-form-field *ngIf="selectedPrizeProgram && selectedPrizeProgram.creationUsername" fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
+    <input readonly matInput name="creationUsername" formControlName="creationUsername"
+      placeholder="{{'LOTTERY.DETAILS.PRIZE_PROGRAM.CREATION_USERNAME' | translate}}">
+  </mat-form-field>
+
+  <mat-form-field *ngIf="selectedPrizeProgram && selectedPrizeProgram.editionTimestamp" fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
+    <input readonly matInput name="editionDate" formControlName="editionDate"
+      placeholder="{{'LOTTERY.DETAILS.PRIZE_PROGRAM.EDITION_DATE' | translate}}">
+  </mat-form-field>
+
+  <mat-form-field *ngIf="selectedPrizeProgram && selectedPrizeProgram.editionUsername" fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
+    <input readonly matInput name="editionUsername" formControlName="editionUsername"
+      placeholder="{{'LOTTERY.DETAILS.PRIZE_PROGRAM.EDITION_USERNAME' | translate}}">
+  </mat-form-field>
+
+</form>

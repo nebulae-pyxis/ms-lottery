@@ -14,7 +14,7 @@
         </button>
         <h3 *ngIf="selectedSheetConfig" matSubheader>
           {{'LOTTERY.DETAILS.CONFIG_SHEET.SHEET_CONFIG_VERSION' | translate}}: {{selectedSheetConfig.version}} </h3>
-        <button mat-raised-button style="margin-left:auto; margin-right:0;" *ngIf="!selectedSheetConfig || selectedSheetConfig.approved === 'APPROVED'" [routerLink]="lotteryName">
+        <button mat-raised-button style="margin-left:auto; margin-right:0;" (click)="clearSelected()" *ngIf="!selectedSheetConfig || selectedSheetConfig.approved === 'APPROVED'">
             {{'LOTTERY.DETAILS.CONFIG_SHEET.CREATE_VERSION' | translate}}
         </button>
       </div>

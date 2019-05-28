@@ -10,5 +10,17 @@
         "type": "graphql",        
         "src": "api/emi-gateway/graphql/lottery-game",
         "preBuildCommands": []
+    },
+    {
+        "name": "lottery-game-sheet-config",
+        "type": "graphql",        
+        "src": "api/emi-gateway/graphql/lottery-game-sheet-config",
+        "preBuildCommands": []
+    },
+    {
+        "name": "lottery-game-prize-program",
+        "type": "graphql",        
+        "src": "api/emi-gateway/graphql/lottery-game-prize-program",
+        "preBuildCommands": []
     }
 ]

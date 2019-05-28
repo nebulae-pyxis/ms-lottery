@@ -2,7 +2,7 @@
   class="mat-white-bg mr-24 mb-24">
 
   <mat-form-field fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
-    <input matInput name="ticketsPerSheet" formControlName="ticketsPerSheet" (keypress)="numberOnly($event)" inputmode="numeric" maxlength="15"
+    <input  autocomplete="off" matInput name="ticketsPerSheet" formControlName="ticketsPerSheet" (keypress)="numberOnly($event)" inputmode="numeric" maxlength="15"
       placeholder="{{'LOTTERY.DETAILS.CONFIG_SHEET.TICKETS_PER_SHEET' | translate}}">
     <mat-error *ngIf="gameGeneralInfoForm.hasError('required', ['ticketsPerSheet'])">
       {{'LOTTERY.LOTTERY_FIELD_REQUIRED' | translate}}
@@ -10,7 +10,7 @@
   </mat-form-field>
 
   <mat-form-field fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
-    <input matInput name="ticketPrice"
+    <input  autocomplete="off" matInput name="ticketPrice"
     formControlName="ticketPrice"
     maxlength="15"
     placeholder="{{'LOTTERY.DETAILS.CONFIG_SHEET.TIKET_PRICE' | translate}}"
@@ -24,7 +24,7 @@
   </mat-form-field>
 
   <mat-form-field fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
-    <input matInput name="validFromDraw" formControlName="validFromDraw" maxlength="15"
+    <input  autocomplete="off" matInput name="validFromDraw" formControlName="validFromDraw" maxlength="15"
       placeholder="{{'LOTTERY.DETAILS.CONFIG_SHEET.VALID_FROM_DRAW' | translate}}">
     <mat-error *ngIf="gameGeneralInfoForm.hasError('required', ['validFromDraw'])">
       {{'LOTTERY.LOTTERY_FIELD_REQUIRED' | translate}}
@@ -32,7 +32,7 @@
   </mat-form-field>
 
   <mat-form-field fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
-    <input matInput name="validUntilDraw" formControlName="validUntilDraw" maxlength="15"
+    <input  autocomplete="off" matInput name="validUntilDraw" formControlName="validUntilDraw" maxlength="15"
       placeholder="{{'LOTTERY.DETAILS.CONFIG_SHEET.VALID_UNTIL_DRAW' | translate}}">
   </mat-form-field>
 

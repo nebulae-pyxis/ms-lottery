@@ -1,0 +1,51 @@
+<form name="gameGeneralInfoForm" [formGroup]="gameGeneralInfoForm" class="w-100-p" fxLayout="column"
+  class="mat-white-bg mr-24 mb-24">
+
+
+  <mat-form-field fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
+    <input readonly matInput name="approved" formControlName="approved"
+      placeholder="{{'LOTTERY.DETAILS.PRIZE_PROGRAM.APPROVAL_STATE' | translate}}">
+  </mat-form-field>
+
+  <mat-form-field *ngIf="selectedPrizeProgram && selectedPrizeProgram.approvedTimestamp" fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
+    <input readonly matInput name="approvedIn" formControlName="approvedIn"
+      placeholder="{{'LOTTERY.DETAILS.PRIZE_PROGRAM.APPROVED_IN' | translate}}">
+  </mat-form-field>
+
+  <mat-form-field *ngIf="selectedPrizeProgram && selectedPrizeProgram.approvedUsername" fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
+    <input  readonly matInput name="approvalUsername" formControlName="approvalUsername"
+      placeholder="{{'LOTTERY.DETAILS.PRIZE_PROGRAM.APPROVAL_USERNAME' | translate}}">
+  </mat-form-field>
+
+  <mat-form-field *ngIf="selectedPrizeProgram && selectedPrizeProgram.approvedNotes" fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
+    <input  readonly matInput name="approvalNotes" formControlName="approvalNotes"
+      placeholder="{{'LOTTERY.DETAILS.PRIZE_PROGRAM.APPROVAL_NOTES' | translate}}">
+  </mat-form-field>
+
+  <mat-form-field *ngIf="selectedPrizeProgram && selectedPrizeProgram.revokedTimestamp" fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
+    <input  readonly matInput name="revokedIn" formControlName="revokedIn"
+      placeholder="{{'LOTTERY.DETAILS.PRIZE_PROGRAM.REVOKED_IN' | translate}}">
+  </mat-form-field>
+
+
+  <mat-form-field *ngIf="selectedPrizeProgram && selectedPrizeProgram.revokedUsername" fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
+    <input  readonly matInput name="revokedUsername" formControlName="revokedUsername"
+      placeholder="{{'LOTTERY.DETAILS.PRIZE_PROGRAM.REVOKED_USERNAME' | translate}}">
+  </mat-form-field>
+
+  <mat-form-field *ngIf="selectedPrizeProgram && selectedPrizeProgram.revokedNotes" fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
+    <input readonly matInput name="revokedNotes" formControlName="revokedNotes"
+      placeholder="{{'LOTTERY.DETAILS.PRIZE_PROGRAM.REVOKED_NOTES' | translate}}">
+  </mat-form-field>
+  <div class="mt-16" *ngIf="isApproveButtonsAllowed()">
+    <button *ngIf="selectedPrizeProgram && selectedPrizeProgram.approved === 'PENDING'" (click)="approvePrizeProgram()" mat-raised-button style="margin-right: 10px" color="primary">
+      {{'LOTTERY.DETAILS.PRIZE_PROGRAM.APPROVE' | translate}}
+    </button>
+    <button *ngIf="selectedPrizeProgram && selectedPrizeProgram.approved === 'PENDING'" (click)="declinePrizeProgram()" mat-raised-button style="margin-right: 10px" color="warn">
+      {{'LOTTERY.DETAILS.PRIZE_PROGRAM.DECLINE' | translate}}
+    </button>
+    <button *ngIf="selectedPrizeProgram && selectedPrizeProgram.approved === 'APPROVED' && !selectedPrizeProgram.revoked" (click)="revokePrizeProgram()" mat-raised-button style="margin-right: 10px" color="warn">
+      {{'LOTTERY.DETAILS.PRIZE_PROGRAM.REVOKE' | translate}}
+    </button>
+  </div>
+</form>

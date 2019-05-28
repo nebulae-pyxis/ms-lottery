@@ -117,13 +117,13 @@ export class GameSheetConfigComponent implements OnInit, OnDestroy {
           return from(requiredParams).pipe(
             reduce((acc, val) => {
               return acc + '/' + params[val];
-             }, 'game')
+            }, 'game')
           );
-         })
-    )
+        })
+      )
       .subscribe((url: any) => {
         this.location.go(url + '/' + newSegment);
-    }, e => console.log(e));
+      }, e => console.log(e));
 
   }
 
@@ -146,6 +146,9 @@ export class GameSheetConfigComponent implements OnInit, OnDestroy {
         );
       })
     ).subscribe(result => {
+      if (!result) {
+        result = (this.dataSource.data && this.dataSource.data.length > 0) ? this.dataSource.data[0] : undefined;
+      }
       this.selectedSheetConfig = result;
       this.gameDetailService.selectedConfigSheetChanged$.next(result);
 

@@ -68,7 +68,6 @@ class LotteryGameDA {
 
     return mongoDB.extractAllFromMongoCursor$(cursor).pipe(
       mergeMap(lotteryGame => {
-        console.log('Se consulta lotteryGame: ', lotteryGame);
         return LotteryDA.getLottery$(lotteryGame.generalInfo.lotteryId).pipe(
           map(lottery => { 
             return  lottery? ({ ...lotteryGame, generalInfo: {...lotteryGame.generalInfo, lotteryName: lottery.generalInfo.name} }) : undefined;

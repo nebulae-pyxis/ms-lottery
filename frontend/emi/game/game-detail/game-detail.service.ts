@@ -252,7 +252,6 @@ export class GameDetailService {
   }
   /* #endregion */
 
-
   notifymsentityUpdated(filterData) {
     this.notifyLotteryGameUpdated$.next(filterData);
   }

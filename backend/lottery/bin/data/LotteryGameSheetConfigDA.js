@@ -116,7 +116,7 @@ class LotteryGameSheetConfigDA {
             ticketPrice: lotteryGameSheetConfig.ticketPrice,
             editionTimestamp: lotteryGameSheetConfig.editionTimestamp,
             editionUserId: lotteryGameSheetConfig.editionUserId,
-            editionUserName: lotteryGameSheetConfig.editionUserName,
+            editionUsername: lotteryGameSheetConfig.editionUsername,
             approved: 'PENDING'
           }
         }, {

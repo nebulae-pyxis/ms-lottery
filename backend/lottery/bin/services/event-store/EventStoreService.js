@@ -4,6 +4,7 @@ const eventSourcing = require("../../tools/EventSourcing")();
 const { LotteryES } = require("../../domain/lottery");
 const { LotteryGameES } = require("../../domain/lotterygame");
 const { LotteryGameSheetConfigES } = require("../../domain/lotteryGameSheetConfig");
+const { LotteryGamePrizeProgramES } = require("../../domain/lotteryGamePrizeProgram");
 const { map, switchMap, filter, mergeMap, concatMap } = require('rxjs/operators');
 /**
  * Singleton instance
@@ -167,6 +168,23 @@ class EventStoreService {
         fn: LotteryGameSheetConfigES.handleLotteryGameSheetConfigRevoked$,
         obj: LotteryGameSheetConfigES
       },
+      //PRIZE PROGRAM
+      LotteryGamePrizeProgramCreated: {
+        fn: LotteryGamePrizeProgramES.handleLotteryGamePrizeProgramCreated$,
+        obj: LotteryGamePrizeProgramES
+      },
+      LotteryGamePrizeProgramUpdated: {
+        fn: LotteryGamePrizeProgramES.handleLotteryGamePrizeProgramUpdated$,
+        obj: LotteryGamePrizeProgramES
+      },
+      LotteryGamePrizeProgramApproved: {
+        fn: LotteryGamePrizeProgramES.handleLotteryGamePrizeProgramApproved$,
+        obj: LotteryGamePrizeProgramES
+      },
+      LotteryGamePrizeProgramRevoked: {
+        fn: LotteryGamePrizeProgramES.handleLotteryGamePrizeProgramRevoked$,
+        obj: LotteryGamePrizeProgramES
+      },
     };
   }
 
@@ -217,6 +235,23 @@ class EventStoreService {
       {
         aggregateType: "LotteryGameSheetConfig",
         eventType: "LotteryGameSheetConfigRevoked"
+      },
+      //PRIZE PROGRAM
+      {
+        aggregateType: "LotteryGamePrizeProgram",
+        eventType: "LotteryGamePrizeProgramCreated"
+      },
+      {
+        aggregateType: "LotteryGamePrizeProgram",
+        eventType: "LotteryGamePrizeProgramUpdated"
+      },
+      {
+        aggregateType: "LotteryGamePrizeProgram",
+        eventType: "LotteryGamePrizeProgramApproved"
+      },
+      {
+        aggregateType: "LotteryGamePrizeProgram",
+        eventType: "LotteryGamePrizeProgramRevoked"
       },
     ]
   }

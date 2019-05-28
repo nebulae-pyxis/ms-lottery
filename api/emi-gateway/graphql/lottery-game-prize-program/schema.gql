@@ -1,0 +1,213 @@
+type CommandResponse {
+  "Response code"
+  code: Int
+  "Response message"
+  message: String
+}
+
+type GrandPrize {
+  "Total value of the grand prize"
+  total: Float
+  "Payment"
+  payment: Float
+}
+
+type SecondaryPrize {
+  id: ID
+  "Secondary prize name"
+  name: String
+  "Quantity"
+  quantity: Int
+  "With serie"
+  withSerie: Boolean
+  "Total Prize"
+  total: Float
+  "Payment"
+  payment: Float
+}
+
+type TwoOutThree {
+  name: String
+  duoTotal: Float
+  duoPayment: Float
+  singleTotal: Float
+  singlePayment: Float
+}
+
+type Approximation {
+  "Order to evaluate the prize"
+  order: Int
+  "Name of Approximation"
+  name: String
+  "Approximation To (GrandPrize, SecondaryPrices or TwoOutThree)"
+  approximationTo: String
+  "If the approximation is to Secondary Price must expecify the ids of the Secondary price, if this value is null all The Secondary price will work with this approximation"
+  approximationsTolds: [String]
+  "Number mask type (Regex, Reversed, unordered, any, same) any if the approximation works with the serie"
+  numberMaskType: String
+  "Regex to evaluate the approximation"
+  numberMaskRegex: String
+  "Serie mask type (Regex, Reversed, unordered, any, same) any if the approximation works with the number"
+  seriesMaskType: String
+  "Total Prize"
+  total: Float
+  "Payment"
+  payment: Float
+}
+
+type LotteryGamePrizeProgram {
+  "PrizeProgram config ID"
+  _id: ID!
+  "Draw consecutive"
+  validFromDraw: Int
+  "Draw consecutive"
+  validUntilDraw: Int
+  "Max value than can reclaim on the POS"
+  prizeClaimThreshold: Float
+  "Grand prize info"
+  grandPrize: GrandPrize
+  "Secondary prize info"
+  secondaryPrices: [SecondaryPrize]
+  "Two out three info"
+  twoOutOfThree: TwoOutThree
+  "Approximations prize info"
+  approximations: [Approximation]
+  "lottery id"
+  lotteryId: String
+  "game id"
+  gameId: String
+  "Config PrizeProgram approved"
+  approved: String
+  "Config PrizeProgram approved"
+  approvedNotes: String
+  "Config PrizeProgram approved"
+  approvedUsername: String
+  "Approved timestamp"
+  approvedTimestamp: BigInt
+  "Config PrizeProgram revoked"
+  revoked: Boolean
+  "Config PrizeProgram revoked notes"
+  revokedNotes: String
+  "Config PrizeProgram revoked timestamp"
+  revokedTimestamp: BigInt
+  "Config PrizeProgram revoked user name"
+  revokedUsername: String
+  "Config PrizeProgram version"
+  version: Int
+  "Creation timestamp"
+  creationTimestamp: BigInt
+  "Creator username"
+  creationUsername: String
+  "Creator user id"
+  creationUserId: String
+  "Modification timestamp"
+  editionTimestamp: BigInt
+  "Modifier user id"
+  editionUserId: String
+  "Modifier username"
+  editionUsername: String
+}
+
+input TwoOutThreeInput {
+  "Name"
+  name: String
+  "two hits total prize"
+  duoTotal: Float
+  "two hits total payment"
+  duoPayment: Float
+  "one hit total prize"
+  singleTotal: Float
+  "one hit total payment"
+  singlePayment: Float
+}
+input LotteryGamePrizeProgramFilterInput {
+  "Name"
+  name: String
+  "Prize program config version"
+  prizeProgramVersion: String
+  "Lottery id"
+  lotteryId: String
+  "game id"
+  gameId: String
+}
+
+input GrandPrizeInput {
+  "Total value of the grand prize"
+  total: Float
+  "Payment"
+  payment: Float
+}
+input SecondaryPrizeInput {
+  id: ID
+  "Secondary prize name"
+  name: String
+  "Quantity"
+  quantity: Int
+  "With serie"
+  withSerie: Boolean
+  "Total Prize"
+  total: Float
+  "Payment"
+  payment: Float
+}
+
+input LotteryGamePrizeProgramInput {
+  "Max value than can reclaim on the POS"
+  prizeClaimThreshold: Float
+  "Draw consecutive"
+  validFromDraw: Int
+  "Draw consecutive"
+  validUntilDraw: Int
+  "Grand prize info"
+  grandPrize: GrandPrizeInput
+  "Two out of three info"
+  twoOutOfThree: TwoOutThreeInput
+  "Secondary prize info"
+  secondaryPrices: [SecondaryPrizeInput]
+  "Lottery Id"
+  lotteryId: String
+  "game id"
+  gameId: String
+}
+
+type Query {
+  "Get PrizeProgram configs filtered "
+  LotteryGamePrizeProgramList(
+    filterInput: LotteryGamePrizeProgramFilterInput!
+  ): [LotteryGamePrizeProgram]
+
+  "Get Game by its id"
+  LotteryGamePrizeProgram(
+    id: String
+    filterInput: LotteryGamePrizeProgramFilterInput
+  ): LotteryGamePrizeProgram
+}
+
+type Mutation {
+  "Create a new Game"
+  CreateLotteryGamePrizeProgram(
+    input: LotteryGamePrizeProgramInput!
+  ): CommandResponse
+  "Update the PrizeProgram config"
+  UpdateLotteryGamePrizeProgram(
+    id: ID!
+    input: LotteryGamePrizeProgramInput!
+  ): CommandResponse
+  "Approve the PrizeProgram config"
+  ApproveLotteryGamePrizeProgram(
+    id: ID!
+    approved: String
+    approvedNotes: String
+  ): CommandResponse
+  "Revoke the PrizeProgram config"
+  RevokeLotteryGamePrizeProgram(
+    id: ID!
+    revoked: Boolean
+    revokedNotes: String
+  ): CommandResponse
+}
+
+type Subscription {
+  "This events is triggered when a Game is created or updated"
+  LotteryGamePrizeProgramUpdatedSubscription: LotteryGamePrizeProgram
+}
