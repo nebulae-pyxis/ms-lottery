@@ -4,16 +4,26 @@ const PubSub = require("graphql-subscriptions").PubSub;
 const pubsub = new PubSub();
 const broker = require("../../broker/BrokerFactory")();
 const CONTEXT_NAME = "sales-gateway";
+const uuidv4 = require('uuid/v4');
 
 const { handleError$ } = require('../../tools/GraphqlResponseTools');
-const { of } = require('rxjs');
-const { map, mergeMap, catchError } = require('rxjs/operators');
+const { of, from, forkJoin } = require('rxjs');
+const { map, mergeMap, catchError, toArray, filter, tap, take, skip, groupBy, distinct } = require('rxjs/operators');
 const { ApolloError } = require("apollo-server");
 
 
 // please use the prefix assigned to this microservice
 const INTERNAL_SERVER_ERROR_CODE = 16001;
 const USERS_PERMISSION_DENIED_ERROR_CODE = 16002;
+
+function createCustonError(name, method, code = INTERNAL_SERVER_ERROR_CODE, message = ''){
+  const customError = new Error(message);
+  customError.code = code;
+  customError.name = name;
+  customError.method = method;
+  return customError;
+
+}
 
 /**
  * Extracts data of backend response and throw an ApolloError if backend response code is not equal to 200
@@ -33,6 +43,7 @@ function getResponseFromBackEnd$(response) {
 
 /**
  * Validate user roles and send request to backend handler
+ * example: sendToBackEndHandler$(root, args, context, requiredRoles, 'query', 'Client', 'clientDetails')  
  * @param {object} root root of GraphQl
  * @param {object} OperationArguments arguments for query or mutation
  * @param {object} context graphQl context
@@ -41,6 +52,7 @@ function getResponseFromBackEnd$(response) {
  * @param {string} aggregateName sample: Vehicle, Client, FixedFile 
  * @param {string} methodName method name
  * @param {number} timeout timeout for query or mutation in milliseconds
+ * 
  */
 function sendToBackEndHandler$(root, OperationArguments, context, requiredRoles, operationType, aggregateName, methodName, timeout = 2000){  
     return RoleValidator.checkPermissions$(
@@ -68,268 +80,293 @@ function sendToBackEndHandler$(root, OperationArguments, context, requiredRoles,
 module.exports = {
   Query: {
     lotteryOpenDraws(root, args, context) {
-        const requiredRoles = [];
-        // return sendToBackEndHandler$(root, args, context, requiredRoles, 'query', 'Client', 'clientDetails')        
-        return of([
-          { id: '4d8f-9g6t-2w6s', name:'Cruz Roja', openDraws: 
-            [
-              {id: '1q9r', name: 'Juego 1', number: '1234' },
-              {id: '1k4b', name: 'Juego 2', number: '5698' },
-              {id: '5d6f', name: 'Juego 3', number: '2589' },
-              {id: '8f8y', name: 'Juego 4', number: '1548' },
-            ]
-          },
-          { id: '4q5s-f8g9-g6h5', name:'Cundinamarca', openDraws: 
-            [
-              {id: '93ei', name: 'Juego 5', number: '3456' },
-              {id: '9d6n', name: 'Juego 6', number: '5915' },
-              {id: '5a9j', name: 'Juego 7', number: '2659' },
-              {id: '2r6p', name: 'Juego 8', number: '8495' },
-            ]
-          },
-        
-        ])
-        .toPromise();
+        console.log('Query => lotteryOpenDraws', {args});
+        return of(fakeDB.lotteries)
+          .pipe(
+            mergeMap(loteries => from(loteries)),
+            map(lottery => ({ ...lottery, openDraws: lottery.draws.filter(draw => draw.open )}) ),
+            filter(lottery => (lottery.openDraws && lottery.openDraws.length > 0)),
+            toArray()
+          )
+          .toPromise();
     },
-    lotteryAvailableSeriesForNumber(root, args, context) {
-      const requiredRoles = [];     
-      return of([
-       { series: 'DE45-JI45-KO12', availableTickets: 157 },
-       { series: 'J9E3-5G9T-6F9G', availableTickets: 159 },
-       { series: '5G8A-1A1S-1E1F', availableTickets: 567 },
-       { series: '2Q2W-3E3D-5D9A', availableTickets: 856 },
-       { series: '6F6T-9T5G-5D9G', availableTickets: 125 },
-       { series: '4D8V-2W8H-Q96F', availableTickets: 598 },      
-      ])
+    lotteryAvailableNumberSeries(root, args, context) {
+
+      const INVALID_DRAW_ID = createCustonError('Invalid Draw Id', `lotteryAvailableNumberSeries`, 10100, 'El Sorteo no existe');
+      const NOT_ACTIVE_DRAW = createCustonError('Not active draw', `lotteryAvailableNumberSeries`, 10101, 'El sorteo no está activo');
+      const INVALID_NUMBER = createCustonError('Invalid Number', `lotteryAvailableNumberSeries`, 10102, 'El Número es inválido');
+
+      console.log('Query => lotteryAvailableNumberSeries', {args});
+      const { drawId, number } = args;
+      return from(fakeDB.lotteries)
+      .pipe(
+        map(lottery => lottery.draws.find(draw => draw.id == drawId)),
+        toArray(),
+        map(results => {
+          const result = results.filter(e => e);          
+          if(result.length === 0){ throw INVALID_DRAW_ID }
+          else if(result.length === 1 && !result[0].open){ throw NOT_ACTIVE_DRAW  }
+          else if(result.length === 1 &&  !result[0].series.find(s => s.number == number) ){ throw INVALID_NUMBER; }
+          else { return result[0].series.filter(serie => serie.number == number); }
+        }),
+        mergeMap(series => from(series)),
+        toArray(),
+      )
       .toPromise();
     },
-    lotteries(root, args, context) {
-      const requiredRoles = [];     
-      return of([
-       { id: 'DE45-JI45-KO12', name: 'Quindío' },
-       { id: 'J9E3-5G9T-6F9G', name: 'Cundinamarca' },
-       { id: '5G8A-1A1S-1E1F', name: 'Cruz Roja' },
-       { id: '2Q2W-3E3D-5D9A', name: 'Lotería de Medellín' },
-       { id: '6F6T-9T5G-5D9G', name: 'Paisita 1' },
-       { id: '4D8V-2W8H-Q96F', name: 'Chontico Día' },      
-      ])
+    lotteriesWithOpenDraws(root, args, context) {
+      console.log('Query => lotteriesOpenDraws', {args});
+      return from(fakeDB.lotteries)
+      .pipe(
+        filter(lottery => (lottery.draws.filter(draw => draw.open)).length > 0 ),
+        toArray()
+      )
       .toPromise();
     },
     lotteryClosedDraws(root, args, context) {
-      const requiredRoles = [];     
-      return of([
-       { id: 'DE45-JI45-KO12', name: 'Quindío', number: '1234' },
-       { id: 'J9E3-5G9T-6F9G', name: 'Cundinamarca', number: '3451' },
-       { id: '5G8A-1A1S-1E1F', name: 'Cruz Roja', number: '3457' },
-       { id: '2Q2W-3E3D-5D9A', name: 'Lotería de Medellín', number: '1974' },
-       { id: '6F6T-9T5G-5D9G', name: 'Paisita 1', number: '5834' },
-       { id: '4D8V-2W8H-Q96F', name: 'Chontico Día', number: '6934' },      
-      ])
+      console.log('Query => lotteryClosedDraws', {args});
+      const INVALID_LOTTERY_ID = createCustonError('Invalid lottery Id', `lotteryClosedDraws`, 10103, 'La lotería no existe');;
+      const { lotteryId } = args;
+      return from(fakeDB.lotteries)
+      .pipe(
+        map(() => fakeDB.lotteries.find(lottery => lottery.id === lotteryId ) ),
+        tap(lottery => {
+          if(!lottery){ throw INVALID_LOTTERY_ID }
+        }),
+        map(lottery => lottery.draws.filter(draw => !draw.open))
+      )
       .toPromise();
     },
-    lotteryPrizes(root, args, context) {
-      const requiredRoles = [];     
-      return of([
-       {
-        ticketNumber: '1QW-2SE-3SD',
-        ticketSeries: '123',
-        ticketId: '1Q2W-EDRF-E34R',
-        prizeId: '1QW3-E334',
-        prizeName: 'Premio A1',
-        prizeTotal: 580000,
-        prizePayment: 5250000,
-        prizeClaimed: false 
-       },
-       {
-        ticketNumber: '8fg-f5g-g6f',
-        ticketSeries: '569',
-        ticketId: '2w3e-d5g7-a1s4',
-        prizeId: 'a2d6-sd45',
-        prizeName: 'Premio A2',
-        prizeTotal: 18000,
-        prizePayment: 125000,
-        prizeClaimed: false 
-       }
-      ])
+    lotteryPrizesToClaim(root, args, context) {
+      console.log('Query => lotteryPrizesToClaim', { args });
+      const { drawId, documentId, claimCode } = args;
+
+      const INVALID_LOTTERY_ID = createCustonError('Invalid draw Id', `lotteryPrizesToClaim`, 10103, 'La lotería no existe');
+      const INVALID_DOCUMENT_ID = createCustonError('Document Id not found', `lotteryPrizesToClaim`, 10104, 'El documento no fue encontrado');
+      const INVALID_CLAIM_CODE = createCustonError('Invalid claim code', `lotteryPrizesToClaim`, 10105, 'El codigo de reclamacion no es valido');
+
+      return of(fakeDB.prizes)
+      .pipe(
+        map(prizesList => {
+          if(!prizesList.find(p => p.drawId === drawId)){ throw INVALID_LOTTERY_ID }
+          if(!prizesList.find(p => (p.drawId == drawId && p.documentId == documentId ))){ throw INVALID_DOCUMENT_ID }
+          if(claimCode && !prizesList.find(p => (p.drawId == drawId && p.documentId == documentId && p.claimCode == claimCode ))){
+            throw INVALID_CLAIM_CODE;
+          }
+          return prizesList;
+        }),
+        mergeMap(list => from(list)),
+        filter(prize => !prize.prizeClaimed),
+        filter(prize => prize.drawId == drawId),
+        filter(prize => documentId ?  prize.documentId == documentId : true),
+        filter(prize => claimCode ?  prize.claimCode == claimCode : true),
+        toArray(),
+        map(prizes => prizes ? prizes : [] )
+      )
       .toPromise();
     },
     lotterySoldTickets(root, args, context) {
-      const requiredRoles = [];     
-
-      return of([
-       {
-        id: 'q1w2-2we3-r4t5',
-        drawId: 'qa09-dd45-nj67',
-        ticketNumber: 'B12520',
-        ticketSeries: '2345',
-        ticketCount: 125,
-        clientName: 'Juan Santa',
-        clientDocumentId: '1045050988',
-        clientPhoneNumber: 3128588812,
-        transactionId: 'sw23-de45-fr56',
-        terminal: {
-          id: 'w2e-2de',
-          userId: '158f-69df-58fg-5f7j-69hu',
-          userName: 'juan.santa'
-        }
-       },
-       {
-        id: '5d8f-9drt-d7c8',
-        drawId: 's5f6-dd45-nj67',
-        ticketNumber: 'C4582',
-        ticketSeries: '6d9f',
-        ticketCount: 125,
-        clientName: 'Lucas Parra',
-        clientDocumentId: '15896588',
-        clientPhoneNumber: 3125889988,
-        transactionId: 'se45-de45-sd38'
-       },
-      ])
+      console.log('Query => lotterySoldTickets', args );
+      const INVALID_DRAW_ID = createCustonError('Invalid draw Id', `lotterySoldTickets`, 10100, 'La lotería no existe');
+      const INVALID_PAGINATION = createCustonError('Invalid pagination', `lotterySoldTickets`, 10106, 'La paginacion no es correcta');
+      const { transactionId, drawId, fromTimestamp, toTimestamp, page = 0, pageSize=10, terminal } = args.input;
+      return of(fakeDB.tickets)
+      .pipe(
+        tap(tickets => {
+          if(drawId && !tickets.find(t => t.drawId == drawId)){ throw INVALID_DRAW_ID }
+          if(page < 0 || pageSize < 0){ throw INVALID_PAGINATION }
+        }),
+        mergeMap(tickets => from(tickets)),
+        filter(ticket => ticket.timestamp > fromTimestamp),
+        filter(ticket => toTimestamp ? ticket.timestamp < toTimestamp : true),        
+        filter(ticket => (transactionId && transactionId !== '') ? ticket.transactionId === transactionId : true),
+        filter(ticket => (drawId && drawId !== '') ? ticket.drawId === drawId : true),
+        filter(ticket => (terminal||{}).id ? ( (ticket.terminal || {}).id === terminal.id) : true),
+        filter(ticket => (terminal||{}).userId ? ( (ticket.terminal || {}).userId === terminal.userId) : true),
+        filter(ticket => (terminal||{}).userName ? ( (ticket.terminal || {}).userName === terminal.userName) : true),
+        skip( page * pageSize ),
+        take(pageSize),
+        toArray()
+      )
       .toPromise();
     },
     lotteryBoughtTickets(root, args, context) {
-      const requiredRoles = [];     
-      return of([
-      {
-        id: '5d8f-9drt-d7c8',
-        drawId: 's5f6-dd45-nj67',
-        ticketNumber: 'C4582',
-        ticketSeries: '6d9f',
-        ticketCount: 125,
-        clientName: 'Lucas Parra',
-        clientDocumentId: '15896588',
-        clientPhoneNumber: 3125889988,
-        transactionId: 'se45-de45-sd38'
-      },
-      {
-        id: 'sd34-d5g7-2s3d',
-        drawId: 's5f6-dd45-nj67',
-        ticketNumber: 'C4582',
-        ticketSeries: '6d9f',
-        ticketCount: 125,
-        clientName: 'Armando Rendon',
-        clientDocumentId: '1059865985',
-        clientPhoneNumber: 3125248965,
-        transactionId: 'se45-de45-sd38'
-      },
-      ])
+      console.log('Query => lotteryBoughtTickets', args );
+      const DOCUMENT_ID_REQUIRED = createCustonError('Document Id Required', `lotterySoldTickets`, 10107, 'El documento del cliente es requerido');
+      const INVALID_DRAW_ID = createCustonError('Draw Id not found', `lotterySoldTickets`, 10100, 'El sorteo no existe');
+      const { drawId, documentId } = args;
+      return of(fakeDB.tickets)
+      .pipe(
+        tap(tickets => {
+          if(!documentId){ throw DOCUMENT_ID_REQUIRED }
+          if( drawId && !tickets.find(t => t.drawId == drawId)){ throw  INVALID_DRAW_ID }
+        }),
+        mergeMap(tickets => from(tickets)),
+        filter(ticket => ( drawId ? ticket.drawId === drawId : true)),
+        filter(ticket => ( documentId ? ticket.clientDocumentId === documentId : true)),
+        toArray()
+      )
       .toPromise();
     },
     lotteryRedeemedPrizes(root, args, context){
-      return of([
-        {
-          ticketNumber: '5698',
-          ticketSeries: 'B563',
-          ticketId: '1q2w-d4f5-b6b4',
-          prizeId: '1qxs-2cfr-45gt-45rf',
-          prizeName: 'Premio mayor',
-          prizeTotal: 2254000000,
-          prizePayment: 974000000,
-          prizeClaimed: true,
-          terminal: {
-            id: 'w2e-2de',
-            userId: '158f-69df-58fg-5f7j-69hu',
-            userName: 'juan.santa'
-          }
-        },
-        {
-          ticketNumber: '5698',
-          ticketSeries: 'B563',
-          ticketId: '1q2w-d4f5-b6b4',
-          prizeId: '1qxs-2cfr-45gt-45rf',
-          prizeName: 'Premio mayor',
-          prizeTotal: 1254000000,
-          prizePayment: 974000000,
-          prizeClaimed: true,
-          terminal: {
-            id: 'w2e-2de',
-            userId: '158f-69df-58fg-5f7j-69hu',
-            userName: 'juan.santa'
-          }
-        },
-       ])
+      console.log('Query => lotteryRedeemedPrizes', args );
+      const { transactionId, drawId, fromTimestamp, toTimestamp, page, pageSize, terminal} = args.input;
+      return from(fakeDB.prizes)
+        .pipe(
+          filter(prize => prize.prizeClaimed),
+          filter(prize => prize.claimedTimestamp > fromTimestamp),
+          filter(prize => toTimestamp ? prize.claimedTimestamp < toTimestamp : true),
+          filter(prize => (transactionId && transactionId !== '') ? prize.transactionId === transactionId : true),
+          filter(ticket => (drawId && drawId !== '') ? ticket.drawId === drawId : true),
+          filter(ticket => (terminal||{}).id ? ( (ticket.terminal || {}).id === terminal.id) : true),
+          filter(ticket => (terminal||{}).userId ? ( (ticket.terminal || {}).userId === terminal.userId) : true),
+          filter(ticket => (terminal||{}).userName ? ( (ticket.terminal || {}).userName === terminal.userName) : true),
+          skip( page * pageSize ),
+          take(pageSize),
+          toArray()
+        )
        .toPromise();
     },
     lotteryClaimedPrizes(root, args, context) {
-      const requiredRoles = [];     
-      return of([
-      {
-        ticketNumber: '5698',
-        ticketSeries: 'B563',
-        ticketId: '1q2w-d4f5-b6b4',
-        prizeId: '1qxs-2cfr-45gt-45rf',
-        prizeName: 'Premio mayor',
-        prizeTotal: 2254000000,
-        prizePayment: 974000000,
-        prizeClaimed: true,
-        terminal: {
-          id: 'w2e-2de',
-          userId: '158f-69df-58fg-5f7j-69hu',
-          userName: 'juan.santa'
-        }
-      },
-      {
-        ticketNumber: '5698',
-        ticketSeries: 'F2548',
-        ticketId: '6f9v-d4f5-b6b4',
-        prizeId: '1qxs-6d9g-45gt-45rf',
-        prizeName: 'Premio menor',
-        prizeTotal: 520000000,
-        prizePayment: 325000000,
-        prizeClaimed: true,
-        terminal: {
-          id: 'w2e-2de',
-          userId: '158f-69df-58fg-5f7j-69hu',
-          userName: 'juan.santa'
-        }
-      },
-    ])
+      console.log('Query => lotteryClaimedPrizes', args );
+      const { drawId, documentId } = args;
+      return from(fakeDB.prizes)
+      .pipe(
+        filter(prize => drawId ? prize.drawId === drawId : true),
+        filter(prize => documentId ? prize.documentId === documentId : true),
+        toArray()
+      )
       .toPromise();
     }
   },
   // MUTATIONS //
   Mutation: {
-    lotteryBuyTicket(root, args, context) {      
-      const requiredRoles = [];     
-      return of({
-        id: 'l3m5-d9f7-2k0m-j8c8',        
-        drawId: args.input.drawId || 'autogen-1qw2-e3r4',
-        ticketNumber: args.input.ticketNumber || 'autogen-5986',
-        ticketSeries: args.input.ticketSeries || 'autogen-5869',
-        ticketCount: args.input.ticketCount || 1,
-        clientName: args.input.clientName,
-        clientDocumentId: args.input.clientDocumentId,
-        clientPhoneNumber: args.input.clientPhoneNumber,
-        transactionId: args.input.transactionId,
-        terminal: args.input.terminal
-      })
+    lotteryBuyTicket(root, args, context) {
+      console.log('MUTATION => lotteryBuyTicket');
+      const INVALID_DRAW_ID = createCustonError('Invalid draw Id', `lotteryBuyTicket`, 10100, 'El id del sorteo no corresponde a nigun sorteo');
+      const INVALID_NUMBER = createCustonError('Invalid number', `lotteryBuyTicket`, 10108, 'numero invalido');
+      const INVALID_SERIES = createCustonError('Series', `lotteryBuyTicket`, 10109, 'numero de serie invalido');
+      const TICKETS_ECXEED_AVAILABLE_TICKETS = createCustonError('number of tickets exceed available tickets',
+        `lotteryBuyTicket`, 10110, 'El numero de tiquetes a oprar excede el numero de tiquetes disponibles');
+      const NUMBER_AND_SERIE_NOT_AVAILABLE = createCustonError('Number and series no longer available', `lotteryBuyTicket`, 10111, 'serie y numero no estan disponibles');
+      const NOT_ACTIVE_DRAW = createCustonError('not active draw', `lotteryBuyTicket`, 10112, 'El sorteo no esta activo');
+
+      console.log('Mutation => lotteryBuyTicket', args );
+      const { drawId, ticketNumber, ticketSeries, ticketCount,
+        clientName, clientDocumentId, clientPhoneNumber,
+        transactionId, divipolaCode, terminal
+      } = args.input;
+
+      if(drawId.length < 4){
+        throw INVALID_DRAW_ID;
+      }
+
+      return of(fakeDB.lotteries)
+      .pipe(
+        map(lotteries => lotteries.filter(lottery => lottery.draws.find(draw => draw.id == drawId)) ),
+        map(lotteries => {
+
+          if(!lotteries[0]){ throw INVALID_DRAW_ID; }
+          let drawsWithSerie = lotteries[0].draws.filter(draw => (draw.id == drawId &&  draw.series.find(serie => serie.series === ticketSeries) ) );
+          if(drawsWithSerie.length == 0){ throw INVALID_SERIES }
+          let selectedSerie = drawsWithSerie[0].series.filter(serie => serie.series === ticketSeries);
+          selectedSerie = selectedSerie.filter(ss => ss.number == ticketNumber)[0]
+          if(!selectedSerie){ throw INVALID_NUMBER }
+          if(selectedSerie.availableTickets < ticketCount ){ console.log(selectedSerie); throw TICKETS_ECXEED_AVAILABLE_TICKETS; }
+
+          // modify available tickets
+          const lotteryIndex  = fakeDB.lotteries.findIndex(l => l == lotteries[0]);
+          const drawIndex = fakeDB.lotteries[lotteryIndex].draws.findIndex(draw => draw == drawsWithSerie[0]);
+          const serieIndex = fakeDB.lotteries[lotteryIndex].draws[drawIndex].series.findIndex(serie => serie ==  selectedSerie);
+          
+          // console.log({lotteryIndex, drawIndex });
+          // console.log(fakeDB.lotteries[lotteryIndex].draws[drawIndex].series[serieIndex] );
+          fakeDB.lotteries[lotteryIndex].draws[drawIndex].series[serieIndex].availableTickets =  selectedSerie.availableTickets - ticketCount;
+          
+          return {...drawsWithSerie[0], series: [selectedSerie]}         
+
+        }),
+        map(draw => {
+          const ticket ={
+            id: uuidv4(),    
+            timestamp: Date.now(),    
+            drawId: draw.id,
+            ticketNumber: ticketNumber,
+            ticketSeries: ticketSeries,
+            ticketCount: ticketCount,
+            clientName: clientName,
+            clientDocumentId: clientDocumentId,
+            clientPhoneNumber: clientPhoneNumber,
+            transactionId: transactionId,
+            terminal: terminal
+          }
+
+          fakeDB.tickets.push(ticket);
+          
+          
+          
+          return ticket;
+        }),     
+      )
       .toPromise();      
     },
     lotteryClaimPrize(root, args, context) {
-      const requiredRoles = [];     
-      return of({
-        ticketNumber: 'qw12-we23-3e4r',
-        ticketSeries: 'B123',
-        ticketId: 'q1w2-3e4r',
-        prizeId: '29iw-38ue',
-        prizeName: 'Premio B3',
-        prizeTotal: 580000,
-        prizePayment: 495000,
-        prizeClaimed: true,
-        terminal: {
-          id: "RS23-FR34-GH67",
-          userId: "l30d-5f6g-9h7y",
-          userName:"juan.santa"
-        }
-      })
+      console.log('MUTATION lotteryClaimPrize', args);
+      const INVALID_DRAW_ID = createCustonError('Invalid draw Id', `lotteryClaimPrize`, 10100, 'El id del sorteo no corresponde a nigun sorteo');
+      const INVALID_CLAIM_CODE = createCustonError('Invalid claim code', `lotteryClaimPrize`, 10105, 'El codigo de reclamacion no es el correcto');
+      const INVALID_PRIZE_ID = createCustonError('Invalid prize id', `lotteryClaimPrize`, 10113, 'El id del sorteo no es valido');
+      const DOCUMENT_NO_FOUND = createCustonError('Document no found', `lotteryClaimPrize`, 10114, 'Documento no encontrado');
+      const LOCKED_TICKET = createCustonError('Locked ticket', `lotteryClaimPrize`, 10115, 'El ticket está bloqueado');
+      const PRIZE_ALREADY_CLAIMED = createCustonError('Prize already claimed', `lotteryClaimPrize`, 10116, 'El premio ya fue reclamado');
+      const NOT_ACTIVE_DRAW = createCustonError('not active draw', `lotteryBuyTicket`, 10112, 'El sorteo no esta activo');
+
+      const { drawId, documentId, prizeId, claimCode, transactionId, divipolaCode, terminal } = args.input ;
+    
+      return of(fakeDB.prizes)
+      .pipe(
+        map(prizes => prizes.find(prize => prize.drawId === drawId) ),
+        map(prize => { 
+          if(!prize){ throw  INVALID_DRAW_ID }
+          else if(prize.prizeClaimed){ throw PRIZE_ALREADY_CLAIMED }
+          else if(prize.prizeId !== prizeId){ throw INVALID_PRIZE_ID }
+          else if(prize.documentId !== documentId){ throw DOCUMENT_NO_FOUND }
+          else if(prize.claimCode !== claimCode){ throw INVALID_CLAIM_CODE }
+          else{
+            const index = fakeDB.prizes.findIndex(p => p == prize);
+            const prizeConfirmation = {
+              ... prize,
+              transactionId,
+              divipolaCode,
+              prizeClaimed: true,
+              terminal: terminal
+
+            };
+            fakeDB.prizes[index] = prizeConfirmation;
+            return fakeDB.prizes[index];
+          }
+        }),
+      )
       .toPromise();      
     },
-    lotteryreSendPrizeClaimCode(root, args, context) {
-      const requiredRoles = [];
-      return of({
-        code: 200,
-        message: 'Prize claim code was resent to client successful'
-      })
+    lotteryResendPrizeClaimCode(root, args, context) {
+      const INVALID_DRAW_ID = createCustonError('Invalid draw Id', `lotteryResendPrizeClaimCode`, 10100, 'El id del sorteo no es valido');
+      const INVALID_DOCUMENT_ID = createCustonError('Invalid document Id', `lotteryResendPrizeClaimCode`, 10104, 'El id del document no es válido');
+
+      console.log('MUTATION lotteryResendPrizeClaimCode', args );
+      const { drawId, documentId, terminal } = args;
+      return of(fakeDB.lotteries)
+      .pipe(
+        tap(() => {
+          if(!drawId){ throw INVALID_DRAW_ID };
+          if(!documentId){ throw INVALID_DOCUMENT_ID };
+        }),
+        map(lotteries => lotteries.filter(lottery => lottery.draws.find(draw => draw == drawId))), // todo here
+        map(() => ({
+          code: 200,
+          message: 'Prize claim code was resent to client successful'
+          })
+        ) 
+      )
       .toPromise();      
     },
   },
@@ -340,8 +377,7 @@ module.exports = {
 
 //// SUBSCRIPTIONS SOURCES ////
 
-const eventDescriptors = [
-];
+const eventDescriptors = [];
 
 /**
  * Connects every backend event to the right GQL subscription
@@ -369,3 +405,129 @@ eventDescriptors.forEach(descriptor => {
     () => console.log(`${descriptor.gqlSubscriptionName} listener STOPPED`)
   );
 });
+
+const fakeDB = {
+  lotteries: [
+    { id: '4d8f-9g6t-2w6s', name:'Cruz Roja', draws:[] },
+    { id: '4q5s-f8g9-g6h5', name:'Cundinamarca', draws: []},
+    { id: 'DE45-JI45-KO12', name: 'Quindío', draws: []},
+    { id: '2Q2W-3E3D-5D9A', name: 'Lotería de Medellín', draws: [] },
+    { id: '6F6T-9T5G-5D9G', name: 'Paisita 1', draws: [] },
+    { id: '4D8V-2W8H-Q96F', name: 'Chontico Día', draws: [] },      
+  ],
+  prizes: [],
+  tickets: [],
+};
+
+function autoFillFakeDatabase(){
+  // FILL LOTTERIES
+  fakeDB.lotteries.forEach(lottery => { // for each lottery
+    const drawsGenerated = [];
+    (new Array(5).fill(0)).forEach((v,i) => { // fill 5 draw for each lottery
+      
+      const autoGeneratedSeries = [];
+      (new Array(Math.floor(Math.random()* 5000)).fill(0)).forEach((v,i) => {  // add from 0 to 30 series
+
+        const serieRawNumber =  ( ( i - (i%5) )/5 ).toString();
+        const currentSerie =  serieRawNumber.length >= 3 ? serieRawNumber : new Array(3 - serieRawNumber.length + 1).join('0') + serieRawNumber;
+        const currentSerieArray = autoGeneratedSeries.filter(s => s.series == currentSerie);
+        let nextNumber = currentSerieArray.length > 0
+         ? (parseInt(currentSerieArray.pop().number)+1).toString()
+         : '0';
+        nextNumber = nextNumber.length >= 3 ? nextNumber : new Array(3 - nextNumber.length + 1).join('0') + nextNumber;
+        const serieToPush = {
+          series: currentSerie,
+          availableTickets: 5,
+          number: nextNumber
+        };
+        autoGeneratedSeries.push(serieToPush)
+      })
+
+      drawsGenerated.push({
+        id: uuidv4(),
+        open: Math.random() > 0.49,
+        name: `Juego ${i}`,
+        number: Math.floor(Math.random() * 100) + 100,
+        series: autoGeneratedSeries
+      })
+      // console.log(autoGeneratedSeries);
+    });
+    lottery.draws = drawsGenerated;
+  });
+  // FILL LOTTERIES
+
+
+  // FILL PRIZES
+  fakeDB.lotteries.forEach(lottery => {
+    lottery.draws.forEach(draw => {
+      const codeToClaim = generateCode(3,3);
+      const prizeAmount = Math.floor(Math.random() * 500 ) * 1000000;
+
+      let prizeToPush = {
+        drawId: draw.id,
+        claimCode: codeToClaim,
+        prizeId: uuidv4(),
+        prizeName: `Premio ${lottery.name} - ${Math.floor(Math.random() * 10)}`,
+        prizeTotal: prizeAmount,
+        prizePayment: prizeAmount - Math.floor((prizeAmount * 15)/100),
+        prizeClaimed: false,
+      };
+
+      const x = Math.floor(Math.random()*4);
+      const winnerIndex = Math.floor(Math.random() * draw.series.length);
+
+      if(x == 2){
+        // give a owner and leave ready to claim
+        prizeToPush = {
+          ...prizeToPush,
+          documentId: '10450501265',
+          ticketNumber: draw.series[winnerIndex].number,
+          ticketSeries: draw.series[winnerIndex].series,
+          ticketId: uuidv4(),
+          
+      };
+      console.log('GIVING A PRIZE OWNER', prizeToPush );
+      } else if(x == 3){
+         // claiming prize
+         prizeToPush = {
+          ...prizeToPush,
+          documentId: '10450501265',
+          claimedTimestamp: Date.now(),
+          transactionId: uuidv4(),
+          prizeClaimed: true, 
+          ticketNumber: draw.series[winnerIndex].number,
+          ticketSeries: draw.series[winnerIndex].series,
+          ticketId: uuidv4(),
+          terminal: {
+            id: uuidv4(),
+            userId: uuidv4(),
+            userName: 'juan.santa'
+          }          
+      };
+      console.log('CLAIMING A PRIZE', prizeToPush );
+
+      }
+
+      // console.log(prizeToPush);
+      fakeDB.prizes.push(prizeToPush)
+
+    })
+  })
+}
+
+function generateCode(lettersQty=3, numbersQty=3, separator = '-'){
+  const letters = "ABCDEFGHIJKLMOPQRSTUVWXYZ";
+  const numbers = "1234567890";
+  return (new Array(lettersQty+numbersQty).fill(0)).map((v, i) => (i%2 == 0) 
+    ? ( i%3 == 0 && i != 0 ) 
+      ? `${separator}${numbers[Math.floor(Math.random() * numbers.length )]}`
+      : numbers[Math.floor(Math.random() * numbers.length )]
+    : ( i%3 == 0 && i != 0 )
+      ?  `${separator}${letters[Math.floor(Math.random() * numbers.length )]}`
+      : letters[Math.floor(Math.random() * numbers.length )]
+    ).join('');
+}
+
+
+autoFillFakeDatabase();
+
