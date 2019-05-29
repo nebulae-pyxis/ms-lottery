@@ -26,6 +26,17 @@ export const LotteryGamePrizeProgramList = gql`
       total
       payment
     }
+    approximations {
+      order
+      name
+      approximationTo
+      approximationsTolds
+      numberMaskType
+      numberMaskRegex
+      seriesMaskType
+      total
+      payment
+    }
     creationTimestamp
     creationUsername
     creationUserId
@@ -68,6 +79,17 @@ export const LotteryGamePrizeProgram = gql`
       name
       quantity
       withSerie
+      total
+      payment
+    }
+    approximations {
+      order
+      name
+      approximationTo
+      approximationsTolds
+      numberMaskType
+      numberMaskRegex
+      seriesMaskType
       total
       payment
     }
@@ -152,6 +174,17 @@ export const LotteryGamePrizeProgramUpdatedSubscription = gql`
       name
       quantity
       withSerie
+      total
+      payment
+    }
+    approximations {
+      order
+      name
+      approximationTo
+      approximationsTolds
+      numberMaskType
+      numberMaskRegex
+      seriesMaskType
       total
       payment
     }

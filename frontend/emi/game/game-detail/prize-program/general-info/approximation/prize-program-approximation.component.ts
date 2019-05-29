@@ -4,8 +4,8 @@ import {
   OnInit,
   OnDestroy,
   Input,
-  ViewChild,
   ElementRef,
+  ViewChild,
 } from '@angular/core';
 
 import {
@@ -39,8 +39,6 @@ import {
   MatTableDataSource
 } from '@angular/material';
 
-import tableDragger from 'table-dragger';
-
 //////////// i18n ////////////
 
 import { locale as english } from '../../../../i18n/en';
@@ -48,16 +46,26 @@ import { locale as spanish } from '../../../../i18n/es';
 import { FuseTranslationLoaderService } from '../../../../../../../core/services/translation-loader.service';
 
 import { PrizeProgramService } from '../../prize-program.service';
+import { ApproximationDialogComponent } from './approximation-dialog/approximation-dialog.component';
 
 import { v4 as uuid } from 'uuid';
 import { DialogComponent } from '../../../../dialog/dialog.component';
-import { ApproximationDialogComponent } from './approximation-dialog/approximation-dialog.component';
+import { animate, state, style, transition, trigger } from '@angular/animations';
+import { SecoDetailDialogComponent } from './seco-detail-dialog/seco-detail-dialog.component';
+
 
 @Component({
   // tslint:disable-next-line:component-selector
   selector: 'prize-program-approximation',
   templateUrl: './prize-program-approximation.component.html',
-  styleUrls: ['./prize-program-approximation.component.scss']
+  styleUrls: ['./prize-program-approximation.component.scss'],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({ height: '0px', minHeight: '0', display: 'none' })),
+      state('expanded', style({ height: '*' })),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ],
 })
 // tslint:disable-next-line:class-name
 export class PrizeProgramApproximationComponent implements OnInit, OnDestroy {
@@ -67,14 +75,24 @@ export class PrizeProgramApproximationComponent implements OnInit, OnDestroy {
   // Stream of filtered client by auto-complete text
   approximationChanged = new Subject();
   dataSource = new MatTableDataSource();
+  expandedElement: any;
   displayedColumns = [
     'name',
-    'quantity',
+    'approximationTo',
     'total',
     'manage-buttons'
 
   ];
+  approximationForm: FormGroup;
+  totalPrize;
+  paymentPrize;
   selectedApproximation;
+  showManageButtons = false;
+  selectedNumberMaskType = 'SAME';
+  selectedSerialMaskType = 'ANY';
+  selectedApproximationTo = 'GRAND_PRIZE';
+  approximationsTolds;
+  @ViewChild('serieSlide') ref: ElementRef;
   constructor(
     private translationLoader: FuseTranslationLoaderService,
     public snackBar: MatSnackBar,
@@ -87,6 +105,13 @@ export class PrizeProgramApproximationComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.subuscribeToSelectedPrizeProgramChange();
+    this.approximationForm = new FormGroup({
+      order: new FormControl('', [Validators.required]),
+      name: new FormControl('', [Validators.required]),
+      numberMaskRegex: new FormControl('', []),
+      totalPrize: new FormControl('', [Validators.required]),
+      paymentPrize: new FormControl('', [Validators.required]),
+    });
   }
 
   createApproximation() {
@@ -95,48 +120,66 @@ export class PrizeProgramApproximationComponent implements OnInit, OnDestroy {
       .open(ApproximationDialogComponent, {
         data: {
           dialogTitle: 'LOTTERY.CREATE_TITLE',
-          approximationSelected: {}
         }
       })
       .afterClosed()
       .pipe(
         filter(result => result && result.okButton),
-        map(({ name, payment, quantity, total, withSerie }) => {
-          const secondaryPrices = this.dataSource.data && this.dataSource.data.length > 0 ? this.dataSource.data : [];
-          secondaryPrices.push({ id: uuid(), name, payment, quantity, total, withSerie });
-          return secondaryPrices;
+        map(({name, numberMaskRegex, total, payment, approximationTo, numberMaskType, seriesMaskType}) => {
+          const approximations = this.dataSource.data && this.dataSource.data.length > 0 ? this.dataSource.data : [];
+          approximations.push({order: this.prizeProgramService.approximations.length + 1, name, numberMaskRegex, total, payment, approximationTo, numberMaskType, seriesMaskType});
+          return approximations;
         })
       ).subscribe(result => {
-        this.prizeProgramService.secondaryPrices = result;
+        result.sort((a, b) => {
+          return (a as any).order > (b as any).order ? 1 : -1;
+        });
+        this.prizeProgramService.approximations = result;
         this.dataSource.data = result;
         console.log(result);
       });
   }
 
   editApproximation(approximation) {
-    this.dialog
-      // Opens confirm dialog
-      .open(ApproximationDialogComponent, {
-        data: {
-          dialogTitle: 'LOTTERY.UPDATE_TITLE',
-          approximationSelected: approximation
-        }
-      })
-      .afterClosed()
+    this.showConfirmationDialog$('LOTTERY.UPDATE_MESSAGE', 'LOTTERY.UPDATE_TITLE')
       .pipe(
-        filter(result => result && result.okButton),
-        map(({ name, payment, total, quantity, withSerie }) => {
-          let secondaryPrices = this.dataSource.data && this.dataSource.data.length > 0 ? this.dataSource.data : [];
-          secondaryPrices = secondaryPrices.filter(seco =>
-            (seco as any).id !== approximation.id
+        map(() => {
+          return {
+            order: parseInt(this.approximationForm.controls['order'].value),
+            name: this.approximationForm.controls['name'].value,
+            numberMaskRegex: parseInt(this.approximationForm.controls['numberMaskRegex'].value),
+            total: parseInt(this.approximationForm.controls['totalPrize'].value),
+            payment: parseInt(this.approximationForm.controls['paymentPrize'].value),
+            approximationTo: this.selectedApproximationTo,
+            numberMaskType: this.selectedNumberMaskType,
+            seriesMaskType: this.selectedSerialMaskType,
+            approximationsTolds: this.approximationsTolds
+          };
+        }),
+        map(element => {
+          let approximations = this.dataSource.data && this.dataSource.data.length > 0 ? this.dataSource.data : [];
+          approximations = approximations.filter(item =>
+            (item as any).order !== approximation.order && (item as any).name !== approximation.name
           );
-          secondaryPrices.push({ name, payment, total, quantity, withSerie });
-          return secondaryPrices;
+          const subArray1 = approximations.slice(0, element.order - 1);
+          subArray1.push(element);
+          const subArray2 = approximations.slice(element.order - 1, approximations.length);
+          return [...subArray1, ...subArray2];
+        }),
+        mergeMap(unsortedList => {
+          let order = 1;
+          return from(unsortedList).pipe(
+            map((unsortedElement: any) => {
+              unsortedElement.order = order;
+              order++;
+              return unsortedElement;
+            }),
+            toArray()
+          );
         })
-      ).subscribe(result => {
-        this.prizeProgramService.secondaryPrices = result;
+      ).subscribe((result: any) => {
+        this.prizeProgramService.approximations = result;
         this.dataSource.data = result;
-        console.log(result);
       });
   }
 
@@ -147,7 +190,10 @@ export class PrizeProgramApproximationComponent implements OnInit, OnDestroy {
         currentList = currentList.filter(seco =>
           (seco as any).id !== approximation.id
         );
-        this.prizeProgramService.secondaryPrices = currentList;
+        currentList.sort((a, b) => {
+          return (a as any).order > (b as any).order ? 1 : -1;
+        });
+        this.prizeProgramService.approximations = currentList;
         this.dataSource.data = currentList;
       });
   }
@@ -165,28 +211,70 @@ export class PrizeProgramApproximationComponent implements OnInit, OnDestroy {
     return true;
   }
 
+  showSecoDetailDialog() {
+    this.dialog
+      // Opens confirm dialog
+      .open(SecoDetailDialogComponent, {
+        data: {
+          dialogTitle: 'LOTTERY.CREATE_TITLE',
+          currentSecos: this.approximationsTolds,
+          availableSecos: this.prizeProgramService.secondaryPrices,
+          showManageItems: this.showManageButtons
+        },
+        width: '400px',
+        minHeight: '350px',
+        minWidth: '350px,'
+      })
+      .afterClosed()
+      .pipe(
+        filter(result => result && result.okButton),
+      ).subscribe(result => {
+        this.approximationsTolds = result.approximationsTolds;
+      });
+  }
+
+  showDetailTable(element) {
+    this.expandedElement = this.expandedElement === element ? null : element;
+    this.approximationForm.controls['order'].setValue(element.order);
+    this.approximationForm.controls['name'].setValue(element.name);
+    this.approximationForm.controls['numberMaskRegex'].setValue(element.numberMaskRegex);
+    this.approximationForm.controls['totalPrize'].setValue(element.total);
+    this.approximationForm.controls['paymentPrize'].setValue(element.payment);
+    this.selectedApproximationTo = element.approximationTo;
+    this.selectedNumberMaskType = element.numberMaskType;
+    this.selectedSerialMaskType = element.seriesMaskType;
+    this.approximationsTolds = element.approximationsTolds;
+  }
+
+
   subuscribeToSelectedPrizeProgramChange() {
     this.prizeProgramService.selectedPrizeProgramChanged$
       .subscribe(prizeProgram => {
         if (!prizeProgram || (prizeProgram && (!prizeProgram.approved || prizeProgram.approved === 'NOT_APPROVED'))) {
+          this.showManageButtons = true;
           this.displayedColumns = [
             'name',
-            'quantity',
+            'approximationTo',
             'total',
             'manage-buttons'
 
           ];
         } else {
+          this.showManageButtons = false;
           this.displayedColumns = [
             'name',
-            'quantity',
+            'approximationTo',
             'total'
+
           ];
         }
-        if (prizeProgram && prizeProgram.secondaryPrices) {
-          const newList = prizeProgram.secondaryPrices.map(({ __typename, ...item }) => item);
+        if (prizeProgram && prizeProgram.approximations) {
+          const newList = prizeProgram.approximations.map(({ __typename, ...item }) => item);
+          newList.sort((a, b) => {
+            return (a as any).order > (b as any).order ? 1 : -1;
+          });
           this.dataSource.data = newList;
-          this.prizeProgramService.secondaryPrices = newList;
+          this.prizeProgramService.approximations = newList;
         } else {
           this.dataSource.data = [];
         }

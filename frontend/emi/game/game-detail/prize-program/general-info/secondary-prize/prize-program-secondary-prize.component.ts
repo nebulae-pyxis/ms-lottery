@@ -164,8 +164,8 @@ export class PrizeProgramSecondaryPrizeComponent implements OnInit, OnDestroy {
   }
 
   removeSecondaryPrize(secondaryPrize) {
-    this.showConfirmationDialog$('LOTTERY.REMOVE_MESSAGE', 'LOTTERY.REMOVE_TITLE')
-      .subscribe(() => {
+    this.showConfirmationDialog$('LOTTERY.REMOVE_MESSAGE', 'LOTTERY.REMOVE_TITLE').pipe(
+      map(() => {
         let currentList = this.dataSource.data;
         currentList = currentList.filter(seco =>
           (seco as any).id !== secondaryPrize.id
@@ -173,8 +173,29 @@ export class PrizeProgramSecondaryPrizeComponent implements OnInit, OnDestroy {
         currentList.sort((a, b) => {
           return (a as any).name > (b as any).name ? 1 : -1;
         });
-        this.prizeProgramService.secondaryPrices = currentList;
-        this.dataSource.data = currentList;
+        return currentList;
+      }),
+      tap(result => {
+        this.prizeProgramService.secondaryPrices = result;
+        this.dataSource.data = result;
+      }),
+      mergeMap(() => {
+        return from(this.prizeProgramService.approximations).pipe(
+          map(approximation => {
+            if (approximation.approximationsTolds) {
+              approximation.approximationsTolds = approximation.approximationsTolds
+                .filter(approximationTold => approximationTold !== secondaryPrize.id);
+            }
+            return approximation;
+          }),
+          toArray(),
+          tap(result => {
+            this.prizeProgramService.approximations = result;
+          })
+        );
+      })
+    )
+      .subscribe(result => {
       });
   }
 

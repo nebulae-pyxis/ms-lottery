@@ -5,6 +5,7 @@ const { LotteryES } = require("../../domain/lottery");
 const { LotteryGameES } = require("../../domain/lotterygame");
 const { LotteryGameSheetConfigES } = require("../../domain/lotteryGameSheetConfig");
 const { LotteryGamePrizeProgramES } = require("../../domain/lotteryGamePrizeProgram");
+const { LotteryGameDrawCalendarES } = require("../../domain/lotteryGameDrawCalendar");
 const { map, switchMap, filter, mergeMap, concatMap } = require('rxjs/operators');
 /**
  * Singleton instance
@@ -185,6 +186,23 @@ class EventStoreService {
         fn: LotteryGamePrizeProgramES.handleLotteryGamePrizeProgramRevoked$,
         obj: LotteryGamePrizeProgramES
       },
+      // DRAW CALENDAR
+      LotteryGameDrawCalendarCreated: {
+        fn: LotteryGameDrawCalendarES.handleLotteryGameDrawCalendarCreated$,
+        obj: LotteryGameDrawCalendarES
+      },
+      LotteryGameDrawCalendarUpdated: {
+        fn: LotteryGameDrawCalendarES.handleLotteryGameDrawCalendarUpdated$,
+        obj: LotteryGameDrawCalendarES
+      },
+      LotteryGameDrawCalendarApproved: {
+        fn: LotteryGameDrawCalendarES.handleLotteryGameDrawCalendarApproved$,
+        obj: LotteryGameDrawCalendarES
+      },
+      LotteryGameDrawCalendarRevoked: {
+        fn: LotteryGameDrawCalendarES.handleLotteryGameDrawCalendarRevoked$,
+        obj: LotteryGameDrawCalendarES
+      },
     };
   }
 
@@ -252,6 +270,23 @@ class EventStoreService {
       {
         aggregateType: "LotteryGamePrizeProgram",
         eventType: "LotteryGamePrizeProgramRevoked"
+      },
+      // DRAW CALENDAR
+      {
+        aggregateType: "LotteryGameDrawCalendar",
+        eventType: "LotteryGameDrawCalendarCreated"
+      },
+      {
+        aggregateType: "LotteryGameDrawCalendar",
+        eventType: "LotteryGameDrawCalendarUpdated"
+      },
+      {
+        aggregateType: "LotteryGameDrawCalendar",
+        eventType: "LotteryGameDrawCalendarApproved"
+      },
+      {
+        aggregateType: "LotteryGameDrawCalendar",
+        eventType: "LotteryGameDrawCalendarRevoked"
       },
     ]
   }

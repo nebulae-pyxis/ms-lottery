@@ -12,10 +12,10 @@
           fxHide.gt-md>
           <mat-icon>menu</mat-icon>
         </button>
-        <h3 *ngIf="selectedPrizeProgram" matSubheader>
-          {{'LOTTERY.DETAILS.PRIZE_PROGRAM.PRIZE_PROGRAM_VERSION' | translate}}: {{selectedPrizeProgram.version}} </h3>
-        <button mat-raised-button style="margin-left:auto; margin-right:0;" *ngIf="!selectedPrizeProgram || selectedPrizeProgram.approved === 'APPROVED'" (click)="clearSelected()">
-            {{'LOTTERY.DETAILS.PRIZE_PROGRAM.CREATE_VERSION' | translate}}
+        <h3 *ngIf="selectedDrawCalendar" matSubheader>
+          {{'LOTTERY.DETAILS.CONFIG_SHEET.SHEET_CONFIG_VERSION' | translate}}: {{selectedDrawCalendar.version}} </h3>
+        <button mat-raised-button style="margin-left:auto; margin-right:0;" (click)="clearSelected()" *ngIf="!selectedDrawCalendar || selectedDrawCalendar.approved === 'APPROVED'">
+            {{'LOTTERY.DETAILS.CONFIG_SHEET.CREATE_VERSION' | translate}}
         </button>
       </div>
       <!-- / HEADER -->
@@ -26,33 +26,33 @@
           <mat-expansion-panel expanded="true">
             <mat-expansion-panel-header>
               <mat-panel-title>
-                {{'LOTTERY.DETAILS.PROGRAM' | translate}}
+                {{'LOTTERY.DETAILS.GENERAL_INFO' | translate}}
               </mat-panel-title>
             </mat-expansion-panel-header>
 
-            <game-prize-program-general-info [game]="game" [selectedPrizeProgram]="selectedPrizeProgram">
-            </game-prize-program-general-info>
+            <game-draw-calendar-general-info [game]="game" [selectedDrawCalendar]="selectedDrawCalendar">
+            </game-draw-calendar-general-info>
 
           </mat-expansion-panel>
-          <mat-expansion-panel *ngIf="selectedPrizeProgram">
+          <mat-expansion-panel *ngIf="selectedDrawCalendar">
             <mat-expansion-panel-header>
               <mat-panel-title>
-                {{'LOTTERY.DETAILS.PRIZE_PROGRAM.APPROVAL_INFO' | translate}}
+                {{'LOTTERY.DETAILS.CONFIG_SHEET.APPROVAL_INFO' | translate}}
               </mat-panel-title>
             </mat-expansion-panel-header>
 
-            <game-prize-program-approval-info [selectedPrizeProgram]="selectedPrizeProgram"></game-prize-program-approval-info>
+            <game-draw-calendar-approval-info [selectedDrawCalendar]="selectedDrawCalendar"></game-draw-calendar-approval-info>
 
           </mat-expansion-panel>
 
-          <mat-expansion-panel *ngIf="selectedPrizeProgram && selectedPrizeProgram.creationTimestamp">
+          <mat-expansion-panel *ngIf="selectedDrawCalendar && selectedDrawCalendar.creationTimestamp">
             <mat-expansion-panel-header>
               <mat-panel-title>
-                {{'LOTTERY.DETAILS.PRIZE_PROGRAM.METADATA' | translate}}
+                {{'LOTTERY.DETAILS.CONFIG_SHEET.METADATA' | translate}}
               </mat-panel-title>
             </mat-expansion-panel-header>
 
-            <game-prize-program-metadata [selectedPrizeProgram]="selectedPrizeProgram"></game-prize-program-metadata>
+            <game-draw-calendar-metadata [selectedDrawCalendar]="selectedDrawCalendar"></game-draw-calendar-metadata>
 
           </mat-expansion-panel>
         </mat-accordion>
@@ -72,12 +72,12 @@
           <!-- Name Column -->
           <ng-container cdkColumnDef="version">
             <mat-header-cell *cdkHeaderCellDef fxFlex="80">
-              <h3 matSubheader>{{'LOTTERY.DETAILS.PRIZE_PROGRAM.PRIZE_PROGRAM_VERSIONS' | translate}}</h3>
+              <h3 matSubheader>{{'LOTTERY.DETAILS.CONFIG_SHEET.SHEET_CONFIG_VERSIONS' | translate}}</h3>
             </mat-header-cell>
-            <mat-cell *cdkCellDef="let prizeProgram" fxFlex="80">
-              <span>{{prizeProgram.version}} : {{(prizeProgram.revoked ? 'LOTTERY.DETAILS.PRIZE_PROGRAM.REVOKED'
-                : prizeProgram.approved === null ? 'LOTTERY.DETAILS.PRIZE_PROGRAM.PENDING'
-                        : 'LOTTERY.DETAILS.PRIZE_PROGRAM.'+prizeProgram.approved) | translate}}</span>
+            <mat-cell *cdkCellDef="let drawCalendar" fxFlex="80">
+              <span>{{drawCalendar.version}} : {{(drawCalendar.revoked ? 'LOTTERY.DETAILS.CONFIG_SHEET.REVOKED'
+                : drawCalendar.approved === null ? 'LOTTERY.DETAILS.CONFIG_SHEET.PENDING'
+                        : 'LOTTERY.DETAILS.CONFIG_SHEET.'+drawCalendar.approved) | translate}}</span>
             </mat-cell>
           </ng-container>
 
@@ -85,10 +85,10 @@
           <mat-header-row *cdkHeaderRowDef="displayedColumns"></mat-header-row>
 
           <mat-row *cdkRowDef="let row; columns: displayedColumns" class="selectedElement"
-            (click)="selectPrizeProgramRow(row)" [ngClass]="{
+            (click)="selectDrawCalendarRow(row)" [ngClass]="{
                   highlight:
-                  selectedPrizeProgram &&
-                  selectedPrizeProgram._id == row._id
+                  selectedDrawCalendar &&
+                  selectedDrawCalendar._id == row._id
                 }" matRipple>
           </mat-row>
         </mat-table>

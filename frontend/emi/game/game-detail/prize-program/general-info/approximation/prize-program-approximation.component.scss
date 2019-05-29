@@ -4,39 +4,50 @@
   color: rgb(114, 114, 114);
 }
 
-.responsive-table {
-  overflow: auto;
-}
-
 table {
   width: 100%;
-  border-spacing: 0;
-  border-collapse: collapse;
-  white-space:nowrap;
 }
 
-table th {
-  background: #BDBDBD;
+tr.example-detail-row {
+  height: 0;
 }
 
-table tr:nth-child(odd) {
-  background-color: #F2F2F2;
-}
-table tr:nth-child(even) {
-  background-color: #E6E6E6;
+tr.example-element-row:not(.example-expanded-row):hover {
+  background: #f5f5f5;
 }
 
-th, tr, td {
-  text-align: center;
-  border: 1px solid #E0E0E0;
-  padding: 5px;
+tr.example-element-row:not(.example-expanded-row):active {
+  background: #efefef;
 }
 
-img {
-  font-style: italic;
-  font-size: 11px;
+.example-element-row td {
+  border-bottom-width: 0;
 }
 
-.fa-bars{
-  cursor: move;
+.example-element-detail {
+  overflow: hidden;
+  display: flex;
+}
+
+.example-element-diagram {
+  min-width: 80px;
+  border: 2px solid black;
+  padding: 8px;
+  font-weight: lighter;
+  margin: 8px 0;
+  height: 104px;
+}
+
+.example-element-symbol {
+  font-weight: bold;
+  font-size: 40px;
+  line-height: normal;
+}
+
+.example-element-description {
+  padding: 16px;
+}
+
+.example-element-description-attribution {
+  opacity: 0.5;
 }

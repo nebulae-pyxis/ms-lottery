@@ -20,7 +20,8 @@ export const locale = {
         TABS: {
           GENERAL_INFO: 'General Info',
           SHEET_CONFIG: 'Sheet config',
-          PRIZE_PROGRAM: 'Prize program'
+          PRIZE_PROGRAM: 'Prize program',
+          DRAW_CALENDAR: 'Draw calendar'
         },
         GENERAL_INFO: 'General Info',
         PROGRAM: 'Program',
@@ -109,7 +110,20 @@ export const locale = {
           SINGLE_TOTAL: 'One hit total prize',
           SINGLE_PAYMENT: 'One hit total payment',
           QUANTITY: 'Quantity',
-          WITH_SERIE: 'With serie'
+          WITH_SERIE: 'With serie',
+          APPROXIMATION_TO: 'Approximation to',
+          REGEX: 'Regex',
+          REVERSED: 'Reversed num.',
+          ANY: 'Any num.',
+          SAME: 'Same num.',
+          UNORDERED: 'Unordered Num.',
+          NUMBER_MASK_TYPE: 'Number mask type',
+          SERIE_MASK_TYPE: 'Serie mask type',
+          SHOW_SECONDARY_PRICES: 'Show secondary prices',
+          NUMBER_MASK_REGEX: 'Mask regex',
+          ORDER: 'Order',
+          SECONDARY_PRIZE: 'Secudary prize',
+          DIALOG_SECONDARY_PRICES_TITTLE: 'Secondary prices',
          }
       },
       LOTTERY_FIELD_REQUIRED: 'this field is required',

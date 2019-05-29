@@ -1,0 +1,30 @@
+<h1 mat-dialog-title>{{'LOTTERY.DETAILS.PRIZE_PROGRAM.DIALOG_SECONDARY_PRICES_TITTLE' | translate}}</h1>
+<form *ngIf="data.showManageItems" name="secoAutoCompleteForm" [formGroup]="secoAutoCompleteForm" class="w-100-p" fxLayout="row">
+  <mat-form-field fxFlex.gt-xs="70" fxFlex="70" fxLayout="column" class="pr-8 pl-8">
+    <input matInput formControlName="seco" id="seco" placeholder="{{'LOTTERY.DETAILS.PRIZE_PROGRAM.SECONDARY_PRIZE' | translate}}"
+      [matAutocomplete]="auto" cdkFocusInitial>
+
+    <mat-autocomplete panelWidth="200" #auto="matAutocomplete" autoActiveFirstOption
+      (optionSelected)='onSecoSelected($event.option.value)' [displayWith]="secoDisplayFn">
+      <mat-option *ngFor="let seco of queriedSecosByAutocomplete$ | async" [value]="seco">
+        <span class="text-boxed text-uppercase">{{ seco.name }} </span>
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+  <button style="margin-left: 10px" (click)="addSecoToList()" color="add-button-color" mat-mini-fab>
+    <mat-icon>note_add</mat-icon>
+  </button>
+</form>
+
+<mat-list style="margin-bottom: 20px">
+  <mat-list-item *ngFor="let seco of secoList">
+    <span>{{getNameById(seco)}}</span>
+    <mat-icon *ngIf="data.showManageItems" (click)="removeSeco(seco)" style="margin: auto; margin-right: 0px; cursor: pointer;">delete</mat-icon>
+    <mat-divider></mat-divider>
+  </mat-list-item>
+</mat-list>
+<mat-dialog-actions>
+  <button mat-raised-button (click)="pushButton(true)">Ok</button>
+  <button mat-raised-button mat-dialog-close color="warn"
+    (click)="pushButton(false)">{{'LOTTERY.CANCEL' | translate}}</button>
+</mat-dialog-actions>

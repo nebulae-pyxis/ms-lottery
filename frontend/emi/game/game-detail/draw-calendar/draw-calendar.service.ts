@@ -3,14 +3,14 @@ import { Observable, BehaviorSubject, of, Subject, from } from 'rxjs';
 import { startWith, tap, mergeMap, map, reduce } from 'rxjs/operators';
 import { GatewayService } from '../../../../../api/gateway.service';
 import {
-  LotteryGamePrizeProgramList,
-  LotteryGamePrizeProgram,
-  CreateLotteryGamePrizeProgram,
-  UpdateLotteryGamePrizeProgram,
-  ApproveLotteryGamePrizeProgram,
-  RevokeLotteryGamePrizeProgram,
-  LotteryGamePrizeProgramUpdatedSubscription
-} from '../../gql/prize-program.js';
+  LotteryGameDrawCalendarList,
+  LotteryGameDrawCalendar,
+  CreateLotteryGameDrawCalendar,
+  UpdateLotteryGameDrawCalendar,
+  ApproveLotteryGameDrawCalendar,
+  RevokeLotteryGameDrawCalendar,
+  LotteryGameDrawCalendarUpdatedSubscription
+} from '../../gql/draw-calendar.js';
 import { Router, ActivatedRoute } from '@angular/router';
 
 import { Location } from '@angular/common';
@@ -18,18 +18,15 @@ import { Location } from '@angular/common';
 @Injectable({
   providedIn: 'root',
 })
-export class PrizeProgramService {
+export class DrawCalendarService {
 
   lastOperation = null;
 
-  prizeProgram = null;
-  notifyPrizeProgramUpdated$ = new Subject();
-  selectedPrizeProgramChanged$ = new BehaviorSubject(undefined);
+  drawCalendar = null;
+  notifyDrawCalendarUpdated$ = new Subject();
+  selectedDrawCalendarChanged$ = new BehaviorSubject(undefined);
   grandPrize;
   grandPrizeFormValid$ = new BehaviorSubject(false);
-  twoOutOfThree;
-  secondaryPrices = [];
-  approximations = [];
 
   constructor(private gateway: GatewayService, private location: Location,
     private route: ActivatedRoute) {
@@ -43,7 +40,7 @@ export class PrizeProgramService {
     return of('CREATE').pipe(
       tap(operation => {
         this.lastOperation = operation;
-        this.prizeProgram = game;
+        this.drawCalendar = game;
       })
     );
   }
@@ -55,7 +52,7 @@ export class PrizeProgramService {
     return of('UPDATE').pipe(
       tap(operation => {
         this.lastOperation = operation;
-        this.prizeProgram = game;
+        this.drawCalendar = game;
       })
     );
   }
@@ -67,15 +64,15 @@ export class PrizeProgramService {
     return of('').pipe(
       tap(() => {
         this.lastOperation = null;
-        this.prizeProgram = null;
+        this.drawCalendar = null;
       })
     );
   }
 
   /* #region  PRIZE PROGRAM CQRS */
-  lotteryGamePrizeProgramList$(filterInput) {
+  lotteryGameDrawCalendarList$(filterInput) {
     return this.gateway.apollo.query<any>({
-      query: LotteryGamePrizeProgramList,
+      query: LotteryGameDrawCalendarList,
       variables: {
         filterInput
       },
@@ -84,9 +81,9 @@ export class PrizeProgramService {
     });
   }
 
-  lotteryGamePrizeProgram$(id, filterInput) {
+  lotteryGameDrawCalendar$(id, filterInput) {
     return this.gateway.apollo.query<any>({
-      query: LotteryGamePrizeProgram,
+      query: LotteryGameDrawCalendar,
       variables: {
         id,
         filterInput
@@ -96,9 +93,9 @@ export class PrizeProgramService {
     });
   }
 
-  createLotteryGamePrizeProgram$(input) {
+  createLotteryGameDrawCalendar$(input) {
     return this.gateway.apollo.mutate<any>({
-      mutation: CreateLotteryGamePrizeProgram,
+      mutation: CreateLotteryGameDrawCalendar,
       variables: {
         input
       },
@@ -106,9 +103,9 @@ export class PrizeProgramService {
     });
   }
 
-  updateLotteryGamePrizeProgram$(id, input) {
+  updateLotteryGameDrawCalendar$(id, input) {
     return this.gateway.apollo.mutate<any>({
-      mutation: UpdateLotteryGamePrizeProgram,
+      mutation: UpdateLotteryGameDrawCalendar,
       variables: {
         id,
         input
@@ -117,9 +114,9 @@ export class PrizeProgramService {
     });
   }
 
-  approveLotteryGamePrizeProgram$(id, approved, approvedNotes) {
+  approveLotteryGameDrawCalendar$(id, approved, approvedNotes) {
     return this.gateway.apollo.mutate<any>({
-      mutation: ApproveLotteryGamePrizeProgram,
+      mutation: ApproveLotteryGameDrawCalendar,
       variables: {
         id,
         approved,
@@ -129,9 +126,9 @@ export class PrizeProgramService {
     });
   }
 
-  revokeLotteryGamePrizeProgram$(id, revoked, revokedNotes) {
+  revokeLotteryGameDrawCalendar$(id, revoked, revokedNotes) {
     return this.gateway.apollo.mutate<any>({
-      mutation: RevokeLotteryGamePrizeProgram,
+      mutation: RevokeLotteryGameDrawCalendar,
       variables: {
         id,
         revoked,
@@ -144,16 +141,16 @@ export class PrizeProgramService {
 
 
   notifymsentityUpdated(filterData) {
-    this.notifyPrizeProgramUpdated$.next(filterData);
+    this.notifyDrawCalendarUpdated$.next(filterData);
   }
 
   /**
  * Event triggered when a lotteryGame is created, updated or deleted.
  */
-  subscribeLotteryGamePrizeProgramUpdatedSubscription$(): Observable<any> {
+  subscribeLotteryGameDrawCalendarUpdatedSubscription$(): Observable<any> {
     return this.gateway.apollo
       .subscribe({
-        query: LotteryGamePrizeProgramUpdatedSubscription
+        query: LotteryGameDrawCalendarUpdatedSubscription
       });
   }
 

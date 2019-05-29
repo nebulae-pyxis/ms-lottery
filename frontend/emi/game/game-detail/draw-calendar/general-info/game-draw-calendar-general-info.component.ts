@@ -51,18 +51,17 @@ import { FuseTranslationLoaderService } from '../../../../../../core/services/tr
 
 //////////// Others ////////////
 import { DialogComponent } from '../../../dialog/dialog.component';
-import { GameDetailService } from '../../game-detail.service';
+import { DrawCalendarService } from '../draw-calendar.service';
 import { KeycloakService } from 'keycloak-angular';
-import { PrizeProgramService } from '../prize-program.service';
 
 @Component({
   // tslint:disable-next-line:component-selector
-  selector: 'game-prize-program-general-info',
-  templateUrl: './game-prize-program-general-info.component.html',
-  styleUrls: ['./game-prize-program-general-info.component.scss']
+  selector: 'game-draw-calendar-general-info',
+  templateUrl: './game-draw-calendar-general-info.component.html',
+  styleUrls: ['./game-draw-calendar-general-info.component.scss']
 })
 // tslint:disable-next-line:class-name
-export class GamePrizeProgramGeneralInfoComponent implements OnInit, OnDestroy {
+export class GameDrawCalendarGeneralInfoComponent implements OnInit, OnDestroy {
   // Subject to unsubscribe
   private ngUnsubscribe = new Subject();
 
@@ -78,18 +77,16 @@ export class GamePrizeProgramGeneralInfoComponent implements OnInit, OnDestroy {
   ticketPrice;
   showSaveButton = true;
   showDuplicateButton = false;
-  prizeClaimThreshold;
-  grandPrizeFormValid = false;
 
   @Input('game') game: any;
-  @Input('selectedPrizeProgram') selectedPrizeProgram: any;
+  @Input('selectedDrawCalendar') selectedDrawCalendar: any;
 
   constructor(
     private translationLoader: FuseTranslationLoaderService,
     private translate: TranslateService,
     public snackBar: MatSnackBar,
     private dialog: MatDialog,
-    private prizeProgramService: PrizeProgramService,
+    private drawCalendarService: DrawCalendarService,
     private keycloakService: KeycloakService
   ) {
     this.translationLoader.loadTranslations(english, spanish);
@@ -97,24 +94,14 @@ export class GamePrizeProgramGeneralInfoComponent implements OnInit, OnDestroy {
 
 
   ngOnInit() {
-    this.buildForm();
-    this.subuscribeToSelectedPrizeProgramChange();
-    this.subscribeGamePrizeProgramUpdated();
-    this.buildSubFormListeners();
-  }
-
-  buildSubFormListeners() {
-    this.prizeProgramService.grandPrizeFormValid$.subscribe(val => {
-      this.grandPrizeFormValid = val;
-    });
-  }
-
-  buildForm() {
     this.gameGeneralInfoForm = new FormGroup({
-      prizeClaimThreshold: new FormControl('', [Validators.required]),
+      ticketsPerSheet: new FormControl('', [Validators.required]),
+      ticketPrice: new FormControl('', [Validators.required]),
       validFromDraw: new FormControl('', [Validators.required]),
       validUntilDraw: new FormControl(''),
     });
+    this.subuscribeToSelectedDrawCalendarChange();
+    this.subscribeGameDrawCalendarUpdated();
   }
 
   numberOnly(event): boolean {
@@ -128,60 +115,55 @@ export class GamePrizeProgramGeneralInfoComponent implements OnInit, OnDestroy {
   isGeneralInfoButtonsAllowed() {
     const roles = this.keycloakService.getUserRoles()
       .filter(role => role === 'PLATFORM-ADMIN' || role === 'LOTTERY-ADMIN');
-    return roles && roles.length > 0;
+    return  roles && roles.length > 0;
   }
 
-  subuscribeToSelectedPrizeProgramChange() {
-    this.prizeProgramService.selectedPrizeProgramChanged$.subscribe(prizeProgram => {
-      if (prizeProgram) {
-        this.showSaveButton = !prizeProgram.approved || prizeProgram.approved === 'NOT_APPROVED';
-        this.showDuplicateButton = prizeProgram.approved === 'APPROVED';
-        // TODO: HERE Set all properties of the prize program
-        this.gameGeneralInfoForm.controls['validFromDraw'].setValue(prizeProgram.validFromDraw);
-        this.gameGeneralInfoForm.controls['validUntilDraw'].setValue(prizeProgram.validUntilDraw);
-        this.gameGeneralInfoForm.controls['prizeClaimThreshold'].setValue(prizeProgram.prizeClaimThreshold);
-
+  subuscribeToSelectedDrawCalendarChange() {
+    this.drawCalendarService.selectedDrawCalendarChanged$.subscribe(drawCalendar => {
+      if (drawCalendar) {
+        this.showSaveButton = !drawCalendar.approved || drawCalendar.approved === 'NOT_APPROVED';
+        this.showDuplicateButton = drawCalendar.approved === 'APPROVED';
+        this.gameGeneralInfoForm.controls['ticketsPerSheet'].setValue(drawCalendar.ticketsPerSheet);
+        this.gameGeneralInfoForm.controls['ticketPrice'].setValue(drawCalendar.ticketPrice);
+        this.gameGeneralInfoForm.controls['validFromDraw'].setValue(drawCalendar.validFromDraw);
+        this.gameGeneralInfoForm.controls['validUntilDraw'].setValue(drawCalendar.validUntilDraw);
       } else {
-        // TODO: HERE reset all properties of the prize program
+        this.gameGeneralInfoForm.controls['ticketsPerSheet'].setValue('');
+        this.gameGeneralInfoForm.controls['ticketPrice'].setValue('');
         this.gameGeneralInfoForm.controls['validFromDraw'].setValue('');
         this.gameGeneralInfoForm.controls['validUntilDraw'].setValue('');
-        this.gameGeneralInfoForm.controls['prizeClaimThreshold'].setValue(undefined);
         this.showSaveButton = true;
         this.showDuplicateButton = false;
-        this.prizeProgramService.grandPrizeFormValid$.next(false);
       }
-      this.selectedPrizeProgram = prizeProgram;
+      this.selectedDrawCalendar = drawCalendar;
     });
   }
-  subscribeGamePrizeProgramUpdated() {
-    this.prizeProgramService.subscribeLotteryGamePrizeProgramUpdatedSubscription$()
+  subscribeGameDrawCalendarUpdated() {
+    this.drawCalendarService.subscribeLotteryGameDrawCalendarUpdatedSubscription$()
       .pipe(
-        map(subscription => subscription.data.LotteryGamePrizeProgramUpdatedSubscription),
+        map(subscription => subscription.data.LotteryGameDrawCalendarUpdatedSubscription),
         takeUntil(this.ngUnsubscribe)
       )
       .subscribe((game: any) => {
-        this.showSnackBar('LOTTERY.DETAILS.PRIZE_PROGRAM.OPERATION_COMPLETED');
+        this.showSnackBar('LOTTERY.DETAILS.CONFIG_SHEET.OPERATION_COMPLETED');
         clearTimeout(this.timeoutMessage);
       });
   }
 
-  createPrizeProgram() {
-    if (this.selectedPrizeProgram && this.selectedPrizeProgram.approved === 'NOT_APPROVED') {
+  createDrawCalendar() {
+    if (this.selectedDrawCalendar && this.selectedDrawCalendar.approved === 'NOT_APPROVED') {
       this.showConfirmationDialog$('LOTTERY.UPDATE_MESSAGE', 'LOTTERY.UPDATE_TITLE').pipe(
         tap(ok => this.showWaitOperationMessage()),
         mergeMap(() => {
-          const prizeProgram = {
+          const drawCalendar = {
             validFromDraw: parseInt(this.gameGeneralInfoForm.getRawValue().validFromDraw),
             validUntilDraw: parseInt(this.gameGeneralInfoForm.getRawValue().validUntilDraw),
-            prizeClaimThreshold: parseInt(this.gameGeneralInfoForm.getRawValue().prizeClaimThreshold),
-            grandPrize: this.prizeProgramService.grandPrize,
-            twoOutOfThree: this.prizeProgramService.twoOutOfThree,
-            secondaryPrices: this.prizeProgramService.secondaryPrices,
-            approximations: this.prizeProgramService.approximations,
+            ticketsPerSheet: parseInt(this.gameGeneralInfoForm.getRawValue().ticketsPerSheet),
+            ticketPrice: parseInt(this.ticketPrice),
             gameId: this.game._id,
             lotteryId: this.game.generalInfo.lotteryId
           };
-          return this.prizeProgramService.updateLotteryGamePrizeProgram$(this.selectedPrizeProgram._id, prizeProgram);
+          return this.drawCalendarService.updateLotteryGameDrawCalendar$(this.selectedDrawCalendar._id, drawCalendar);
         }),
         mergeMap(resp => this.graphQlAlarmsErrorHandler$(resp)),
         filter((resp: any) => !resp.errors || resp.errors.length === 0),
@@ -193,21 +175,19 @@ export class GamePrizeProgramGeneralInfoComponent implements OnInit, OnDestroy {
             console.log('Error ==> ', error);
           });
     } else {
+      console.log('entra a crear');
       this.showConfirmationDialog$('LOTTERY.CREATE_MESSAGE', 'LOTTERY.CREATE_TITLE').pipe(
         tap(ok => this.showWaitOperationMessage()),
         mergeMap(() => {
-          const prizeProgram = {
+          const drawCalendar = {
             validFromDraw: parseInt(this.gameGeneralInfoForm.getRawValue().validFromDraw),
             validUntilDraw: parseInt(this.gameGeneralInfoForm.getRawValue().validUntilDraw),
-            prizeClaimThreshold: parseInt(this.gameGeneralInfoForm.getRawValue().prizeClaimThreshold),
-            grandPrize: this.prizeProgramService.grandPrize,
-            twoOutOfThree: this.prizeProgramService.twoOutOfThree,
-            secondaryPrices: this.prizeProgramService.secondaryPrices,
-            approximations: this.prizeProgramService.approximations,
+            ticketsPerSheet: parseInt(this.gameGeneralInfoForm.getRawValue().ticketsPerSheet),
+            ticketPrice: parseInt(this.ticketPrice),
             gameId: this.game._id,
             lotteryId: this.game.generalInfo.lotteryId
           };
-          return this.prizeProgramService.createLotteryGamePrizeProgram$(prizeProgram);
+          return this.drawCalendarService.createLotteryGameDrawCalendar$(drawCalendar);
         }),
         mergeMap(resp => this.graphQlAlarmsErrorHandler$(resp)),
         filter((resp: any) => !resp.errors || resp.errors.length === 0),
@@ -218,22 +198,16 @@ export class GamePrizeProgramGeneralInfoComponent implements OnInit, OnDestroy {
             this.showErrorOperationMessage();
             console.log('Error ==> ', error);
           });
-    }
+     }
   }
 
   duplicateSelected() {
-    const currentPrizeProgram = this.prizeProgramService.selectedPrizeProgramChanged$.getValue();
-    this.prizeProgramService.selectedPrizeProgramChanged$.next({
-      validFromDraw: currentPrizeProgram.validFromDraw,
-      validUntilDraw: currentPrizeProgram.validUntilDraw,
-      prizeClaimThreshold: currentPrizeProgram.prizeClaimThreshold,
-      grandPrize: this.prizeProgramService.grandPrize,
-      twoOutOfThree: this.prizeProgramService.twoOutOfThree,
-      secondaryPrices: this.prizeProgramService.secondaryPrices,
-      approximations: this.prizeProgramService.approximations,
-      gameId: this.game._id,
-      lotteryId: this.game.generalInfo.lotteryId
-
+    const currentDrawCalendar = this.drawCalendarService.selectedDrawCalendarChanged$.getValue();
+    this.drawCalendarService.selectedDrawCalendarChanged$.next({
+      validFromDraw: currentDrawCalendar.validFromDraw,
+      validUntilDraw: currentDrawCalendar.validUntilDraw,
+      ticketsPerSheet: currentDrawCalendar.ticketsPerSheet,
+      ticketPrice: currentDrawCalendar.ticketPrice
     });
   }
 

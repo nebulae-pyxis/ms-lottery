@@ -59,6 +59,13 @@
         </ng-template>
         </mat-tab>
 
+        <mat-tab label="{{'LOTTERY.DETAILS.TABS.DRAW_CALENDAR' | translate}}">
+          <ng-template matTabContent>
+        <game-draw-calendar [game]="game" *ngIf="pageType">
+        </game-draw-calendar>
+      </ng-template>
+      </mat-tab>
+
         </mat-tab-group>
 
         <!-- / CONTENT -->

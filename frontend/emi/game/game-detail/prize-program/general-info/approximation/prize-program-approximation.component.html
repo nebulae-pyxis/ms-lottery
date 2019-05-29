@@ -1,14 +1,145 @@
-<div>
-  <div class="wrapper">
-    <div class="container" >
-      <div>You can move these elements between these two containers</div>
-      <div>Moving them anywhere else isn't quite possible</div>
-      <div>There's also the possibility of moving elements around in the same container, changing their position</div>
-    </div>
-    <div class="container" >
-      <div>This is the default use case. You only need to specify the containers you want to use</div>
-      <div>More interactive use cases lie ahead</div>
-      <div>Make sure to check out the <a href="https://github.com/bevacqua/dragula#readme">documentation on GitHub!</a></div>
-    </div>
-  </div>
-</div>
+<table mat-table [dataSource]="dataSource" multiTemplateDataRows class="mat-elevation-z8">
+
+
+  <ng-container cdkColumnDef="name">
+    <mat-header-cell *cdkHeaderCellDef fxFlex="80">
+      <h3 matSubheader>{{'LOTTERY.DETAILS.PRIZE_PROGRAM.NAME' | translate}}</h3>
+    </mat-header-cell>
+    <mat-cell *cdkCellDef="let approximation" fxFlex="80">
+      <span style="margin-left: 20px">{{approximation.name}}</span>
+    </mat-cell>
+  </ng-container>
+
+  <ng-container cdkColumnDef="approximationTo">
+    <mat-header-cell *cdkHeaderCellDef fxFlex="80" fxHide.lt-sm>
+      <h3 matSubheader>{{'LOTTERY.DETAILS.PRIZE_PROGRAM.APPROXIMATION_TO' | translate}}</h3>
+    </mat-header-cell>
+    <mat-cell *cdkCellDef="let approximation" fxHide.lt-sm fxFlex="80">
+      <span style="margin-left: 20px">{{'LOTTERY.DETAILS.PRIZE_PROGRAM.'+approximation.approximationTo | translate}}</span>
+    </mat-cell>
+  </ng-container>
+
+  <ng-container cdkColumnDef="total">
+    <mat-header-cell *cdkHeaderCellDef fxFlex="80" fxHide.lt-sm>
+      <h3 matSubheader>{{'LOTTERY.DETAILS.PRIZE_PROGRAM.TOTAL_PRIZE' | translate}}</h3>
+    </mat-header-cell>
+    <mat-cell *cdkCellDef="let approximation" fxHide.lt-sm fxFlex="80">
+      <span style="margin-left: 20px">{{approximation.total | currency: 'COP':'$'}}</span>
+    </mat-cell>
+  </ng-container>
+
+  <ng-container cdkColumnDef="manage-buttons">
+    <mat-header-cell *cdkHeaderCellDef fxFlex="80">
+      <button style="margin-left: 10px" color="add-button-color" (click)="createApproximation()" mat-mini-fab>
+        <mat-icon>note_add</mat-icon>
+      </button>
+    </mat-header-cell>
+    <mat-cell *cdkCellDef="let approximation" fxFlex="80">
+    </mat-cell>
+  </ng-container>
+
+  <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+  <ng-container matColumnDef="expandedDetail">
+    <td mat-cell style="width: 100%" *matCellDef="let element" [attr.colspan]="displayedColumns.length">
+      <div class="example-element-detail" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+        <div style="width: 100%" class="example-element-description">
+          <form name="approximationForm" [formGroup]="approximationForm" class="w-100-p" fxLayout="column"
+            class="mat-white-bg mr-24 mb-24">
+            <mat-form-field fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
+              <input matInput name="order" formControlName="order" autocomplete="off" maxlength="3"
+                placeholder="{{'LOTTERY.DETAILS.PRIZE_PROGRAM.ORDER' | translate}}" (keypress)="numberOnly($event)">
+              <mat-error *ngIf="approximationForm.hasError('required', ['quantity'])">
+                {{'LOTTERY.LOTTERY_FIELD_REQUIRED' | translate}}
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
+              <input autocomplete="off" matInput name="name" formControlName="name" maxlength="100"
+                placeholder="{{'LOTTERY.DETAILS.PRIZE_PROGRAM.NAME' | translate}}">
+              <mat-error *ngIf="approximationForm.hasError('required', ['name'])">
+                {{'LOTTERY.LOTTERY_FIELD_REQUIRED' | translate}}
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
+              <mat-label>{{'LOTTERY.DETAILS.PRIZE_PROGRAM.APPROXIMATION_TO' | translate}}</mat-label>
+              <mat-select [(value)]="selectedApproximationTo">
+                <mat-option value="GRAND_PRIZE">{{'LOTTERY.DETAILS.PRIZE_PROGRAM.GRAND_PRIZE' | translate}}</mat-option>
+                <mat-option value="SECONDARY_PRIZE">{{'LOTTERY.DETAILS.PRIZE_PROGRAM.SECONDARY_PRICES' | translate}}</mat-option>
+                <mat-option value="TWO_OUT_OF_THREE">{{'LOTTERY.DETAILS.PRIZE_PROGRAM.TWO_OUT_OF_THREE' | translate}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <button mat-raised-button style="margin: 10px"  color="primary"
+              *ngIf="selectedApproximationTo === 'SECONDARY_PRIZE'" (click)="showSecoDetailDialog()">
+                {{'LOTTERY.DETAILS.PRIZE_PROGRAM.SHOW_SECONDARY_PRICES' | translate}}
+              </button>
+
+              <mat-form-field fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
+                <mat-label>{{'LOTTERY.DETAILS.PRIZE_PROGRAM.NUMBER_MASK_TYPE' | translate}}</mat-label>
+                <mat-select [(value)]="selectedNumberMaskType">
+                  <mat-option value="REGEX">{{'LOTTERY.DETAILS.PRIZE_PROGRAM.REGEX' | translate}}</mat-option>
+                  <mat-option value="REVERSED">{{'LOTTERY.DETAILS.PRIZE_PROGRAM.REVERSED' | translate}}</mat-option>
+                  <mat-option value="ANY">{{'LOTTERY.DETAILS.PRIZE_PROGRAM.ANY' | translate}}</mat-option>
+                  <mat-option value="SAME">{{'LOTTERY.DETAILS.PRIZE_PROGRAM.SAME' | translate}}</mat-option>
+                  <mat-option value="UNORDERED">{{'LOTTERY.DETAILS.PRIZE_PROGRAM.UNORDERED' | translate}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field *ngIf="selectedNumberMaskType === 'REGEX'" fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
+                <input autocomplete="off" matInput name="numberMaskRegex" formControlName="numberMaskRegex" maxlength="100"
+                  placeholder="{{'LOTTERY.DETAILS.PRIZE_PROGRAM.NUMBER_MASK_REGEX' | translate}}">
+                <mat-error *ngIf="approximationForm.hasError('required', ['numberMaskRegex'])">
+                  {{'LOTTERY.LOTTERY_FIELD_REQUIRED' | translate}}
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
+                <mat-label>{{'LOTTERY.DETAILS.PRIZE_PROGRAM.SERIE_MASK_TYPE' | translate}}</mat-label>
+                <mat-select [(value)]="selectedSerialMaskType">
+                  <mat-option value="ANY">{{'LOTTERY.DETAILS.PRIZE_PROGRAM.ANY' | translate}}</mat-option>
+                  <mat-option value="SAME">{{'LOTTERY.DETAILS.PRIZE_PROGRAM.SAME' | translate}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+
+            <mat-form-field fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
+              <input matInput name="totalPrize" formControlName="totalPrize" autocomplete="off" maxlength="15"
+                placeholder="{{'LOTTERY.DETAILS.PRIZE_PROGRAM.TOTAL_PRIZE' | translate}}" currencyMask
+                [options]="{ prefix: '$ ', thousands: '.', precision: '0', align: 'left' }" [(ngModel)]="totalPrize">
+              <mat-error *ngIf="approximationForm.hasError('required', ['totalPrize'])">
+                {{'LOTTERY.LOTTERY_FIELD_REQUIRED' | translate}}
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
+              <input matInput name="paymentPrize" formControlName="paymentPrize" autocomplete="off" maxlength="15"
+                placeholder="{{'LOTTERY.DETAILS.PRIZE_PROGRAM.TOTAL_PAYMENT' | translate}}" currencyMask
+                [options]="{ prefix: '$ ', thousands: '.', precision: '0', align: 'left' }" [(ngModel)]="paymentPrize">
+              <mat-error *ngIf="approximationForm.hasError('required', ['paymentPrize'])">
+                {{'LOTTERY.LOTTERY_FIELD_REQUIRED' | translate}}
+              </mat-error>
+            </mat-form-field>
+
+            <div class="mt-16" *ngIf="showManageButtons">
+              <button mat-raised-button style="margin-right: 10px"
+              [disabled]="approximationForm.invalid"
+              (click)="editApproximation(element)">
+                {{'LOTTERY.EDIT' | translate}}
+              </button>
+              <button mat-raised-button (click)="removeApproximation(element)" style="margin-right: 10px" color="warn">
+                {{'LOTTERY.REMOVE_TITLE' | translate}}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let element; columns: displayedColumns;" class="example-element-row"
+    [class.example-expanded-row]="expandedElement === element"
+    (click)="showDetailTable(element)">
+  </tr>
+  <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+</table>

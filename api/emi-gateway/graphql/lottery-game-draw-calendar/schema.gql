@@ -1,0 +1,134 @@
+type CommandResponse {
+  "Response code"
+  code: Int
+  "Response message"
+  message: String
+}
+
+type Template {
+  "open draw days before"
+  openDrawDaysBefore: Int
+  "open draw time"
+  openDrawTime: String
+  "close draw minutes before"
+  closeDrawMinutesBefore: Int
+  "deactivate draw months after"
+  deactivateDrawMonthsAfter: Int
+  "deactivate draw time"
+  deactivateDrawtime: String
+}
+
+type LotteryGameDrawCalendar {
+  "Sheet config ID"
+  _id: ID!
+  "Template"
+  template: Template
+  "Lottery id"
+  lotteryId: String
+  "game id"
+  gameId: String
+  "Config sheet approved"
+  approved: String
+  "Config sheet approved"
+  approvedNotes: String
+  "Config sheet approved"
+  approvedUsername: String
+  "Approved timestamp"
+  approvedTimestamp: BigInt
+  "Config sheet revoked"
+  revoked: Boolean
+  "Config sheet revoked notes"
+  revokedNotes: String
+  "Config sheet revoked timestamp"
+  revokedTimestamp: BigInt
+  "Config sheet revoked user name"
+  revokedUsername: String
+  "Config sheet version"
+  version: Int
+  "Creation timestamp"
+  creationTimestamp: BigInt
+  "Creator username"
+  creationUsername: String
+  "Creator user id"
+  creationUserId: String
+  "Modification timestamp"
+  editionTimestamp: BigInt
+  "Modifier user id"
+  editionUserId: String
+  "Modifier username"
+  editionUsername: String
+}
+
+input LotteryGameDrawCalendarFilterInput {
+  "Name"
+  name: String
+  "Sheet config version"
+  drawCalendarVersion: String
+  "Lottery id"
+  lotteryId: String
+  "game id"
+  gameId: String
+}
+
+input TemplateInput {
+  "open draw days before"
+  openDrawDaysBefore: Int
+  "open draw time"
+  openDrawTime: String
+  "close draw minutes before"
+  closeDrawMinutesBefore: Int
+  "deactivate draw months after"
+  deactivateDrawMonthsAfter: Int
+  "deactivate draw time"
+  deactivateDrawtime: String
+}
+
+input LotteryGameDrawCalendarInput {
+  template: TemplateInput
+  "Lottery Id"
+  lotteryId: String
+  "game id"
+  gameId: String
+}
+
+type Query {
+  "Get sheet configs filtered "
+  LotteryGameDrawCalendarList(
+    filterInput: LotteryGameDrawCalendarFilterInput!
+  ): [LotteryGameDrawCalendar]
+
+  "Get Game by its id"
+  LotteryGameDrawCalendar(
+    id: String
+    filterInput: LotteryGameDrawCalendarFilterInput
+  ): LotteryGameDrawCalendar
+}
+
+type Mutation {
+  "Create a new Game"
+  CreateLotteryGameDrawCalendar(
+    input: LotteryGameDrawCalendarInput!
+  ): CommandResponse
+  "Update the sheet config"
+  UpdateLotteryGameDrawCalendar(
+    id: ID!
+    input: LotteryGameDrawCalendarInput!
+  ): CommandResponse
+  "Approve the sheet config"
+  ApproveLotteryGameDrawCalendar(
+    id: ID!
+    approved: String
+    approvedNotes: String
+  ): CommandResponse
+  "Revoke the sheet config"
+  RevokeLotteryGameDrawCalendar(
+    id: ID!
+    revoked: Boolean
+    revokedNotes: String
+  ): CommandResponse
+}
+
+type Subscription {
+  "This events is triggered when a Game is created or updated"
+  LotteryGameDrawCalendarUpdatedSubscription: LotteryGameDrawCalendar
+}

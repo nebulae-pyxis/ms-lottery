@@ -20,7 +20,8 @@ export const locale = {
         TABS: {
           GENERAL_INFO: 'Información General',
           SHEET_CONFIG: 'Config de billete',
-          PRIZE_PROGRAM: 'Programa de premios'
+          PRIZE_PROGRAM: 'Programa de premios',
+          DRAW_CALENDAR: 'Calendario de sorteos'
         },
         GENERAL_INFO: 'Información General',
         PROGRAM: 'Programa',
@@ -125,7 +126,20 @@ export const locale = {
           SINGLE_TOTAL: 'Un acierto total premio',
           SINGLE_PAYMENT: 'Un acierto total a pagar',
           QUANTITY: 'Cantidad',
-          WITH_SERIE: 'Con serie'
+          WITH_SERIE: 'Con serie',
+          APPROXIMATION_TO: 'Aplicada en',
+          REGEX: 'Regex',
+          REVERSED: 'Num. Inverso',
+          ANY: 'Cualquier num.',
+          SAME: 'Num. igual',
+          UNORDERED: 'Num. desordenado',
+          NUMBER_MASK_TYPE: 'Tipo de mascara en número',
+          SERIE_MASK_TYPE: 'Tipo de mascara en serie',
+          SHOW_SECONDARY_PRICES: 'Ver secos afectados',
+          NUMBER_MASK_REGEX: 'Mascara regex',
+          ORDER: 'Orden',
+          SECONDARY_PRIZE: 'Premio secundario',
+          DIALOG_SECONDARY_PRICES_TITTLE: 'Secos afectados',
          }
       },
       LOTTERY_FIELD_REQUIRED: 'Este campo es requerido',

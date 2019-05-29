@@ -2,12 +2,12 @@
 
 let mongoDB = undefined;
 //const mongoDB = require('./MongoDB')();
-const CollectionName = "LotteryGamePrizeProgram";
+const CollectionName = "LotteryGameDrawCalendar";
 const { CustomError } = require("../tools/customError");
 const { map, tap, mergeMap, toArray, first } = require("rxjs/operators");
 const { of, Observable, defer, from } = require("rxjs");
 
-class LotteryGamePrizeProgramDA {
+class LotteryGameDrawCalendarDA {
   static start$(mongoDbInstance) {
     return Observable.create(observer => {
       if (mongoDbInstance) {
@@ -24,7 +24,7 @@ class LotteryGamePrizeProgramDA {
   /**
    * Gets an user by its id
    */
-  static getLotteryGamePrizeProgram$(id) {
+  static getLotteryGameDrawCalendar$(id) {
     const collection = mongoDB.db.collection(CollectionName);
 
     const query = {
@@ -34,7 +34,7 @@ class LotteryGamePrizeProgramDA {
     return defer(() => collection.findOne(query));
   }
 
-  static getLotteryGamePrizeProgramList$(filter) {
+  static getLotteryGameDrawCalendarList$(filter) {
     const collection = mongoDB.db.collection(CollectionName);
 
     const query = {
@@ -70,7 +70,7 @@ class LotteryGamePrizeProgramDA {
     return mongoDB.extractAllFromMongoCursor$(cursor);
   }
 
-  static getLastVersionPrizeProgram(gameId) { 
+  static getLastVersionDrawCalendar(gameId) { 
     const collection = mongoDB.db.collection(CollectionName);
     const cursor = collection
       .find({ gameId })
@@ -85,14 +85,14 @@ class LotteryGamePrizeProgramDA {
    * Creates a new LotteryGame
    * @param {*} lotteryGame lotteryGame to create
    */
-  static createLotteryGamePrizeProgram$(prizeProgram, userInfo) {
-    return this.getLastVersionPrizeProgram(prizeProgram.gameId).pipe(
-      mergeMap(lastPrizeProgram => {
-        const version = lastPrizeProgram && lastPrizeProgram.version ? lastPrizeProgram.version + 1 : 1;
-        prizeProgram.version = version;
-        prizeProgram.approved = 'PENDING';
+  static createLotteryGameDrawCalendar$(drawCalendar, userInfo) {
+    return this.getLastVersionDrawCalendar(drawCalendar.gameId).pipe(
+      mergeMap(lastDrawCalendar => {
+        const version = lastDrawCalendar && lastDrawCalendar.version ? lastDrawCalendar.version + 1 : 1;
+        drawCalendar.version = version;
+        drawCalendar.approved = 'PENDING';
         const collection = mongoDB.db.collection(CollectionName);
-        return defer(() => collection.insertOne(prizeProgram));
+        return defer(() => collection.insertOne(drawCalendar));
       })
     )
   }
@@ -100,26 +100,23 @@ class LotteryGamePrizeProgramDA {
   /**
 * modifies the general info of the indicated LotteryGame 
 * @param {*} id  LotteryGame ID
-* @param {*} LotteryGamePrizeProgram  New general information of the LotteryGame
+* @param {*} LotteryGameDrawCalendar  New general information of the LotteryGame
 */
-  static updateLotteryGamePrizeProgram$(id, lotteryGamePrizeProgram) {
-    console.log('llegan parametros editados: ', lotteryGamePrizeProgram);
+  static updateLotteryGameDrawCalendar$(id, lotteryGameDrawCalendar) {
     const collection = mongoDB.db.collection(CollectionName);
+
     return defer(() =>
       collection.findOneAndUpdate(
         { _id: id },
         {
           $set: {
-            validFromDraw: lotteryGamePrizeProgram.validFromDraw,
-            validUntilDraw: lotteryGamePrizeProgram.validUntilDraw,
-            prizeClaimThreshold: lotteryGamePrizeProgram.prizeClaimThreshold,
-            editionTimestamp: lotteryGamePrizeProgram.editionTimestamp,
-            editionUserId: lotteryGamePrizeProgram.editionUserId,
-            editionUsername: lotteryGamePrizeProgram.editionUsername,
-            grandPrize: lotteryGamePrizeProgram.grandPrize,
-            twoOutOfThree: lotteryGamePrizeProgram.twoOutOfThree,
-            secondaryPrices: lotteryGamePrizeProgram.secondaryPrices,
-            approximations: lotteryGamePrizeProgram.approximations,
+            validFromDraw: lotteryGameDrawCalendar.validFromDraw,
+            validUntilDraw: lotteryGameDrawCalendar.validUntilDraw,
+            ticketsPerSheet: lotteryGameDrawCalendar.ticketsPerSheet,
+            ticketPrice: lotteryGameDrawCalendar.ticketPrice,
+            editionTimestamp: lotteryGameDrawCalendar.editionTimestamp,
+            editionUserId: lotteryGameDrawCalendar.editionUserId,
+            editionUsername: lotteryGameDrawCalendar.editionUsername,
             approved: 'PENDING'
           }
         }, {
@@ -134,9 +131,9 @@ class LotteryGamePrizeProgramDA {
   /**
   * modifies the general info of the indicated LotteryGame 
   * @param {*} id  LotteryGame ID
-  * @param {*} LotteryGamePrizeProgram  New general information of the LotteryGame
+  * @param {*} LotteryGameDrawCalendar  New general information of the LotteryGame
   */
-  static approveLotteryGamePrizeProgram$({ id, approved, approvedUserId, approvedUsername,
+  static approveLotteryGameDrawCalendar$({ id, approved, approvedUserId, approvedUsername,
     approvedNotes, editionUserId, editionUsername, editionTimestamp }) {
     const collection = mongoDB.db.collection(CollectionName);
 
@@ -166,9 +163,9 @@ class LotteryGamePrizeProgramDA {
   /**
 * modifies the general info of the indicated LotteryGame 
 * @param {*} id  LotteryGame ID
-* @param {*} LotteryGamePrizeProgram  New general information of the LotteryGame
+* @param {*} LotteryGameDrawCalendar  New general information of the LotteryGame
 */
-  static revokeLotteryGamePrizeProgram$({ id, revoked, revokedUserId, revokedUsername,
+  static revokeLotteryGameDrawCalendar$({ id, revoked, revokedUserId, revokedUsername,
     revokedNotes, editionUserId, editionUsername, editionTimestamp }) {
     const collection = mongoDB.db.collection(CollectionName);
 
@@ -199,6 +196,6 @@ class LotteryGamePrizeProgramDA {
 
 }
 /**
- * @returns {LotteryGamePrizeProgramDA}
+ * @returns {LotteryGameDrawCalendarDA}
  */
-module.exports = LotteryGamePrizeProgramDA;
+module.exports = LotteryGameDrawCalendarDA;

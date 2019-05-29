@@ -31,6 +31,12 @@ import { PrizeProgramSecondaryPrizeComponent } from './game-detail/prize-program
 import { SecondaryPrizeDialogComponent } from './game-detail/prize-program/general-info/secondary-prize/secondary-prize-dialog/secondary-prize-dialog.component';
 import { ApproximationDialogComponent } from './game-detail/prize-program/general-info/approximation/approximation-dialog/approximation-dialog.component';
 import { PrizeProgramApproximationComponent } from './game-detail/prize-program/general-info/approximation/prize-program-approximation.component';
+import { SecoDetailDialogComponent } from './game-detail/prize-program/general-info/approximation/seco-detail-dialog/seco-detail-dialog.component';
+import { GameDrawCalendarComponent } from './game-detail/draw-calendar/game-draw-calendar.component';
+import { GameDrawCalendarMetadataComponent } from './game-detail/draw-calendar/metadata/game-draw-calendar-metada.component';
+import { GameDrawCalendarGeneralInfoComponent } from './game-detail/draw-calendar/general-info/game-draw-calendar-general-info.component';
+import { GameDrawCalendarApprovalInfoComponent } from './game-detail/draw-calendar/approval-info/game-draw-calendar-approval-info.component';
+import { DrawCalendarService } from './game-detail/draw-calendar/draw-calendar.service';
 
 
 
@@ -65,6 +71,7 @@ const routes: Routes = [
     NoteDialogComponent,
     SecondaryPrizeDialogComponent,
     ApproximationDialogComponent,
+    SecoDetailDialogComponent,
     GameListComponent,
     GameDetailComponent,
     GameDetailGeneralInfoComponent,
@@ -72,6 +79,10 @@ const routes: Routes = [
     GameSheetConfigGeneralInfoComponent,
     GameSheetConfigApprovalInfoComponent,
     GameSheetConfigMetadataComponent,
+    GameDrawCalendarComponent,
+    GameDrawCalendarMetadataComponent,
+    GameDrawCalendarGeneralInfoComponent,
+    GameDrawCalendarApprovalInfoComponent,
     GamePrizeProgramComponent,
     GamePrizeProgramApprovalInfoComponent,
     GamePrizeProgramGeneralInfoComponent,
@@ -81,8 +92,8 @@ const routes: Routes = [
     PrizeProgramSecondaryPrizeComponent,
     PrizeProgramApproximationComponent
   ],
-  entryComponents: [DialogComponent, NoteDialogComponent, SecondaryPrizeDialogComponent, ApproximationDialogComponent],
-  providers: [ GameService, GameListService, GameDetailService, PrizeProgramService,  DatePipe]
+  entryComponents: [DialogComponent, NoteDialogComponent, SecondaryPrizeDialogComponent, SecoDetailDialogComponent, ApproximationDialogComponent],
+  providers: [ GameService, GameListService, GameDetailService, PrizeProgramService, DrawCalendarService,  DatePipe]
 })
 
 export class GameModule {}
