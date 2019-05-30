@@ -211,7 +211,7 @@ export class PrizeProgramApproximationComponent implements OnInit, OnDestroy {
     return true;
   }
 
-  showSecoDetailDialog() {
+  showSecoDetailDialog(approximation) {
     this.dialog
       // Opens confirm dialog
       .open(SecoDetailDialogComponent, {
@@ -230,6 +230,7 @@ export class PrizeProgramApproximationComponent implements OnInit, OnDestroy {
         filter(result => result && result.okButton),
       ).subscribe(result => {
         this.approximationsTolds = result.approximationsTolds;
+        this.editApproximation(approximation);
       });
   }
 

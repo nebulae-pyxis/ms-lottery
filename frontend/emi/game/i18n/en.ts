@@ -124,7 +124,26 @@ export const locale = {
           ORDER: 'Order',
           SECONDARY_PRIZE: 'Secudary prize',
           DIALOG_SECONDARY_PRICES_TITTLE: 'Secondary prices',
-         }
+          DIALOG_SECO_EMPTY_LIST: 'All the dry ones of this game are going to be taken into account for this approach until one or more dry ones are selected (Use the autocomplete above to add the dry ones)'
+        },
+        DRAW_CALENDAR: {
+          TEMPLATE_CALENDAR: 'Template calendar',
+          OPEN_DRAW_DAYS_BEFORE: 'Open draw days before',
+          OPEN_DRAW_TIME: 'Open draw time',
+          CLOSE_DRAW_MINUTES_BEFORE: 'Close draw minutes before',
+          DEACTIVATE_DRAW_MONTH_AFTER: 'Deactivate draw month after',
+          DEACTIVATE_DRAW_TIME: 'Deactivate draw time',
+          DRAWING_DATETIME: 'Draw date',
+          DRAWING_STATE: 'State',
+          OPENING_DATE: 'Opening date',
+          CLOSING_DATETIME: 'Closing date',
+          DEACTIVATION_DATETIME: 'Deactivation date',
+          OPEN: 'Open',
+          CLOSED: 'Closed',
+          DEACTIVATED: 'Deactivated',
+          DATE_LIST: 'Date calendar'
+
+        }
       },
       LOTTERY_FIELD_REQUIRED: 'this field is required',
       ACTIVE: 'Active',

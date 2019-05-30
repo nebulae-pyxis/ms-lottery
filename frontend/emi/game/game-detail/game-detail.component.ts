@@ -39,6 +39,7 @@ import { KeycloakService } from 'keycloak-angular';
 import { GameDetailService } from './game-detail.service';
 import { Location } from '@angular/common';
 import { PrizeProgramService } from './prize-program/prize-program.service';
+import { DrawCalendarService } from './draw-calendar/draw-calendar.service';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -65,6 +66,7 @@ export class GameDetailComponent implements OnInit, OnDestroy {
     private activatedRouter: ActivatedRoute,
     private gameDetailservice: GameDetailService,
     private prizeProgramService: PrizeProgramService,
+    private drawCalendarService: DrawCalendarService,
     private route: ActivatedRoute,
     private location: Location
   ) {
@@ -93,6 +95,9 @@ export class GameDetailComponent implements OnInit, OnDestroy {
                 break;
               case 'prize-program':
                 this.selectedTab = 2;
+                break;
+              case 'draw-calendar':
+                this.selectedTab = 3;
                 break;
             }
           }
@@ -137,9 +142,14 @@ export class GameDetailComponent implements OnInit, OnDestroy {
         break;
       case 2:
         this.updateGameRoute(['id'], 'prize-program' +
-          (this.gameDetailservice.selectedConfigSheetChanged$.value ? '/' + this.prizeProgramService.selectedPrizeProgramChanged$.value._id : '')
+          (this.prizeProgramService.selectedPrizeProgramChanged$.value ? '/' + this.prizeProgramService.selectedPrizeProgramChanged$.value._id : '')
         );
         break;
+        case 3:
+          this.updateGameRoute(['id'], 'draw-calendar' +
+            (this.drawCalendarService.selectedDrawCalendarChanged$.value ? '/' + this.drawCalendarService.selectedDrawCalendarChanged$.value._id : '')
+          );
+          break;
     }
   }
 

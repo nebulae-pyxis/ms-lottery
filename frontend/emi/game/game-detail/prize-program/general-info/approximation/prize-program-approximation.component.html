@@ -71,7 +71,7 @@
             </mat-form-field>
 
             <button mat-raised-button style="margin: 10px"  color="primary"
-              *ngIf="selectedApproximationTo === 'SECONDARY_PRIZE'" (click)="showSecoDetailDialog()">
+              *ngIf="selectedApproximationTo === 'SECONDARY_PRIZE'" (click)="showSecoDetailDialog(element)">
                 {{'LOTTERY.DETAILS.PRIZE_PROGRAM.SHOW_SECONDARY_PRICES' | translate}}
               </button>
 

@@ -18,11 +18,28 @@ type Template {
   deactivateDrawtime: String
 }
 
+type DateCalendar {
+  "Date when is opened the draw"
+  openingDatetime: BigInt
+  "Date when is closed the draw"
+  closingDatetime: BigInt
+  "Date when is played the draw"
+  drawingDatetime: BigInt
+  "Date when is deactived the draw"
+  deactivationDatetime: BigInt
+  "Date calendar id"
+  id: String
+  "Draw state (open, closed, deactivated)"
+  drawState: String
+}
+
 type LotteryGameDrawCalendar {
   "Sheet config ID"
   _id: ID!
   "Template"
   template: Template
+  "Date calendar"
+  dateCalendar: [DateCalendar]
   "Lottery id"
   lotteryId: String
   "game id"
@@ -83,8 +100,26 @@ input TemplateInput {
   deactivateDrawtime: String
 }
 
+input DateCalendarInput {
+  "Date when is opened the draw"
+  openingDatetime: BigInt
+  "Date when is closed the draw"
+  closingDatetime: BigInt
+  "Date when is played the draw"
+  drawingDatetime: BigInt
+  "Date when is deactived the draw"
+  deactivationDatetime: BigInt
+  "date calendar id"
+  id: String
+  "Draw state (open, closed, deactivated)"
+  drawState: String
+}
+
 input LotteryGameDrawCalendarInput {
+  "Template used to create the date calendar"
   template: TemplateInput
+  "Date calendar"
+  dateCalendar: [DateCalendarInput]
   "Lottery Id"
   lotteryId: String
   "game id"

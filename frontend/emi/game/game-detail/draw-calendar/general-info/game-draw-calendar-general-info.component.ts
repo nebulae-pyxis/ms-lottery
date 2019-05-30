@@ -70,13 +70,13 @@ export class GameDrawCalendarGeneralInfoComponent implements OnInit, OnDestroy {
   lotteryId;
   // Stream of filtered client by auto-complete text
   queriedLotteriesByAutocomplete$: Observable<any[]>;
-  lotteryName = 'test';
   timeoutMessage = null;
   heightContent;
   selectedType;
   ticketPrice;
   showSaveButton = true;
   showDuplicateButton = false;
+  templateFormValid = false;
 
   @Input('game') game: any;
   @Input('selectedDrawCalendar') selectedDrawCalendar: any;
@@ -102,6 +102,7 @@ export class GameDrawCalendarGeneralInfoComponent implements OnInit, OnDestroy {
     });
     this.subuscribeToSelectedDrawCalendarChange();
     this.subscribeGameDrawCalendarUpdated();
+    this.subscribeToDrawCalendarTemplateFormChanged();
   }
 
   numberOnly(event): boolean {
@@ -138,6 +139,13 @@ export class GameDrawCalendarGeneralInfoComponent implements OnInit, OnDestroy {
       this.selectedDrawCalendar = drawCalendar;
     });
   }
+
+  subscribeToDrawCalendarTemplateFormChanged() {
+    this.drawCalendarService.templateFormValid$.subscribe(valid => {
+      console.log('valido: ', valid);
+      this.templateFormValid = valid;
+    });
+  }
   subscribeGameDrawCalendarUpdated() {
     this.drawCalendarService.subscribeLotteryGameDrawCalendarUpdatedSubscription$()
       .pipe(
@@ -156,10 +164,8 @@ export class GameDrawCalendarGeneralInfoComponent implements OnInit, OnDestroy {
         tap(ok => this.showWaitOperationMessage()),
         mergeMap(() => {
           const drawCalendar = {
-            validFromDraw: parseInt(this.gameGeneralInfoForm.getRawValue().validFromDraw),
-            validUntilDraw: parseInt(this.gameGeneralInfoForm.getRawValue().validUntilDraw),
-            ticketsPerSheet: parseInt(this.gameGeneralInfoForm.getRawValue().ticketsPerSheet),
-            ticketPrice: parseInt(this.ticketPrice),
+            template: this.drawCalendarService.template,
+            dateCalendar: this.drawCalendarService.dateList,
             gameId: this.game._id,
             lotteryId: this.game.generalInfo.lotteryId
           };
@@ -180,10 +186,8 @@ export class GameDrawCalendarGeneralInfoComponent implements OnInit, OnDestroy {
         tap(ok => this.showWaitOperationMessage()),
         mergeMap(() => {
           const drawCalendar = {
-            validFromDraw: parseInt(this.gameGeneralInfoForm.getRawValue().validFromDraw),
-            validUntilDraw: parseInt(this.gameGeneralInfoForm.getRawValue().validUntilDraw),
-            ticketsPerSheet: parseInt(this.gameGeneralInfoForm.getRawValue().ticketsPerSheet),
-            ticketPrice: parseInt(this.ticketPrice),
+            template: this.drawCalendarService.template,
+            dateCalendar: this.drawCalendarService.dateList,
             gameId: this.game._id,
             lotteryId: this.game.generalInfo.lotteryId
           };
@@ -202,13 +206,9 @@ export class GameDrawCalendarGeneralInfoComponent implements OnInit, OnDestroy {
   }
 
   duplicateSelected() {
+    this.drawCalendarService.dateList = [];
     const currentDrawCalendar = this.drawCalendarService.selectedDrawCalendarChanged$.getValue();
-    this.drawCalendarService.selectedDrawCalendarChanged$.next({
-      validFromDraw: currentDrawCalendar.validFromDraw,
-      validUntilDraw: currentDrawCalendar.validUntilDraw,
-      ticketsPerSheet: currentDrawCalendar.ticketsPerSheet,
-      ticketPrice: currentDrawCalendar.ticketPrice
-    });
+    this.drawCalendarService.selectedDrawCalendarChanged$.next({template: currentDrawCalendar.template});
   }
 
   showWaitOperationMessage() {

@@ -140,7 +140,26 @@ export const locale = {
           ORDER: 'Orden',
           SECONDARY_PRIZE: 'Premio secundario',
           DIALOG_SECONDARY_PRICES_TITTLE: 'Secos afectados',
-         }
+          DIALOG_SECO_EMPTY_LIST: 'Todos los secos de este juego van a ser tenidos en cuenta para esta aproximación hasta que no se selecciona uno o más secos (Utilice el autocompletar de arriba para agregar los secos)'
+        },
+        DRAW_CALENDAR: {
+          TEMPLATE_CALENDAR: 'Plantilla de calendarios',
+          OPEN_DRAW_DAYS_BEFORE: 'Días de apertura antes del sorteo',
+          OPEN_DRAW_TIME: 'Hora de apertura del sorteo',
+          CLOSE_DRAW_MINUTES_BEFORE: 'Minutos antes del cierre del sorteo',
+          DEACTIVATE_DRAW_MONTH_AFTER: 'Meses para la desactivación del sorteo',
+          DEACTIVATE_DRAW_TIME: 'Hora de desactivación del sorteo',
+          DRAWING_DATETIME: 'fecha del sorteo',
+          DRAWING_STATE: 'Estado',
+          OPENING_DATE: 'Fecha de apertura',
+          CLOSING_DATETIME: 'Fecha de cierre',
+          DEACTIVATION_DATETIME: 'Fecha de desactivación',
+          OPEN: 'Abierto',
+          CLOSED: 'Cerrado',
+          DEACTIVATED: 'Desactivado',
+          DATE_LIST: 'Fecha de sorteos'
+
+        }
       },
       LOTTERY_FIELD_REQUIRED: 'Este campo es requerido',
       ACTIVE: 'Activo',

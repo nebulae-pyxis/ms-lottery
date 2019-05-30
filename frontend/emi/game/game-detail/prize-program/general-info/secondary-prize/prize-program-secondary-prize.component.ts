@@ -182,14 +182,19 @@ export class PrizeProgramSecondaryPrizeComponent implements OnInit, OnDestroy {
       mergeMap(() => {
         return from(this.prizeProgramService.approximations).pipe(
           map(approximation => {
+            console.log('Lista inicial: ', approximation.approximationsTolds);
             if (approximation.approximationsTolds) {
               approximation.approximationsTolds = approximation.approximationsTolds
-                .filter(approximationTold => approximationTold !== secondaryPrize.id);
+                .filter(approximationTold => {
+                  console.log('Id a eliminar: ' + secondaryPrize.id + ' id evaluado: ', approximationTold);
+                  return approximationTold !== secondaryPrize.id;
+                });
             }
             return approximation;
           }),
           toArray(),
           tap(result => {
+            console.log('lista final: ', result);
             this.prizeProgramService.approximations = result;
           })
         );

@@ -16,13 +16,16 @@
   </button>
 </form>
 
-<mat-list style="margin-bottom: 20px">
+<mat-list *ngIf="secoList" style="margin-bottom: 20px">
   <mat-list-item *ngFor="let seco of secoList">
     <span>{{getNameById(seco)}}</span>
     <mat-icon *ngIf="data.showManageItems" (click)="removeSeco(seco)" style="margin: auto; margin-right: 0px; cursor: pointer;">delete</mat-icon>
     <mat-divider></mat-divider>
   </mat-list-item>
 </mat-list>
+<h3 *ngIf="!secoList || (secoList.length < 1)">
+    {{'LOTTERY.DETAILS.PRIZE_PROGRAM.DIALOG_SECO_EMPTY_LIST' | translate}}
+</h3>
 <mat-dialog-actions>
   <button mat-raised-button (click)="pushButton(true)">Ok</button>
   <button mat-raised-button mat-dialog-close color="warn"

@@ -104,16 +104,14 @@ class LotteryGameDrawCalendarDA {
 */
   static updateLotteryGameDrawCalendar$(id, lotteryGameDrawCalendar) {
     const collection = mongoDB.db.collection(CollectionName);
-
+    console.log('element to update: ',lotteryGameDrawCalendar);
     return defer(() =>
       collection.findOneAndUpdate(
         { _id: id },
         {
           $set: {
-            validFromDraw: lotteryGameDrawCalendar.validFromDraw,
-            validUntilDraw: lotteryGameDrawCalendar.validUntilDraw,
-            ticketsPerSheet: lotteryGameDrawCalendar.ticketsPerSheet,
-            ticketPrice: lotteryGameDrawCalendar.ticketPrice,
+            template: lotteryGameDrawCalendar.template,
+            dateCalendar: lotteryGameDrawCalendar.dateCalendar,
             editionTimestamp: lotteryGameDrawCalendar.editionTimestamp,
             editionUserId: lotteryGameDrawCalendar.editionUserId,
             editionUsername: lotteryGameDrawCalendar.editionUsername,

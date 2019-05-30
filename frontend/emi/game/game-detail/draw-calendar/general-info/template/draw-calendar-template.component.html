@@ -1,0 +1,59 @@
+<form name="templateForm" [formGroup]="templateForm" class="w-100-p" fxLayout="column" class="mat-white-bg mr-24 mb-24">
+
+  <mat-form-field fxFlex.gt-xs="100" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
+    <input autocomplete="off" matInput name="openDrawDaysBefore" formControlName="openDrawDaysBefore" maxlength="3"
+      (keypress)="numberOnly($event)"
+      placeholder="{{'LOTTERY.DETAILS.DRAW_CALENDAR.OPEN_DRAW_DAYS_BEFORE' | translate}}"
+      (ngModelChange)="openDrawDaysBeforeChanged($event)">
+      <mat-error *ngIf="templateForm.hasError('required', ['openDrawDaysBefore'])">
+        {{'LOTTERY.LOTTERY_FIELD_REQUIRED' | translate}}
+      </mat-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput [matDatepicker]="openDrawTime"
+      placeholder="{{'LOTTERY.DETAILS.DRAW_CALENDAR.OPEN_DRAW_TIME' | translate}}"
+      (ngModelChange)="openDrawTimeChanged($event)"
+      formControlName="openDrawTime" />
+    <mat-datepicker-toggle matSuffix [for]="openDrawTime"></mat-datepicker-toggle>
+    <mat-datepicker [twelveHour]="true" type="time" #openDrawTime></mat-datepicker>
+    <mat-error *ngIf="templateForm.hasError('required', ['openDrawTime'])">
+      {{'LOTTERY.LOTTERY_FIELD_REQUIRED' | translate}}
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field fxFlex.gt-xs="100" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
+    <input autocomplete="off" matInput name="closeDrawMinutesBefore"
+      (ngModelChange)="closeDrawMinutesBeforeChanged($event)"
+      formControlName="closeDrawMinutesBefore" maxlength="3"
+      (keypress)="numberOnly($event)"
+      placeholder="{{'LOTTERY.DETAILS.DRAW_CALENDAR.CLOSE_DRAW_MINUTES_BEFORE' | translate}}">
+      <mat-error *ngIf="templateForm.hasError('required', ['closeDrawMinutesBefore'])">
+        {{'LOTTERY.LOTTERY_FIELD_REQUIRED' | translate}}
+      </mat-error>
+  </mat-form-field>
+
+  <mat-form-field fxFlex.gt-xs="100" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
+    <input autocomplete="off" matInput name="deactivateDrawMonthsAfter"
+    (ngModelChange)="deactivateDrawMonthsAfterChanged($event)"
+     formControlName="deactivateDrawMonthsAfter" maxlength="3"
+      (keypress)="numberOnly($event)"
+      placeholder="{{'LOTTERY.DETAILS.DRAW_CALENDAR.DEACTIVATE_DRAW_MONTH_AFTER' | translate}}">
+      <mat-error *ngIf="templateForm.hasError('required', ['deactivateDrawMonthsAfter'])">
+        {{'LOTTERY.LOTTERY_FIELD_REQUIRED' | translate}}
+      </mat-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput [matDatepicker]="deactivateDrawtime"
+    (ngModelChange)="deactivateDrawtimeChanged($event)"
+      placeholder="{{'LOTTERY.DETAILS.DRAW_CALENDAR.DEACTIVATE_DRAW_TIME' | translate}}"
+      formControlName="deactivateDrawtime" />
+    <mat-datepicker-toggle matSuffix [for]="deactivateDrawtime"></mat-datepicker-toggle>
+    <mat-datepicker [twelveHour]="true" type="time" #deactivateDrawtime></mat-datepicker>
+    <mat-error *ngIf="templateForm.hasError('required', ['deactivateDrawtime'])">
+      {{'LOTTERY.LOTTERY_FIELD_REQUIRED' | translate}}
+    </mat-error>
+  </mat-form-field>
+
+</form>

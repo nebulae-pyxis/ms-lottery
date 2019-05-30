@@ -37,6 +37,9 @@ import { GameDrawCalendarMetadataComponent } from './game-detail/draw-calendar/m
 import { GameDrawCalendarGeneralInfoComponent } from './game-detail/draw-calendar/general-info/game-draw-calendar-general-info.component';
 import { GameDrawCalendarApprovalInfoComponent } from './game-detail/draw-calendar/approval-info/game-draw-calendar-approval-info.component';
 import { DrawCalendarService } from './game-detail/draw-calendar/draw-calendar.service';
+import { DrawCalendarTemplateComponent } from './game-detail/draw-calendar/general-info/template/draw-calendar-template.component';
+import { DrawCalendarDateListComponent } from './game-detail/draw-calendar/general-info/date-list/draw-calendar-date-list.component';
+import { DateListDialogComponent } from './game-detail/draw-calendar/general-info/date-list/date-list-dialog/date-list-dialog.component';
 
 
 
@@ -71,6 +74,7 @@ const routes: Routes = [
     NoteDialogComponent,
     SecondaryPrizeDialogComponent,
     ApproximationDialogComponent,
+    DateListDialogComponent,
     SecoDetailDialogComponent,
     GameListComponent,
     GameDetailComponent,
@@ -90,9 +94,16 @@ const routes: Routes = [
     PrizeProgramGrandPrizeComponent,
     PrizeProgramTwoOutOfThreeComponent,
     PrizeProgramSecondaryPrizeComponent,
-    PrizeProgramApproximationComponent
+    PrizeProgramApproximationComponent,
+    DrawCalendarTemplateComponent,
+    DrawCalendarDateListComponent
   ],
-  entryComponents: [DialogComponent, NoteDialogComponent, SecondaryPrizeDialogComponent, SecoDetailDialogComponent, ApproximationDialogComponent],
+  entryComponents: [DialogComponent,
+    NoteDialogComponent,
+    SecondaryPrizeDialogComponent,
+    SecoDetailDialogComponent,
+    ApproximationDialogComponent,
+    DateListDialogComponent],
   providers: [ GameService, GameListService, GameDetailService, PrizeProgramService, DrawCalendarService,  DatePipe]
 })
 

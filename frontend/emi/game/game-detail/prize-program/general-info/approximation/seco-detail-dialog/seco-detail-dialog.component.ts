@@ -22,7 +22,7 @@ export class SecoDetailDialogComponent implements OnInit {
   secoAutoCompleteForm: FormGroup;
   selectedSeco;
   queriedSecosByAutocomplete$: Observable<any[]>;
-  secoList;
+  secoList = [];
 
   constructor(private dialogRef: MatDialogRef<SecoDetailDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: DialogData) {
 
@@ -56,7 +56,7 @@ export class SecoDetailDialogComponent implements OnInit {
     return from(this.data.availableSecos)
       .pipe(
         filter(seco => this.secoList ? !this.secoList.some(s => s === seco.id) : true),
-        filter(seco => seco.name.includes(filterText)),
+        filter(seco => seco.name.toUpperCase().includes(filterText.toUpperCase())),
         toArray()
       );
   }

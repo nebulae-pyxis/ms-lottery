@@ -4,25 +4,36 @@ export const LotteryGameDrawCalendarList = gql`
   query LotteryGameDrawCalendarList($filterInput: LotteryGameDrawCalendarFilterInput!) {
     LotteryGameDrawCalendarList(filterInput: $filterInput) {
       _id
-    	validFromDraw
-    validUntilDraw
-    ticketsPerSheet
-    ticketPrice
-    creationTimestamp
-    creationUsername
-    creationUserId
-    editionTimestamp
-    editionUserId
-    editionUsername
-    approved
-    revoked
-    revokedNotes
-    revokedTimestamp
-    revokedUsername
-    version
-    approvedNotes
-    approvedUsername
-    approvedTimestamp
+    	template {
+        openDrawDaysBefore
+        openDrawTime
+        closeDrawMinutesBefore
+        deactivateDrawMonthsAfter
+        deactivateDrawtime
+      }
+      dateCalendar {
+        openingDatetime
+        closingDatetime
+        drawingDatetime
+        deactivationDatetime
+        id
+        drawState
+      }
+      creationTimestamp
+      creationUsername
+      creationUserId
+      editionTimestamp
+      editionUserId
+      editionUsername
+      approved
+      revoked
+      revokedNotes
+      revokedTimestamp
+      revokedUsername
+      version
+      approvedNotes
+      approvedUsername
+      approvedTimestamp
     }
   }
 `;
@@ -31,10 +42,21 @@ export const LotteryGameDrawCalendar = gql`
   query LotteryGameDrawCalendar($id: String, $filterInput: LotteryGameDrawCalendarFilterInput) {
     LotteryGameDrawCalendar(id: $id, filterInput: $filterInput) {
       _id
-    	validFromDraw
-    validUntilDraw
-    ticketsPerSheet
-    ticketPrice
+      template {
+        openDrawDaysBefore
+        openDrawTime
+        closeDrawMinutesBefore
+        deactivateDrawMonthsAfter
+        deactivateDrawtime
+      }
+      dateCalendar {
+        openingDatetime
+        closingDatetime
+        drawingDatetime
+        deactivationDatetime
+        id
+        drawState
+      }
     creationTimestamp
     creationUsername
     creationUserId
@@ -96,10 +118,21 @@ export const LotteryGameDrawCalendarUpdatedSubscription = gql`
   subscription{
     LotteryGameDrawCalendarUpdatedSubscription{
       _id
-    	validFromDraw
-    validUntilDraw
-    ticketsPerSheet
-    ticketPrice
+    	template {
+        openDrawDaysBefore
+        openDrawTime
+        closeDrawMinutesBefore
+        deactivateDrawMonthsAfter
+        deactivateDrawtime
+      }
+      dateCalendar {
+        openingDatetime
+        closingDatetime
+        drawingDatetime
+        deactivationDatetime
+        id
+        drawState
+      }
     creationTimestamp
     creationUsername
     creationUserId

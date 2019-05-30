@@ -25,8 +25,9 @@ export class DrawCalendarService {
   drawCalendar = null;
   notifyDrawCalendarUpdated$ = new Subject();
   selectedDrawCalendarChanged$ = new BehaviorSubject(undefined);
-  grandPrize;
-  grandPrizeFormValid$ = new BehaviorSubject(false);
+  template;
+  templateFormValid$ = new BehaviorSubject(false);
+  dateList: any[];
 
   constructor(private gateway: GatewayService, private location: Location,
     private route: ActivatedRoute) {
