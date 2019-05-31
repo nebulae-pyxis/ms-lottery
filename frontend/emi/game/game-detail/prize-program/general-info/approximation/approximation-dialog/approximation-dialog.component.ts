@@ -4,7 +4,6 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 
 export interface DialogData {
   dialogTitle: string;
-  approximationSelected: any;
 }
 
 @Component({
@@ -19,23 +18,21 @@ export class ApproximationDialogComponent implements OnInit {
   approximationForm: FormGroup;
   totalPrize;
   paymentPrize;
-  withSerie = true;
+  selectedNumberMaskType = 'SAME';
+  selectedSerialMaskType = 'ANY';
+  selectedApproximationTo = 'GRAND_PRIZE';
 
   constructor(private dialogRef: MatDialogRef<ApproximationDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: DialogData) {
 
   }
 
   ngOnInit() {
-    const seco = this.data.approximationSelected;
     this.approximationForm = new FormGroup({
-      name: new FormControl(seco ? seco.name : '', [Validators.required]),
-      quantity: new FormControl(seco ? seco.quantity : '', [Validators.required]),
-      totalPrize: new FormControl(seco ? seco.total : '', [Validators.required]),
-      paymentPrize: new FormControl(seco ? seco.payment : '', [Validators.required]),
+      name: new FormControl('', [Validators.required]),
+      numberMaskRegex: new FormControl('', []),
+      totalPrize: new FormControl('', [Validators.required]),
+      paymentPrize: new FormControl('', [Validators.required]),
     });
-    this.totalPrize = seco.total;
-    this.paymentPrize = seco.payment;
-    this.withSerie = seco.withSerie;
   }
 
   numberOnly(event): boolean {
@@ -46,19 +43,16 @@ export class ApproximationDialogComponent implements OnInit {
     return true;
   }
 
-  changeWithSerie() {
-    this.withSerie = ((this.ref as any).checked);
-  }
-
-
   pushButton(okButton: Boolean) {
     this.dialogRef.close({
       okButton,
       name: this.approximationForm.controls['name'].value,
-      quantity: parseInt(this.approximationForm.controls['quantity'].value),
+      numberMaskRegex: this.approximationForm.controls['numberMaskRegex'].value,
       total: parseInt(this.approximationForm.controls['totalPrize'].value),
       payment: parseInt(this.approximationForm.controls['paymentPrize'].value),
-      withSerie: this.withSerie
+      approximationTo: this.selectedApproximationTo,
+      numberMaskType: this.selectedNumberMaskType,
+      seriesMaskType: this.selectedSerialMaskType
     });
   }
 

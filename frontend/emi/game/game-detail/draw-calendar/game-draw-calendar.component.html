@@ -1,0 +1,102 @@
+<div class="page-layout simple right-sidenav single-scroll" fusePerfectScrollbar>
+
+  <mat-sidenav-container>
+
+    <!-- CENTER -->
+    <div class="center" fusePerfectScrollbar>
+
+      <!-- HEADER -->
+      <div class="p-12" style="height: 30px; margin-top: 30px; width: 100%" fxLayout="row" fxLayoutAlign="start center">
+
+        <button mat-button class="mat-icon-button sidenav-toggle" fuseMatSidenavToggler="simple-right-sidenav-2"
+          fxHide.gt-md>
+          <mat-icon>menu</mat-icon>
+        </button>
+        <h3 *ngIf="selectedDrawCalendar" matSubheader>
+          {{'LOTTERY.DETAILS.CONFIG_SHEET.SHEET_CONFIG_VERSION' | translate}}: {{selectedDrawCalendar.version}} </h3>
+        <button mat-raised-button style="margin-left:auto; margin-right:0;" (click)="clearSelected()" *ngIf="!selectedDrawCalendar || selectedDrawCalendar.approved === 'APPROVED'">
+            {{'LOTTERY.DETAILS.CONFIG_SHEET.CREATE_VERSION' | translate}}
+        </button>
+      </div>
+      <!-- / HEADER -->
+
+      <!-- CONTENT -->
+      <div class="content p-12 mat-white-bg" [style.height.px]="heightContent">
+        <mat-accordion>
+          <mat-expansion-panel expanded="true">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                {{'LOTTERY.DETAILS.GENERAL_INFO' | translate}}
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <game-draw-calendar-general-info [game]="game" [selectedDrawCalendar]="selectedDrawCalendar">
+            </game-draw-calendar-general-info>
+
+          </mat-expansion-panel>
+          <mat-expansion-panel *ngIf="selectedDrawCalendar">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                {{'LOTTERY.DETAILS.CONFIG_SHEET.APPROVAL_INFO' | translate}}
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <game-draw-calendar-approval-info [selectedDrawCalendar]="selectedDrawCalendar"></game-draw-calendar-approval-info>
+
+          </mat-expansion-panel>
+
+          <mat-expansion-panel *ngIf="selectedDrawCalendar && selectedDrawCalendar.creationTimestamp">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                {{'LOTTERY.DETAILS.CONFIG_SHEET.METADATA' | translate}}
+              </mat-panel-title>
+            </mat-expansion-panel-header>
+
+            <game-draw-calendar-metadata [selectedDrawCalendar]="selectedDrawCalendar"></game-draw-calendar-metadata>
+
+          </mat-expansion-panel>
+        </mat-accordion>
+      </div>
+      <!-- / CONTENT -->
+
+    </div>
+    <!-- / CENTER -->
+
+    <!-- SIDENAV -->
+    <mat-sidenav class="sidenav  p-24" align="start" opened="true" mode="side"
+      fuseMatSidenavHelper="simple-right-sidenav-2" mat-is-locked-open="gt-md">
+
+      <div class="demo-sidenav">
+        <mat-table id="entity-table" class="item-table" #table [dataSource]="dataSource" fusePerfectScrollbar>
+
+          <!-- Name Column -->
+          <ng-container cdkColumnDef="version">
+            <mat-header-cell *cdkHeaderCellDef fxFlex="80">
+              <h3 matSubheader>{{'LOTTERY.DETAILS.CONFIG_SHEET.SHEET_CONFIG_VERSIONS' | translate}}</h3>
+            </mat-header-cell>
+            <mat-cell *cdkCellDef="let drawCalendar" fxFlex="80">
+              <span>{{drawCalendar.version}} : {{(drawCalendar.revoked ? 'LOTTERY.DETAILS.CONFIG_SHEET.REVOKED'
+                : drawCalendar.approved === null ? 'LOTTERY.DETAILS.CONFIG_SHEET.PENDING'
+                        : 'LOTTERY.DETAILS.CONFIG_SHEET.'+drawCalendar.approved) | translate}}</span>
+            </mat-cell>
+          </ng-container>
+
+
+          <mat-header-row *cdkHeaderRowDef="displayedColumns"></mat-header-row>
+
+          <mat-row *cdkRowDef="let row; columns: displayedColumns" class="selectedElement"
+            (click)="selectDrawCalendarRow(row)" [ngClass]="{
+                  highlight:
+                  selectedDrawCalendar &&
+                  selectedDrawCalendar._id == row._id
+                }" matRipple>
+          </mat-row>
+        </mat-table>
+      </div>
+
+    </mat-sidenav>
+    <!-- / SIDENAV -->
+
+  </mat-sidenav-container>
+
+</div>

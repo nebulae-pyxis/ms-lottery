@@ -1,0 +1,55 @@
+<h1 mat-dialog-title>{{data.dialogTitle | translate}}</h1>
+<form name="notesForm" [formGroup]="dateListForm" class="w-100-p" fxLayout="column"
+  class="mat-white-bg mr-24 mb-24">
+
+  <mat-form-field>
+    <input matInput [matDatepicker]="drawingDatetime"
+      placeholder="{{'LOTTERY.DETAILS.DRAW_CALENDAR.DRAWING_DATETIME' | translate}}"
+      (ngModelChange)="drawingDatetimeChanged($event)"
+      formControlName="drawingDatetime" />
+    <mat-datepicker-toggle matSuffix [for]="drawingDatetime"></mat-datepicker-toggle>
+    <mat-datepicker [twelveHour]="false" type="datetime" #drawingDatetime></mat-datepicker>
+    <mat-error *ngIf="dateListForm.hasError('required', ['drawingDatetime'])">
+      {{'LOTTERY.LOTTERY_FIELD_REQUIRED' | translate}}
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput [matDatepicker]="openingDatetime"
+      placeholder="{{'LOTTERY.DETAILS.DRAW_CALENDAR.OPENING_DATE' | translate}}"
+      formControlName="openingDatetime" />
+    <mat-datepicker-toggle matSuffix [for]="openingDatetime"></mat-datepicker-toggle>
+    <mat-datepicker [twelveHour]="false" type="datetime" #openingDatetime></mat-datepicker>
+    <mat-error *ngIf="dateListForm.hasError('required', ['openingDatetime'])">
+      {{'LOTTERY.LOTTERY_FIELD_REQUIRED' | translate}}
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput [matDatepicker]="closingDatetime"
+      placeholder="{{'LOTTERY.DETAILS.DRAW_CALENDAR.CLOSING_DATETIME' | translate}}"
+      formControlName="closingDatetime" />
+    <mat-datepicker-toggle matSuffix [for]="closingDatetime"></mat-datepicker-toggle>
+    <mat-datepicker [twelveHour]="false" type="datetime" #closingDatetime></mat-datepicker>
+    <mat-error *ngIf="dateListForm.hasError('required', ['closingDatetime'])">
+      {{'LOTTERY.LOTTERY_FIELD_REQUIRED' | translate}}
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput [matDatepicker]="deactivationDatetime"
+      placeholder="{{'LOTTERY.DETAILS.DRAW_CALENDAR.DEACTIVATION_DATETIME' | translate}}"
+      formControlName="deactivationDatetime" />
+    <mat-datepicker-toggle matSuffix [for]="deactivationDatetime"></mat-datepicker-toggle>
+    <mat-datepicker [twelveHour]="false" type="datetime" #deactivationDatetime></mat-datepicker>
+    <mat-error *ngIf="dateListForm.hasError('required', ['deactivationDatetime'])">
+      {{'LOTTERY.LOTTERY_FIELD_REQUIRED' | translate}}
+    </mat-error>
+  </mat-form-field>
+
+</form>
+<mat-dialog-actions>
+  <button mat-raised-button [disabled]="dateListForm.invalid" (click)="pushButton(true)">Ok</button>
+  <button mat-raised-button mat-dialog-close color="warn"
+    (click)="pushButton(false)">{{'LOTTERY.CANCEL' | translate}}</button>
+</mat-dialog-actions>

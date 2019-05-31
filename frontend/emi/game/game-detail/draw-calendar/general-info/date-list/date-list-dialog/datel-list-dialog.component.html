@@ -1,0 +1,45 @@
+<h1 mat-dialog-title>{{data.dialogTitle | translate}}</h1>
+<form name="notesForm" [formGroup]="dateListForm" class="w-100-p" fxLayout="column"
+  class="mat-white-bg mr-24 mb-24">
+  <mat-form-field fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
+    <input matInput name="name" formControlName="name" maxlength="100"
+      placeholder="{{'LOTTERY.DETAILS.PRIZE_PROGRAM.NAME' | translate}}">
+    <mat-error *ngIf="dateListForm.hasError('required', ['name'])">
+      {{'LOTTERY.LOTTERY_FIELD_REQUIRED' | translate}}
+    </mat-error>
+  </mat-form-field>
+
+  <mat-slide-toggle #serieSlide (change)="changeWithSerie()" [checked]="withSerie">{{'LOTTERY.DETAILS.PRIZE_PROGRAM.WITH_SERIE' | translate}}</mat-slide-toggle>
+
+  <mat-form-field fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
+    <input matInput name="quantity" formControlName="quantity" autocomplete="off" maxlength="3"
+      placeholder="{{'LOTTERY.DETAILS.PRIZE_PROGRAM.QUANTITY' | translate}}"
+      (keypress)="numberOnly($event)">
+    <mat-error *ngIf="dateListForm.hasError('required', ['quantity'])">
+      {{'LOTTERY.LOTTERY_FIELD_REQUIRED' | translate}}
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
+    <input matInput name="totalPrize" formControlName="totalPrize" maxlength="15"
+      placeholder="{{'LOTTERY.DETAILS.PRIZE_PROGRAM.TOTAL_PRIZE' | translate}}" autocomplete="off" currencyMask
+      [options]="{ prefix: '$ ', thousands: '.', precision: '0', align: 'left' }" [(ngModel)]="totalPrize">
+    <mat-error *ngIf="dateListForm.hasError('required', ['totalPrize'])">
+      {{'LOTTERY.LOTTERY_FIELD_REQUIRED' | translate}}
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
+    <input matInput name="paymentPrize" formControlName="paymentPrize" maxlength="15"
+      placeholder="{{'LOTTERY.DETAILS.PRIZE_PROGRAM.TOTAL_PAYMENT' | translate}}" autocomplete="off" currencyMask
+      [options]="{ prefix: '$ ', thousands: '.', precision: '0', align: 'left' }" [(ngModel)]="paymentPrize">
+    <mat-error *ngIf="dateListForm.hasError('required', ['paymentPrize'])">
+      {{'LOTTERY.LOTTERY_FIELD_REQUIRED' | translate}}
+    </mat-error>
+  </mat-form-field>
+</form>
+<mat-dialog-actions>
+  <button mat-raised-button [disabled]="dateListForm.invalid" (click)="pushButton(true)">Ok</button>
+  <button mat-raised-button mat-dialog-close color="warn"
+    (click)="pushButton(false)">{{'LOTTERY.CANCEL' | translate}}</button>
+</mat-dialog-actions>

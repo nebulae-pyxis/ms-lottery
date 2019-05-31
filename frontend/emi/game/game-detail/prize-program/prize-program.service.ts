@@ -29,6 +29,7 @@ export class PrizeProgramService {
   grandPrizeFormValid$ = new BehaviorSubject(false);
   twoOutOfThree;
   secondaryPrices = [];
+  approximations = [];
 
   constructor(private gateway: GatewayService, private location: Location,
     private route: ActivatedRoute) {

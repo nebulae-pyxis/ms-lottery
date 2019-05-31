@@ -3,7 +3,8 @@
 const { LotteryCQRS } = require("../../domain/lottery");
 const { LotteryGameCQRS } = require("../../domain/lotterygame");
 const { LotteryGameSheetConfigCQRS } = require("../../domain/lotteryGameSheetConfig");
-const { LotteryGamePrizeProgramCQRS } = require("../../domain/lotteryGamePrizeProgram")
+const { LotteryGamePrizeProgramCQRS } = require("../../domain/lotteryGamePrizeProgram");
+const { LotteryGameDrawCalendarCQRS } = require("../../domain/lotteryGameDrawCalendar");
 const broker = require("../../tools/broker/BrokerFactory")();
 const { of, from } = require("rxjs");
 const jsonwebtoken = require("jsonwebtoken");
@@ -248,6 +249,31 @@ class GraphQlService {
         aggregateType: "LotteryGamePrizeProgram",
         messageType: "emigateway.graphql.mutation.RevokeLotteryGamePrizeProgram"
       },
+      // DRAW CALENDAR
+      {
+        aggregateType: "LotteryGameDrawCalendar",
+        messageType: "emigateway.graphql.query.LotteryGameDrawCalendar"
+      },
+      {
+        aggregateType: "LotteryGameDrawCalendar",
+        messageType: "emigateway.graphql.query.LotteryGameDrawCalendarList"
+      },
+      {
+        aggregateType: "LotteryGameDrawCalendar",
+        messageType: "emigateway.graphql.mutation.CreateLotteryGameDrawCalendar"
+      },
+      {
+        aggregateType: "LotteryGameDrawCalendar",
+        messageType: "emigateway.graphql.mutation.UpdateLotteryGameDrawCalendar"
+      },
+      {
+        aggregateType: "LotteryGameDrawCalendar",
+        messageType: "emigateway.graphql.mutation.ApproveLotteryGameDrawCalendar"
+      },
+      {
+        aggregateType: "LotteryGameDrawCalendar",
+        messageType: "emigateway.graphql.mutation.RevokeLotteryGameDrawCalendar"
+      },
     ];
   }
 
@@ -356,7 +382,32 @@ class GraphQlService {
       "emigateway.graphql.mutation.RevokeLotteryGamePrizeProgram": {
         fn: LotteryGamePrizeProgramCQRS.revokeLotteryGamePrizeProgram$,
         obj: LotteryGamePrizeProgramCQRS
-      }
+      },
+      // DRAW CALENDAR
+      "emigateway.graphql.query.LotteryGameDrawCalendar": {
+        fn: LotteryGameDrawCalendarCQRS.getLotteryGameDrawCalendar$,
+        obj: LotteryGameDrawCalendarCQRS
+      },
+      "emigateway.graphql.query.LotteryGameDrawCalendarList": {
+        fn: LotteryGameDrawCalendarCQRS.getLotteryGameDrawCalendarList$,
+        obj: LotteryGameDrawCalendarCQRS
+      },
+      "emigateway.graphql.mutation.CreateLotteryGameDrawCalendar": {
+        fn: LotteryGameDrawCalendarCQRS.createLotteryGameDrawCalendar$,
+        obj: LotteryGameDrawCalendarCQRS
+      },
+      "emigateway.graphql.mutation.UpdateLotteryGameDrawCalendar": {
+        fn: LotteryGameDrawCalendarCQRS.updateLotteryGameDrawCalendar$,
+        obj: LotteryGameDrawCalendarCQRS
+      },
+      "emigateway.graphql.mutation.ApproveLotteryGameDrawCalendar": {
+        fn: LotteryGameDrawCalendarCQRS.approveLotteryGameDrawCalendar$,
+        obj: LotteryGameDrawCalendarCQRS
+      },
+      "emigateway.graphql.mutation.RevokeLotteryGameDrawCalendar": {
+        fn: LotteryGameDrawCalendarCQRS.revokeLotteryGameDrawCalendar$,
+        obj: LotteryGameDrawCalendarCQRS
+      },
     };
   }
 }

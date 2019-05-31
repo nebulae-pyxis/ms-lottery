@@ -1,0 +1,106 @@
+<table mat-table [dataSource]="dataSource" multiTemplateDataRows class="mat-elevation-z8">
+
+
+  <ng-container cdkColumnDef="drawingDatetime">
+    <mat-header-cell *cdkHeaderCellDef fxFlex="80">
+      <h3 matSubheader>{{'LOTTERY.DETAILS.DRAW_CALENDAR.DRAWING_DATETIME' | translate}}</h3>
+    </mat-header-cell>
+    <mat-cell *cdkCellDef="let dateList" fxFlex="80">
+      <span style="margin-left: 20px">{{dateList.drawingDatetime | date: 'yyyy-MM-dd hh:mm a'}}</span>
+    </mat-cell>
+  </ng-container>
+
+  <ng-container cdkColumnDef="drawState">
+    <mat-header-cell *cdkHeaderCellDef fxFlex="80" fxHide.lt-sm>
+      <h3 matSubheader>{{'LOTTERY.DETAILS.DRAW_CALENDAR.DRAWING_STATE' | translate}}</h3>
+    </mat-header-cell>
+    <mat-cell *cdkCellDef="let dateList" fxHide.lt-sm fxFlex="80">
+      <span style="margin-left: 20px">{{'LOTTERY.DETAILS.DRAW_CALENDAR.'+dateList.drawState | translate}}</span>
+    </mat-cell>
+  </ng-container>
+
+  <ng-container cdkColumnDef="manage-buttons">
+    <mat-header-cell *cdkHeaderCellDef fxFlex="80">
+      <button style="margin-left: 10px" color="add-button-color" (click)="createDateList()" mat-mini-fab>
+        <mat-icon>note_add</mat-icon>
+      </button>
+    </mat-header-cell>
+    <mat-cell *cdkCellDef="let dateList" fxFlex="80">
+    </mat-cell>
+  </ng-container>
+
+  <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
+  <ng-container matColumnDef="expandedDetail">
+    <td mat-cell style="width: 100%" *matCellDef="let element" [attr.colspan]="displayedColumns.length">
+      <div class="example-element-detail" [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+        <div style="width: 100%" class="example-element-description">
+          <form name="dateListForm" [formGroup]="dateListForm" class="w-100-p" fxLayout="column"
+            class="mat-white-bg mr-24 mb-24">
+            <mat-form-field>
+              <input matInput [matDatepicker]="drawingDatetime"
+                placeholder="{{'LOTTERY.DETAILS.DRAW_CALENDAR.DRAWING_DATETIME' | translate}}"
+                (ngModelChange)="drawingDatetimeChanged($event)"
+                formControlName="drawingDatetime" />
+              <mat-datepicker-toggle matSuffix [for]="drawingDatetime"></mat-datepicker-toggle>
+              <mat-datepicker [twelveHour]="true" type="datetime" #drawingDatetime></mat-datepicker>
+              <mat-error *ngIf="dateListForm.hasError('required', ['drawingDatetime'])">
+                {{'LOTTERY.LOTTERY_FIELD_REQUIRED' | translate}}
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field>
+              <input matInput [matDatepicker]="openingDatetime"
+                placeholder="{{'LOTTERY.DETAILS.DRAW_CALENDAR.OPENING_DATE' | translate}}"
+                formControlName="openingDatetime" />
+              <mat-datepicker-toggle matSuffix [for]="openingDatetime"></mat-datepicker-toggle>
+              <mat-datepicker [twelveHour]="true" type="datetime" #openingDatetime></mat-datepicker>
+              <mat-error *ngIf="dateListForm.hasError('required', ['openingDatetime'])">
+                {{'LOTTERY.LOTTERY_FIELD_REQUIRED' | translate}}
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field>
+              <input matInput [matDatepicker]="closingDatetime"
+                placeholder="{{'LOTTERY.DETAILS.DRAW_CALENDAR.CLOSING_DATETIME' | translate}}"
+                formControlName="closingDatetime" />
+              <mat-datepicker-toggle matSuffix [for]="closingDatetime"></mat-datepicker-toggle>
+              <mat-datepicker [twelveHour]="true" type="datetime" #closingDatetime></mat-datepicker>
+              <mat-error *ngIf="dateListForm.hasError('required', ['closingDatetime'])">
+                {{'LOTTERY.LOTTERY_FIELD_REQUIRED' | translate}}
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field>
+              <input matInput [matDatepicker]="deactivationDatetime"
+                placeholder="{{'LOTTERY.DETAILS.DRAW_CALENDAR.DEACTIVATION_DATETIME' | translate}}"
+                formControlName="deactivationDatetime" />
+              <mat-datepicker-toggle matSuffix [for]="deactivationDatetime"></mat-datepicker-toggle>
+              <mat-datepicker [twelveHour]="true" type="datetime" #deactivationDatetime></mat-datepicker>
+              <mat-error *ngIf="dateListForm.hasError('required', ['deactivationDatetime'])">
+                {{'LOTTERY.LOTTERY_FIELD_REQUIRED' | translate}}
+              </mat-error>
+            </mat-form-field>
+
+            <div class="mt-16" *ngIf="showManageButtons">
+              <button mat-raised-button style="margin-right: 10px"
+              [disabled]="dateListForm.invalid"
+              (click)="editDateList(element)">
+                {{'LOTTERY.EDIT' | translate}}
+              </button>
+              <button mat-raised-button (click)="removeDateList(element)" style="margin-right: 10px" color="warn">
+                {{'LOTTERY.REMOVE_TITLE' | translate}}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let element; columns: displayedColumns;" class="example-element-row"
+    [class.example-expanded-row]="expandedElement === element"
+    (click)="showDetailTable(element)">
+  </tr>
+  <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+</table>

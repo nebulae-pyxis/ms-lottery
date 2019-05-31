@@ -1,0 +1,36 @@
+<mat-accordion>
+  <mat-expansion-panel expanded="true">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        {{'LOTTERY.DETAILS.DRAW_CALENDAR.TEMPLATE_CALENDAR' | translate}}
+      </mat-panel-title>
+      <mat-panel-description *ngIf="!templateFormValid" style="color: #f44336">
+        {{'LOTTERY.DETAILS.PRIZE_PROGRAM.VERIFY_FORM' | translate}}
+        <mat-icon style="margin-left: 5px; margin-top: -1px; color: #f44336">error_outline</mat-icon>
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <draw-calendar-template></draw-calendar-template>
+  </mat-expansion-panel>
+
+  <mat-expansion-panel >
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        {{'LOTTERY.DETAILS.DRAW_CALENDAR.DATE_LIST' | translate}}
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <draw-calendar-date-list></draw-calendar-date-list>
+  </mat-expansion-panel>
+
+</mat-accordion>
+
+<div class="mt-16" *ngIf="isGeneralInfoButtonsAllowed()">
+  <button mat-raised-button style="margin-right: 10px"
+    [disabled]="!templateFormValid"
+    (click)="createDrawCalendar()" *ngIf="showSaveButton">
+    {{'LOTTERY.UPDATE' | translate}}
+  </button>
+  <button mat-raised-button (click)="duplicateSelected()" style="margin-right: 10px" color="primary"
+    *ngIf="showDuplicateButton">
+    {{'LOTTERY.DETAILS.PRIZE_PROGRAM.DUPLICATE' | translate}}
+  </button>
+</div>

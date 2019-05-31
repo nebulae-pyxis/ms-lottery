@@ -20,7 +20,8 @@ export const locale = {
         TABS: {
           GENERAL_INFO: 'Información General',
           SHEET_CONFIG: 'Config de billete',
-          PRIZE_PROGRAM: 'Programa de premios'
+          PRIZE_PROGRAM: 'Programa de premios',
+          DRAW_CALENDAR: 'Calendario de sorteos'
         },
         GENERAL_INFO: 'Información General',
         PROGRAM: 'Programa',
@@ -125,8 +126,40 @@ export const locale = {
           SINGLE_TOTAL: 'Un acierto total premio',
           SINGLE_PAYMENT: 'Un acierto total a pagar',
           QUANTITY: 'Cantidad',
-          WITH_SERIE: 'Con serie'
-         }
+          WITH_SERIE: 'Con serie',
+          APPROXIMATION_TO: 'Aplicada en',
+          REGEX: 'Regex',
+          REVERSED: 'Num. Inverso',
+          ANY: 'Cualquier num.',
+          SAME: 'Num. igual',
+          UNORDERED: 'Num. desordenado',
+          NUMBER_MASK_TYPE: 'Tipo de mascara en número',
+          SERIE_MASK_TYPE: 'Tipo de mascara en serie',
+          SHOW_SECONDARY_PRICES: 'Ver secos afectados',
+          NUMBER_MASK_REGEX: 'Mascara regex',
+          ORDER: 'Orden',
+          SECONDARY_PRIZE: 'Premio secundario',
+          DIALOG_SECONDARY_PRICES_TITTLE: 'Secos afectados',
+          DIALOG_SECO_EMPTY_LIST: 'Todos los secos de este juego van a ser tenidos en cuenta para esta aproximación hasta que no se selecciona uno o más secos (Utilice el autocompletar de arriba para agregar los secos)'
+        },
+        DRAW_CALENDAR: {
+          TEMPLATE_CALENDAR: 'Plantilla de calendarios',
+          OPEN_DRAW_DAYS_BEFORE: 'Días de apertura antes del sorteo',
+          OPEN_DRAW_TIME: 'Hora de apertura del sorteo',
+          CLOSE_DRAW_MINUTES_BEFORE: 'Minutos antes del cierre del sorteo',
+          DEACTIVATE_DRAW_MONTH_AFTER: 'Meses para la desactivación del sorteo',
+          DEACTIVATE_DRAW_TIME: 'Hora de desactivación del sorteo',
+          DRAWING_DATETIME: 'fecha del sorteo',
+          DRAWING_STATE: 'Estado',
+          OPENING_DATE: 'Fecha de apertura',
+          CLOSING_DATETIME: 'Fecha de cierre',
+          DEACTIVATION_DATETIME: 'Fecha de desactivación',
+          OPEN: 'Abierto',
+          CLOSED: 'Cerrado',
+          DEACTIVATED: 'Desactivado',
+          DATE_LIST: 'Fecha de sorteos'
+
+        }
       },
       LOTTERY_FIELD_REQUIRED: 'Este campo es requerido',
       ACTIVE: 'Activo',

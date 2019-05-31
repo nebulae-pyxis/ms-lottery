@@ -1,0 +1,25 @@
+<form name="gameGeneralInfoForm" [formGroup]="gameGeneralInfoForm" class="w-100-p" fxLayout="column"
+  class="mat-white-bg mr-24 mb-24">
+
+
+  <mat-form-field *ngIf="selectedDrawCalendar && selectedDrawCalendar.creationTimestamp" fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
+    <input readonly matInput name="creationDate" formControlName="creationDate"
+      placeholder="{{'LOTTERY.DETAILS.CONFIG_SHEET.CREATION_DATE' | translate}}">
+  </mat-form-field>
+
+  <mat-form-field *ngIf="selectedDrawCalendar && selectedDrawCalendar.creationUsername" fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
+    <input readonly matInput name="creationUsername" formControlName="creationUsername"
+      placeholder="{{'LOTTERY.DETAILS.CONFIG_SHEET.CREATION_USERNAME' | translate}}">
+  </mat-form-field>
+
+  <mat-form-field *ngIf="selectedDrawCalendar && selectedDrawCalendar.editionTimestamp" fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
+    <input readonly matInput name="editionDate" formControlName="editionDate"
+      placeholder="{{'LOTTERY.DETAILS.CONFIG_SHEET.EDITION_DATE' | translate}}">
+  </mat-form-field>
+
+  <mat-form-field *ngIf="selectedDrawCalendar && selectedDrawCalendar.editionUsername" fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
+    <input readonly matInput name="editionUsername" formControlName="editionUsername"
+      placeholder="{{'LOTTERY.DETAILS.CONFIG_SHEET.EDITION_USERNAME' | translate}}">
+  </mat-form-field>
+
+</form>

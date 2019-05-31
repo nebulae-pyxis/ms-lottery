@@ -14,7 +14,7 @@
         </button>
         <h3 *ngIf="selectedPrizeProgram" matSubheader>
           {{'LOTTERY.DETAILS.PRIZE_PROGRAM.PRIZE_PROGRAM_VERSION' | translate}}: {{selectedPrizeProgram.version}} </h3>
-        <button mat-raised-button style="margin-left:auto; margin-right:0;" *ngIf="!selectedPrizeProgram || selectedPrizeProgram.approved === 'APPROVED'" [routerLink]="lotteryName">
+        <button mat-raised-button style="margin-left:auto; margin-right:0;" *ngIf="!selectedPrizeProgram || selectedPrizeProgram.approved === 'APPROVED'" (click)="clearSelected()">
             {{'LOTTERY.DETAILS.PRIZE_PROGRAM.CREATE_VERSION' | translate}}
         </button>
       </div>

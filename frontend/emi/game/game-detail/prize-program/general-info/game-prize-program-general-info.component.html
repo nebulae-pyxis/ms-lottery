@@ -47,7 +47,7 @@
     <prize-program-grand-prize></prize-program-grand-prize>
   </mat-expansion-panel>
 
-  <mat-expansion-panel *ngIf="selectedPrizeProgram">
+  <mat-expansion-panel >
     <mat-expansion-panel-header>
       <mat-panel-title>
         {{'LOTTERY.DETAILS.PRIZE_PROGRAM.SECONDARY_PRICES' | translate}}
@@ -56,7 +56,7 @@
     <prize-program-secondary-prize></prize-program-secondary-prize>
   </mat-expansion-panel>
 
-  <mat-expansion-panel *ngIf="selectedPrizeProgram && selectedPrizeProgram.creationTimestamp">
+  <mat-expansion-panel >
     <mat-expansion-panel-header>
       <mat-panel-title>
         {{'LOTTERY.DETAILS.PRIZE_PROGRAM.TWO_OUT_OF_THREE' | translate}}
@@ -65,7 +65,7 @@
     <prize-program-two-out-of-three></prize-program-two-out-of-three>
   </mat-expansion-panel>
 
-  <mat-expansion-panel *ngIf="selectedPrizeProgram && selectedPrizeProgram.creationTimestamp">
+  <mat-expansion-panel >
     <mat-expansion-panel-header>
       <mat-panel-title>
         {{'LOTTERY.DETAILS.PRIZE_PROGRAM.APPROXIMATIONS' | translate}}

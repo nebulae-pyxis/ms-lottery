@@ -31,6 +31,15 @@ import { PrizeProgramSecondaryPrizeComponent } from './game-detail/prize-program
 import { SecondaryPrizeDialogComponent } from './game-detail/prize-program/general-info/secondary-prize/secondary-prize-dialog/secondary-prize-dialog.component';
 import { ApproximationDialogComponent } from './game-detail/prize-program/general-info/approximation/approximation-dialog/approximation-dialog.component';
 import { PrizeProgramApproximationComponent } from './game-detail/prize-program/general-info/approximation/prize-program-approximation.component';
+import { SecoDetailDialogComponent } from './game-detail/prize-program/general-info/approximation/seco-detail-dialog/seco-detail-dialog.component';
+import { GameDrawCalendarComponent } from './game-detail/draw-calendar/game-draw-calendar.component';
+import { GameDrawCalendarMetadataComponent } from './game-detail/draw-calendar/metadata/game-draw-calendar-metada.component';
+import { GameDrawCalendarGeneralInfoComponent } from './game-detail/draw-calendar/general-info/game-draw-calendar-general-info.component';
+import { GameDrawCalendarApprovalInfoComponent } from './game-detail/draw-calendar/approval-info/game-draw-calendar-approval-info.component';
+import { DrawCalendarService } from './game-detail/draw-calendar/draw-calendar.service';
+import { DrawCalendarTemplateComponent } from './game-detail/draw-calendar/general-info/template/draw-calendar-template.component';
+import { DrawCalendarDateListComponent } from './game-detail/draw-calendar/general-info/date-list/draw-calendar-date-list.component';
+import { DateListDialogComponent } from './game-detail/draw-calendar/general-info/date-list/date-list-dialog/date-list-dialog.component';
 
 import { NoteDialogComponent as NoteDialogComponent2 } from './game-detail/prize-program/approval-info/note-dialog/note-dialog.component';
 import { DialogComponent as ApprovalInfoDialog } from './game-detail/sheet-config/approval-info/dialog/dialog.component';
@@ -73,6 +82,8 @@ const routes: Routes = [
     NoteDialogComponent,
     SecondaryPrizeDialogComponent,
     ApproximationDialogComponent,
+    DateListDialogComponent,
+    SecoDetailDialogComponent,
     GameListComponent,
     GameDetailComponent,
     GameDetailGeneralInfoComponent,
@@ -80,6 +91,10 @@ const routes: Routes = [
     GameSheetConfigGeneralInfoComponent,
     GameSheetConfigApprovalInfoComponent,
     GameSheetConfigMetadataComponent,
+    GameDrawCalendarComponent,
+    GameDrawCalendarMetadataComponent,
+    GameDrawCalendarGeneralInfoComponent,
+    GameDrawCalendarApprovalInfoComponent,
     GamePrizeProgramComponent,
     GamePrizeProgramApprovalInfoComponent,
     GamePrizeProgramGeneralInfoComponent,
@@ -87,10 +102,17 @@ const routes: Routes = [
     PrizeProgramGrandPrizeComponent,
     PrizeProgramTwoOutOfThreeComponent,
     PrizeProgramSecondaryPrizeComponent,
-    PrizeProgramApproximationComponent
+    PrizeProgramApproximationComponent,
+    DrawCalendarTemplateComponent,
+    DrawCalendarDateListComponent
   ],
-  entryComponents: [NoteDialogComponent3, ApprovalInfoDialog, NoteDialogComponent2, ApprovalInfoDialogComponent, DialogComponent, NoteDialogComponent, SecondaryPrizeDialogComponent, ApproximationDialogComponent],
-  providers: [ GameService, GameListService, GameDetailService, PrizeProgramService,  DatePipe]
+  entryComponents: [DialogComponent,
+    NoteDialogComponent,
+    SecondaryPrizeDialogComponent,
+    SecoDetailDialogComponent,
+    ApproximationDialogComponent,
+    DateListDialogComponent],
+  providers: [ GameService, GameListService, GameDetailService, PrizeProgramService, DrawCalendarService,  DatePipe]
 })
 
 export class GameModule {}

@@ -128,7 +128,7 @@ export class GamePrizeProgramGeneralInfoComponent implements OnInit, OnDestroy {
   isGeneralInfoButtonsAllowed() {
     const roles = this.keycloakService.getUserRoles()
       .filter(role => role === 'PLATFORM-ADMIN' || role === 'LOTTERY-ADMIN');
-    return  roles && roles.length > 0;
+    return roles && roles.length > 0;
   }
 
   subuscribeToSelectedPrizeProgramChange() {
@@ -177,6 +177,7 @@ export class GamePrizeProgramGeneralInfoComponent implements OnInit, OnDestroy {
             grandPrize: this.prizeProgramService.grandPrize,
             twoOutOfThree: this.prizeProgramService.twoOutOfThree,
             secondaryPrices: this.prizeProgramService.secondaryPrices,
+            approximations: this.prizeProgramService.approximations,
             gameId: this.game._id,
             lotteryId: this.game.generalInfo.lotteryId
           };
@@ -202,6 +203,7 @@ export class GamePrizeProgramGeneralInfoComponent implements OnInit, OnDestroy {
             grandPrize: this.prizeProgramService.grandPrize,
             twoOutOfThree: this.prizeProgramService.twoOutOfThree,
             secondaryPrices: this.prizeProgramService.secondaryPrices,
+            approximations: this.prizeProgramService.approximations,
             gameId: this.game._id,
             lotteryId: this.game.generalInfo.lotteryId
           };
@@ -216,7 +218,7 @@ export class GamePrizeProgramGeneralInfoComponent implements OnInit, OnDestroy {
             this.showErrorOperationMessage();
             console.log('Error ==> ', error);
           });
-     }
+    }
   }
 
   duplicateSelected() {
@@ -224,8 +226,14 @@ export class GamePrizeProgramGeneralInfoComponent implements OnInit, OnDestroy {
     this.prizeProgramService.selectedPrizeProgramChanged$.next({
       validFromDraw: currentPrizeProgram.validFromDraw,
       validUntilDraw: currentPrizeProgram.validUntilDraw,
-      ticketsPerSheet: currentPrizeProgram.ticketsPerSheet,
-      ticketPrice: currentPrizeProgram.ticketPrice
+      prizeClaimThreshold: currentPrizeProgram.prizeClaimThreshold,
+      grandPrize: this.prizeProgramService.grandPrize,
+      twoOutOfThree: this.prizeProgramService.twoOutOfThree,
+      secondaryPrices: this.prizeProgramService.secondaryPrices,
+      approximations: this.prizeProgramService.approximations,
+      gameId: this.game._id,
+      lotteryId: this.game.generalInfo.lotteryId
+
     });
   }
 

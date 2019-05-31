@@ -119,6 +119,7 @@ class LotteryGamePrizeProgramDA {
             grandPrize: lotteryGamePrizeProgram.grandPrize,
             twoOutOfThree: lotteryGamePrizeProgram.twoOutOfThree,
             secondaryPrices: lotteryGamePrizeProgram.secondaryPrices,
+            approximations: lotteryGamePrizeProgram.approximations,
             approved: 'PENDING'
           }
         }, {

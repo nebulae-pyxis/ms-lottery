@@ -151,6 +151,27 @@ input SecondaryPrizeInput {
   payment: Float
 }
 
+input ApproximationInput {
+  "Order to evaluate the prize"
+  order: Int
+  "Name of Approximation"
+  name: String
+  "Approximation To (GrandPrize, SecondaryPrices or TwoOutThree)"
+  approximationTo: String
+  "If the approximation is to Secondary Price must expecify the ids of the Secondary price, if this value is null all The Secondary price will work with this approximation"
+  approximationsTolds: [String]
+  "Number mask type (Regex, Reversed, unordered, any, same) any if the approximation works with the serie"
+  numberMaskType: String
+  "Regex to evaluate the approximation"
+  numberMaskRegex: String
+  "Serie mask type (Regex, Reversed, unordered, any, same) any if the approximation works with the number"
+  seriesMaskType: String
+  "Total Prize"
+  total: Float
+  "Payment"
+  payment: Float
+}
+
 input LotteryGamePrizeProgramInput {
   "Max value than can reclaim on the POS"
   prizeClaimThreshold: Float
@@ -164,6 +185,8 @@ input LotteryGamePrizeProgramInput {
   twoOutOfThree: TwoOutThreeInput
   "Secondary prize info"
   secondaryPrices: [SecondaryPrizeInput]
+  "Approximations prize info"
+  approximations: [ApproximationInput]
   "Lottery Id"
   lotteryId: String
   "game id"

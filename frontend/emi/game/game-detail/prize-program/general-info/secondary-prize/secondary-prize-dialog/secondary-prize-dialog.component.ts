@@ -35,7 +35,7 @@ export class SecondaryPrizeDialogComponent implements OnInit {
     });
     this.totalPrize = seco.total;
     this.paymentPrize = seco.payment;
-    this.withSerie = seco.withSerie;
+    this.withSerie = true;
   }
 
   numberOnly(event): boolean {
