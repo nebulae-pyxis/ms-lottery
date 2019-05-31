@@ -1,0 +1,75 @@
+<div id="draw-detail" class="page-layout carded fullwidth" fusePerfectScrollbar>
+
+  <!-- TOP BACKGROUND -->
+  <div class="top-bg mat-accent-bg"></div>
+  <!-- / TOP BACKGROUND -->
+
+  <!-- CENTER -->
+  <div class="center">
+
+    <!-- HEADER -->
+    <div class="header white-fg" fxLayout="row" fxLayoutAlign="space-between center">
+
+      <!-- APP TITLE -->
+      <div fxLayout="row" fxLayoutAlign="start center">
+
+        <button class="mr-0 mr-sm-16" mat-icon-button [routerLink]="['../']">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+
+        <div fxLayout="column" fxLayoutAlign="start start" *fuseIfOnDom>
+
+          <div class="h2" *ngIf="service && service._id">
+            <span>{{'SERVICE.DETAIL_HEADER_NAME' | translate}}</span>
+          </div>
+
+          <div class="subtitle secondary-text" *ngIf="service && service._id">
+            <span>ID: {{service._id}}</span>
+          </div>
+        </div>
+      </div>
+      <!-- / APP TITLE -->
+    </div>
+    <!-- / HEADER -->
+
+    <!-- CONTENT CARD -->
+    <div style class="content-card mat-white-bg" fusePerfectScrollbar>
+      <mat-accordion [multi]="true">
+        <mat-expansion-panel [expanded]="detailsOpened">
+          <mat-expansion-panel-header>
+            <mat-panel-title> {{ 'DRAW_ACCORDION.GENERAL_INFO_TITTLE' | translate }} </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <pyxis-draw-detail-general-info [draw]="selectedDraw" >
+
+          </pyxis-draw-detail-general-info>
+
+        </mat-expansion-panel>
+        <mat-expansion-panel [expanded]="resultsOpened">
+          <mat-expansion-panel-header>
+            <mat-panel-title> {{ 'DRAW_ACCORDION.RESULTS_TITLE' | translate }} </mat-panel-title>
+          </mat-expansion-panel-header>
+
+          <pyxis-draw-detail-results [draw]="selectedDraw">
+
+          </pyxis-draw-detail-results>
+
+        </mat-expansion-panel>
+
+        <mat-expansion-panel [expanded]="approvementOpened">
+          <mat-expansion-panel-header>
+            <mat-panel-title> {{ 'DRAW_ACCORDION.APPROVEMENT_TITLE' | translate }} </mat-panel-title>
+          </mat-expansion-panel-header>
+          <pyxis-draw-detail-approvement>
+          </pyxis-draw-detail-approvement>
+
+        </mat-expansion-panel>
+
+
+      </mat-accordion>
+
+    </div>
+    <!-- / CONTENT CARD -->
+  </div>
+  <!-- / CENTER -->
+</div>

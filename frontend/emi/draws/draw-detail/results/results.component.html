@@ -1,0 +1,67 @@
+<div [formGroup]="prizesResultForm" fxFlex="100" fxLayout="row wrap">
+
+  <!-- GRAND PRIZE SECTION -->
+  <div fxLayoutAlign="start center">
+    <mat-icon style="color: rgb(209, 209, 106)">star_rate</mat-icon>
+    <span class="pl-12">{{ 'DRAW_ACCORDION.RESULTS_PANEL.GRAND_PRIZE_TITLE' | translate }}</span>
+  </div>
+
+  <div class="border" fxFlex="100" fxLayout="row wrap" fxLayoutAlign="space-around center">
+
+    <div style="background: rgb(79, 138, 172)" class="border p-4 m-8" fxLayoutAlign="center center" fxFlex.xs="100"
+      fxFlex.gt-xs="30" fxFlex.gt-sm="20">
+      <mat-icon style="color: rgb(209, 209, 106)">star_rate</mat-icon>
+      <input [readonly]="resultsConfirmed" formControlName="grandPrize" style="text-align: center !important" fxFlex="85" maxlength="8"
+        style="font-size: 20px" type="text" mask="{{ numberSerieMask }}">
+      <mat-icon style="color: rgb(209, 209, 106)">star_rate</mat-icon>
+    </div>
+
+  </div>
+  <!-- GRAND PRIZE SECTION -->
+
+
+  <!-- SECOS PRIZES SECTION -->
+  <div class="mt-12" fxLayoutAlign="start center">
+    <mat-icon style="color: rgb(44, 143, 150)">star_rate</mat-icon>
+    <span class="pl-12 secos-prize-title"> {{ 'DRAW_ACCORDION.RESULTS_PANEL.SECOS_PRIZE_TITLE' | translate }}</span>
+  </div>
+
+  <div class="border" fxFlex="100" fxLayout="row wrap" fxLayoutAlign="start start">
+
+    <div *ngFor="let item of prizesResultForm.get('secos')['controls']; let i = index;"
+      class="number-serie-input p-4 m-8" formArrayName="secos" fxLayoutAlign="center center" fxFlex.xs="100"
+      fxFlex.gt-xs="30" fxFlex.gt-sm="20" fxFlex.gt-md="12">
+      <input [readonly]="resultsConfirmed" [formControl]="prizesResultForm.get('secos')['controls'][i]" style="text-align: center !important"
+        fxFlex="95" maxlength="8" style="font-size: 20px" type="text" mask="{{ numberSerieMask }}">
+    </div>
+
+  </div>
+  <!-- SECOS PRIZES SECTION -->
+
+  <!-- 2 OF 3 -->
+  <div class="mt-12" fxLayoutAlign="start center">
+    <mat-icon style="color: rgb(44, 143, 150)">star_rate</mat-icon>
+    <span class="pl-12"> {{ 'DRAW_ACCORDION.RESULTS_PANEL.TWO_OF_THREE_PRIZE_TITLE' | translate }}</span>
+  </div>
+
+  <div class="border" fxFlex="100" fxLayout="row wrap" fxLayoutAlign="start start">
+    <div *ngFor="let item of prizesResultForm.get('twoOfThree')['controls']; let i = index;"
+      class="number-serie-input p-4 m-8" formArrayName="twoOfThree" fxLayoutAlign="center center" fxFlex.xs="100"
+      fxFlex.gt-xs="30" fxFlex.gt-sm="20" fxFlex.gt-md="12">
+      <input [readonly]="resultsConfirmed" [formControl]="prizesResultForm.get('twoOfThree')['controls'][i]" style="text-align: center !important"
+        fxFlex="95" maxlength="4" style="font-size: 20px" type="text">
+    </div>
+
+  </div>
+  <!-- 2 OF 3 -->
+
+
+  <!-- CONFIRMATION BUTTON -->
+  <div class="mt-20" fxFlex="100" fxLayoutAlign="center center">
+    <button *ngIf="!readOnlyResults" mat-raised-button color="primary" (click)="confirmResults()">
+      {{ 'DRAW_ACCORDION.RESULTS_PANEL.CONFIRM_RESULTS' | translate }}
+    </button>
+  </div>
+  <!-- CONFIRMATION BUTTON -->
+
+</div>

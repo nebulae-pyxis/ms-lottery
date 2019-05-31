@@ -1,0 +1,127 @@
+<div fxFlex="100" fxLayout="row wrap">
+
+  <!-- DRAW NUMBER AND STATE ICON -->
+  <div class="pl-8 state-and-icon" fxFlex="100" fxLayout="row" fxLayoutAlign="start center">
+    <div class="draw-number">
+      {{ selectedDraw.generalInfo.stateIcon }}
+    </div>
+    <mat-icon class="pl-12" [ngClass]="{
+      'open-draw': selectedDraw.generalInfo.state == 'OPEN',
+      'closed-draw': selectedDraw.generalInfo.state == 'CLOSED',
+      'deactived-draw': selectedDraw.generalInfo.state == 'DEACTIVED'
+    }">
+      {{ selectedDraw.generalInfo.stateIcon }}
+    </mat-icon>
+    <!-- <mat-icon>home</mat-icon> -->
+
+  </div>
+  <!-- DRAW NUMBER AND STATE ICON -->
+
+  <!-- CREATION TIMESTAMP -->
+  <mat-form-field class="pr-8 pl-8" fxFlex.xs="100" fxFlex.gt-sm="50" fxFlex.gt-md="25">
+    <input readonly matInput [placeholder]="'DRAW_ACCORDION.GENERAL_INFO_PANEL.CREATION_TIMESTAMP' | translate"
+      [value]="selectedDraw.generalInfo.creationTimestamp | date: 'dd/MM/y HH:mm:ss' ">
+  </mat-form-field>
+
+  <!-- CREATOR RESPONSIBLE -->
+  <mat-form-field class="pr-8 pl-8" fxFlex.xs="100" fxFlex.gt-sm="50" fxFlex.gt-md="25">
+    <input readonly matInput [placeholder]="'DRAW_ACCORDION.GENERAL_INFO_PANEL.USER_CREATOR' | translate"
+      [value]="selectedDraw.generalInfo.userCreator">
+  </mat-form-field>
+
+  <!-- MODIFICATION TIMESTAMP -->
+  <mat-form-field class="pr-8 pl-8" fxFlex.xs="100" fxFlex.gt-sm="50" fxFlex.gt-md="25">
+    <input readonly matInput [placeholder]="'DRAW_ACCORDION.GENERAL_INFO_PANEL.MODIFICATION_TIMESTAMP' | translate"
+      [value]="selectedDraw.generalInfo.modificationTimestamp">
+  </mat-form-field>
+
+  <!-- MODIFICATION TIMESTAMP -->
+  <mat-form-field class="pr-8 pl-8" fxFlex.xs="100" fxFlex.gt-sm="50" fxFlex.gt-md="25">
+    <input readonly matInput [placeholder]="'DRAW_ACCORDION.GENERAL_INFO_PANEL.MODIFICATION_RESPONSIBLE' | translate"
+      [value]="selectedDraw.generalInfo.modificationResponsible">
+  </mat-form-field>
+
+  <!-- APPROVEMENT SECTION -->
+  <div fxFlex="100" style="font-size: 20px" class="pl-8 mb-12 mt-12" fxLayoutAling="start center">
+    {{ 'DRAW_ACCORDION.GENERAL_INFO_PANEL.APPROVEMENT_SECTION' | translate }}
+  </div>
+
+  <!-- APPROVEMENT OR REJECTED -->
+  <mat-form-field class="pr-8 pl-8" fxFlex.xs="100" fxFlex.gt-sm="50" fxFlex.gt-md="25">
+    <span matPrefix>
+      <mat-icon [ngClass]="{'color-green': selectedDraw.approved,'color-red': !selectedDraw.approved}">
+        {{ selectedDraw.approved ? 'done' : 'close' }}
+      </mat-icon>
+    </span>
+    <input readonly matInput [ngClass]="{'color-green': selectedDraw.approved,'color-red': !selectedDraw.approved }"
+      [value]="selectedDraw.approved
+      ? 'DRAW_ACCORDION.GENERAL_INFO_PANEL.APPROVED'
+      : 'DRAW_ACCORDION.GENERAL_INFO_PANEL.NOT_APPROVED'
+      | translate">
+  </mat-form-field>
+
+  <mat-form-field class="pr-8 pl-8" fxFlex.xs="100" fxFlex.gt-sm="50" fxFlex.gt-md="25">
+    <input readonly matInput [placeholder]=" selectedDraw.approved
+      ? 'DRAW_ACCORDION.GENERAL_INFO_PANEL.APPROVEMENT_TIMESTAMP'
+      : 'DRAW_ACCORDION.GENERAL_INFO_PANEL.REJECT_TIMESTAMP'
+      | translate" [value]="selectedDraw.generalInfo.approvedTimestamp | date: 'dd/MM/y HH:mm:ss'">
+  </mat-form-field>
+
+
+  <!-- APPROVER OR REJECTER USER -->
+  <mat-form-field class="pr-8 pl-8" fxFlex.xs="100" fxFlex.gt-sm="50" fxFlex.gt-md="25">
+    <input readonly matInput [placeholder]="selectedDraw.approved
+      ? 'DRAW_ACCORDION.GENERAL_INFO_PANEL.APPROVER_USER_NAME'
+      : 'DRAW_ACCORDION.GENERAL_INFO_PANEL.REJECTER_USER_NAME'
+      | translate" [value]="selectedDraw.approvedUsername">
+  </mat-form-field>
+  <!-- APPROVER OR REJECTER USER -->
+
+  <!-- NOTES -->
+  <mat-form-field *ngIf="selectedDraw.approvedNotes" class="pr-8 pl-8" fxFlex="100">
+    <textarea style="resize: none;" readonly matInput [placeholder]="'DRAW_ACCORDION.GENERAL_INFO_PANEL.APPROVEMENT_NOTES'
+    | translate" [wrap]="">{{ selectedDraw.approvedNotes }}</textarea>
+  </mat-form-field>
+  <!-- NOTES -->
+
+  <!-- APPROVEMENT OR REJECTED -->
+
+  <!-- APPROVEMENT SECTION -->
+
+  <!-- VERSION SECTION -->
+  <div fxFlex="100" style="font-size: 20px" class="pl-8 mb-12 mt-12" fxLayoutAling="start center">
+    {{ 'DRAW_ACCORDION.GENERAL_INFO_PANEL.VERSION_SECTION' | translate }}
+  </div>
+  <!-- VERSION SECTION -->
+
+  <span fxFlex="100" class="pl-8" fxLayoutAlign="start center">
+    <mat-icon>remove_red_eye</mat-icon>
+    <a class="ml-8 link-ref" [routerLink]="['../']">
+      {{ 'DRAW_ACCORDION.GENERAL_INFO_PANEL.SHEET_CONFIG_VERSION' | translate }}
+    </a>
+  </span>
+
+  <span fxFlex="100" class="pl-8" fxLayoutAlign="start center">
+    <mat-icon>remove_red_eye</mat-icon>
+    <a class="ml-8 link-ref" [routerLink]="['../']">
+      {{ 'DRAW_ACCORDION.GENERAL_INFO_PANEL.PRIZE_PROGRAM_VERSION' | translate }}
+    </a>
+  </span>
+
+  <span fxFlex="100" class="pl-8" fxLayoutAlign="start center">
+    <mat-icon>remove_red_eye</mat-icon>
+    <a class="ml-8 link-ref" [routerLink]="['../']">
+      {{ 'DRAW_ACCORDION.GENERAL_INFO_PANEL.CALENDAR_VERSION' | translate }}
+    </a>
+  </span>
+
+  <span fxFlex="100" class="pl-8" fxLayoutAlign="start center">
+    <mat-icon>remove_red_eye</mat-icon>
+    <a class="ml-8 link-ref" [routerLink]="['../']">
+      {{ 'DRAW_ACCORDION.GENERAL_INFO_PANEL.QUOTA_VERSION' | translate }}
+    </a>
+  </span>
+
+
+
+</div>

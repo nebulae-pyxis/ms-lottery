@@ -32,6 +32,10 @@ import { SecondaryPrizeDialogComponent } from './game-detail/prize-program/gener
 import { ApproximationDialogComponent } from './game-detail/prize-program/general-info/approximation/approximation-dialog/approximation-dialog.component';
 import { PrizeProgramApproximationComponent } from './game-detail/prize-program/general-info/approximation/prize-program-approximation.component';
 
+import { NoteDialogComponent as NoteDialogComponent2 } from './game-detail/prize-program/approval-info/note-dialog/note-dialog.component';
+import { DialogComponent as ApprovalInfoDialog } from './game-detail/sheet-config/approval-info/dialog/dialog.component';
+import { DialogComponent as ApprovalInfoDialogComponent } from './game-detail/prize-program/approval-info/dialog/dialog.component';
+import { NoteDialogComponent as NoteDialogComponent3 } from './game-detail/sheet-config/approval-info/note-dialog/note-dialog.component';
 
 
 const routes: Routes = [
@@ -62,6 +66,10 @@ const routes: Routes = [
   ],
   declarations: [
     DialogComponent,
+    ApprovalInfoDialogComponent,
+    NoteDialogComponent2,
+    NoteDialogComponent3,
+    ApprovalInfoDialog,
     NoteDialogComponent,
     SecondaryPrizeDialogComponent,
     ApproximationDialogComponent,
@@ -81,7 +89,7 @@ const routes: Routes = [
     PrizeProgramSecondaryPrizeComponent,
     PrizeProgramApproximationComponent
   ],
-  entryComponents: [DialogComponent, NoteDialogComponent, SecondaryPrizeDialogComponent, ApproximationDialogComponent],
+  entryComponents: [NoteDialogComponent3, ApprovalInfoDialog, NoteDialogComponent2, ApprovalInfoDialogComponent, DialogComponent, NoteDialogComponent, SecondaryPrizeDialogComponent, ApproximationDialogComponent],
   providers: [ GameService, GameListService, GameDetailService, PrizeProgramService,  DatePipe]
 })
 

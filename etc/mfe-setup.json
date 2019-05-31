@@ -1,61 +1,88 @@
 [
-    {
-        "name": "lottery",
-        "src": "frontend/emi/lottery",
-        "groups": [
-            {
-              "id": "LOTTERY",
-              "icon": "location_searching",
-              "translate": {
-                "en": "Lotteries",
-                "es": "Loterias"
-              },
-              "priority": 1000
-            }
-          ],
-        "contents": [
-            {
-                "groupId": "LOTTERY",
-                "id": "lottery",
-                "icon": "business",
-                "translate": {
-                    "en": "Lottery admin",
-                    "es": "Gestion de loterias"
-                },
-                "navURL": "/lottery",
-                "path": "lottery",
-                "loadChildren": "./main/content/lottery/lottery.module#LotteryModule",
-                "priority": 1000,
-                "roles" : ["PLATFORM-ADMIN", "LOTTERY-ADMIN"],
-                "default" : false
-            }             
-        ],
-        "preBuildCommands": [],
-        "environmentVars": {
-        }
-    },
-    {
-      "name": "game",
-      "src": "frontend/emi/game",
-      "contents": [
-          {
-              "groupId": "LOTTERY",
-              "id": "game",
-              "icon": "chrome_reader_mode",
-              "translate": {
-                  "en": "Games admin",
-                  "es": "Gestion de Juegos"
-              },
-              "navURL": "/game",
-              "path": "game",
-              "loadChildren": "./main/content/game/game.module#GameModule",
-              "priority": 1000,
-              "roles" : ["PLATFORM-ADMIN", "LOTTERY-ADMIN", "LOTTERY-APPROVER"],
-              "default" : false
-          }            
-      ],
-      "preBuildCommands": [ "npm install ng2-currency-mask", "npm install --save @types/uuid"],
-      "environmentVars": {
+  {
+    "name": "lottery",
+    "src": "frontend/emi/lottery",
+    "groups": [
+      {
+        "id": "LOTTERY",
+        "icon": "location_searching",
+        "translate": {
+          "en": "Lotteries",
+          "es": "Loterias"
+        },
+        "priority": 1000
       }
+    ],
+    "contents": [
+      {
+        "groupId": "LOTTERY",
+        "id": "lottery",
+        "icon": "business",
+        "translate": {
+          "en": "Lottery admin",
+          "es": "Gestion de loterias"
+        },
+        "navURL": "/lottery",
+        "path": "lottery",
+        "loadChildren": "./main/content/lottery/lottery.module#LotteryModule",
+        "priority": 1000,
+        "roles": ["PLATFORM-ADMIN", "LOTTERY-ADMIN"],
+        "default": false
+      }
+    ],
+    "preBuildCommands": [],
+    "environmentVars": {}
+  },
+  {
+    "name": "game",
+    "src": "frontend/emi/game",
+    "contents": [
+      {
+        "groupId": "LOTTERY",
+        "id": "game",
+        "icon": "chrome_reader_mode",
+        "translate": {
+          "en": "Games admin",
+          "es": "Gestion de Juegos"
+        },
+        "navURL": "/game",
+        "path": "game",
+        "loadChildren": "./main/content/game/game.module#GameModule",
+        "priority": 1000,
+        "roles": ["PLATFORM-ADMIN", "LOTTERY-ADMIN", "LOTTERY-APPROVER"],
+        "default": false
+      }
+    ],
+    "preBuildCommands": [
+      "npm install ng2-currency-mask",
+      "npm install --save @types/uuid",
+      "npm install table-dragger --save"
+    ],
+    "environmentVars": {}
+  },
+  {
+    "name": "draws",
+    "src": "frontend/emi/draws",
+    "contents": [
+      {
+        "groupId": "LOTTERY",
+        "id": "draws",
+        "icon": "chrome_reader_mode",
+        "translate": {
+          "en": "Draws Detail",
+          "es": "Detalle de Sorteos"
+        },
+        "navURL": "/draws",
+        "path": "draws",
+        "loadChildren": "./main/content/draws/draws.module#DrawsModule",
+        "priority": 1000,
+        "roles": ["PLATFORM-ADMIN", "LOTTERY-ADMIN", "LOTTERY-APPROVER"],
+        "default": false
+      }
+    ],
+    "preBuildCommands": [
+      "npm install --save ngx-mask"
+    ],
+    "environmentVars": {}
   }
 ]
