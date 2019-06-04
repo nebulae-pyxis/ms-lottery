@@ -5,7 +5,7 @@ import { DatePipe } from '@angular/common';
 import { FuseWidgetModule } from '../../../core/components/widget/widget.module';
 
 import { ToolbarService } from '../../toolbar/toolbar.service';
-import { DialogComponent } from './dialog/dialog.component';
+import { ConfirmationDialogComponent } from './dialog/dialog.component';
 import { DrawListService } from './draw-list/draw-list.service';
 import { DrawListComponent } from './draw-list/draw-list.component';
 import { DrawDetailService } from './draw-detail/draw-detail.service';
@@ -32,14 +32,14 @@ export const options: Partial<IConfig> | (() => Partial<IConfig>) = undefined;
     NgxMaskModule.forRoot(options)
   ],
   declarations: [
-    DialogComponent,
+    ConfirmationDialogComponent,
     DrawListComponent,
     DrawDetailComponent,
     DrawDetailGeneralInfoComponent,
     DrawDetailResultsComponent,
     DrawDetailApprovementComponent
   ],
-  entryComponents: [DialogComponent],
+  entryComponents: [ConfirmationDialogComponent],
   providers: [DatePipe, DrawListService, DrawDetailService, ToolbarService]
 })
 

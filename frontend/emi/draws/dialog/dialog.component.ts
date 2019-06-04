@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject} from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 export interface DialogData {
   dialogTitle: string;
@@ -7,13 +7,17 @@ export interface DialogData {
 }
 
 @Component({
+// tslint:disable-next-line: component-selector
   selector: 'app-dialog.component',
   templateUrl: './dialog.component.html',
   styleUrls: ['./dialog.component.scss']
 })
-export class DialogComponent implements OnInit {
+export class ConfirmationDialogComponent implements OnInit {
 
-  constructor(private dialogRef: MatDialogRef<DialogComponent>, @Inject(MAT_DIALOG_DATA) public data: DialogData) {
+  constructor(
+    private dialogRef: MatDialogRef<ConfirmationDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: DialogData
+  ){
 
   }
 

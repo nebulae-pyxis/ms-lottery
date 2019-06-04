@@ -1,21 +1,17 @@
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
-import { startWith } from 'rxjs/operators';
 import { GatewayService } from '../../../../api/gateway.service';
 import {
-  ServiceServices,
-  ServiceServicesSize,
-  ServiceServiceUpdatedSubscription
+  LotteryLotteries,
+  LotteryDraws,
+  LotteryDrawsSize,
+  LotteryDrawUpdated
 } from '../gql/draws';
 import * as moment from 'moment';
 
 @Injectable()
 export class DrawListService {
   private _filterSubject$ = new BehaviorSubject({
-    // initTimestamp: moment()
-    //   .subtract(1, 'day')
-    //   .startOf('day'),
-    // endTimestamp: moment().endOf('day'),
     timestamp: moment()
       .subtract(1, 'day')
       .startOf('day'),
@@ -29,6 +25,8 @@ export class DrawListService {
     }
   });
 
+  private _lotteryOptions$ = new BehaviorSubject([]);
+
   constructor(private gateway: GatewayService) {}
 
   /**
@@ -37,13 +35,21 @@ export class DrawListService {
    * @param paginator Object that contains info about page number and amount of records to recover
    * @returns {Observable} Observable with the service list
    */
-  getserviceList$(filterInput, paginatorInput) {
+  getDrawList$(filterInput, paginatorInput) {
     return this.gateway.apollo.query<any>({
-      query: ServiceServices,
+      query: LotteryDraws,
       variables: {
         filterInput: filterInput,
         paginationInput: paginatorInput
       },
+      fetchPolicy: 'network-only',
+      errorPolicy: 'all'
+    });
+  }
+
+  getLotteryList$(){
+    return this.gateway.apollo.query<any>({
+      query: LotteryLotteries,
       fetchPolicy: 'network-only',
       errorPolicy: 'all'
     });
@@ -54,9 +60,9 @@ export class DrawListService {
    * @param filter Data to filter the list
    * @returns {Observable} Observable with the amount of service
    */
-  getserviceSize$(filterInput) {
+  getDrawSize$(filterInput) {
     return this.gateway.apollo.query<any>({
-      query: ServiceServicesSize,
+      query: LotteryDrawsSize,
       variables: {
         filterInput: filterInput
       },
@@ -81,8 +87,20 @@ export class DrawListService {
     return this._paginatorSubject$.asObservable();
   }
 
+   /**
+   * Emits an event when the paginator is modified
+   * @returns {Observable<any>}
+   */
+  get lotteryOptions$(): Observable<any> {
+    return this._lotteryOptions$.asObservable();
+  }
+
+  updateLotteryOptions(lotteryOptions) {
+    this._lotteryOptions$.next(lotteryOptions);
+  }
+
+
   updateFilterData(filterData) {
-    // console.log('filterData -->> ', filterData);
     this._filterSubject$.next(filterData);
   }
 
@@ -95,7 +113,7 @@ export class DrawListService {
    */
   subscribeServiceServiceUpdatedSubscription$(): Observable<any> {
     return this.gateway.apollo.subscribe({
-      query: ServiceServiceUpdatedSubscription
+      query: LotteryDrawUpdated
     });
   }
 }

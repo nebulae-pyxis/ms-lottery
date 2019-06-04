@@ -42,12 +42,21 @@
   </mat-form-field>
 
   <!-- APPROVEMENT SECTION -->
-  <div fxFlex="100" style="font-size: 20px" class="pl-8 mb-12 mt-12" fxLayoutAling="start center">
+  <div *ngIf="selectedDraw.approved === undefined" fxFlex="100" style="font-size: 20px"
+    class="pl-8 mb-12 mt-12" fxLayoutAling="start center">
     {{ 'DRAW_ACCORDION.GENERAL_INFO_PANEL.APPROVEMENT_SECTION' | translate }}
   </div>
 
+  <!-- WAITING FOR RESULTS APPROVEMENT OR REJECTION -->
+  <div *ngIf="selectedDraw.approved !== undefined" fxFlex="100" style="font-size: 20px" class="pl-8 mb-12 mt-12" fxLayoutAling="start center">
+    <mat-icon></mat-icon>
+      {{'DRAW_ACCORDION.GENERAL_INFO_PANEL.WAITING_APPROVEMENT' | translate}}
+  </div>
+  <!-- WAITING FOR RESULTS APPROVEMENT OR REJECTION -->
+
   <!-- APPROVEMENT OR REJECTED -->
-  <mat-form-field class="pr-8 pl-8" fxFlex.xs="100" fxFlex.gt-sm="50" fxFlex.gt-md="25">
+  <mat-form-field *ngIf="selectedDraw.approved !== undefined" class="pr-8 pl-8" fxFlex.xs="100" fxFlex.gt-sm="50"
+    fxFlex.gt-md="25">
     <span matPrefix>
       <mat-icon [ngClass]="{'color-green': selectedDraw.approved,'color-red': !selectedDraw.approved}">
         {{ selectedDraw.approved ? 'done' : 'close' }}
@@ -55,30 +64,35 @@
     </span>
     <input readonly matInput [ngClass]="{'color-green': selectedDraw.approved,'color-red': !selectedDraw.approved }"
       [value]="selectedDraw.approved
-      ? 'DRAW_ACCORDION.GENERAL_INFO_PANEL.APPROVED'
-      : 'DRAW_ACCORDION.GENERAL_INFO_PANEL.NOT_APPROVED'
-      | translate">
+      ? ('DRAW_ACCORDION.GENERAL_INFO_PANEL.APPROVED' | translate)
+      : ('DRAW_ACCORDION.GENERAL_INFO_PANEL.NOT_APPROVED' | translate)">
   </mat-form-field>
 
-  <mat-form-field class="pr-8 pl-8" fxFlex.xs="100" fxFlex.gt-sm="50" fxFlex.gt-md="25">
+  <!-- APPROVEMENT TIMESTAMP -->
+  <mat-form-field *ngIf="selectedDraw.approved !== undefined" class="pr-8 pl-8" fxFlex.xs="100" fxFlex.gt-sm="50"
+    fxFlex.gt-md="25">
     <input readonly matInput [placeholder]=" selectedDraw.approved
-      ? 'DRAW_ACCORDION.GENERAL_INFO_PANEL.APPROVEMENT_TIMESTAMP'
-      : 'DRAW_ACCORDION.GENERAL_INFO_PANEL.REJECT_TIMESTAMP'
-      | translate" [value]="selectedDraw.generalInfo.approvedTimestamp | date: 'dd/MM/y HH:mm:ss'">
+      ? ('DRAW_ACCORDION.GENERAL_INFO_PANEL.APPROVEMENT_TIMESTAMP' | translate )
+      : ('DRAW_ACCORDION.GENERAL_INFO_PANEL.REJECT_TIMESTAMP' | translate)"
+      [value]="selectedDraw.generalInfo.approvedTimestamp | date: 'dd/MM/y HH:mm:ss'">
   </mat-form-field>
+  <!-- APPROVEMENT TIMESTAMP -->
 
 
   <!-- APPROVER OR REJECTER USER -->
-  <mat-form-field class="pr-8 pl-8" fxFlex.xs="100" fxFlex.gt-sm="50" fxFlex.gt-md="25">
+  <mat-form-field *ngIf="selectedDraw.approved !== undefined" class="pr-8 pl-8" fxFlex.xs="100" fxFlex.gt-sm="50"
+    fxFlex.gt-md="25">
     <input readonly matInput [placeholder]="selectedDraw.approved
-      ? 'DRAW_ACCORDION.GENERAL_INFO_PANEL.APPROVER_USER_NAME'
-      : 'DRAW_ACCORDION.GENERAL_INFO_PANEL.REJECTER_USER_NAME'
-      | translate" [value]="selectedDraw.approvedUsername">
+      ? ('DRAW_ACCORDION.GENERAL_INFO_PANEL.APPROVER_USER_NAME' | translate)
+      : ('DRAW_ACCORDION.GENERAL_INFO_PANEL.REJECTER_USER_NAME' | translate)" [value]="selectedDraw.approvedUsername">
   </mat-form-field>
   <!-- APPROVER OR REJECTER USER -->
+
+
 
   <!-- NOTES -->
-  <mat-form-field *ngIf="selectedDraw.approvedNotes" class="pr-8 pl-8" fxFlex="100">
+  <mat-form-field *ngIf="selectedDraw.approvedNotes" class="pr-8 pl-8"
+    fxFlex="100">
     <textarea style="resize: none;" readonly matInput [placeholder]="'DRAW_ACCORDION.GENERAL_INFO_PANEL.APPROVEMENT_NOTES'
     | translate" [wrap]="">{{ selectedDraw.approvedNotes }}</textarea>
   </mat-form-field>

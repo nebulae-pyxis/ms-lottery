@@ -41,8 +41,7 @@ import {
 import { locale as english } from '../../../../i18n/en';
 import { locale as spanish } from '../../../../i18n/es';
 import { FuseTranslationLoaderService } from '../../../../../../../core/services/translation-loader.service';
-
-import { PrizeProgramService } from '../../prize-program.service';
+import { PrizeProgramService } from '../../../prize-program/prize-program.service';
 
 @Component({
   // tslint:disable-next-line:component-selector

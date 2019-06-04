@@ -1,78 +1,105 @@
 ////////// ANGULAR //////////
-import {
-  Component,
-  OnInit,
-  OnDestroy
-} from '@angular/core';
-
-import {
-  FormBuilder,
-  FormGroup,
-  FormControl,
-  Validators
-} from '@angular/forms';
-
+import { Component, OnInit, OnDestroy, NgZone, ViewChild, Input } from '@angular/core';
 ////////// RXJS ///////////
-import { map, mergeMap, tap, takeUntil, take } from 'rxjs/operators';
-import { Subject, of} from 'rxjs';
-
+import { take, takeUntil, filter, mergeMap, tap } from 'rxjs/operators';
+import { Subject, of } from 'rxjs';
 //////////// ANGULAR MATERIAL ///////////
-import { MatSnackBar } from '@angular/material';
-
+import { MatSnackBar, MatDialog } from '@angular/material';
 //////////// i18n ////////////
-import {
-  TranslateService
-} from '@ngx-translate/core';
 import { locale as english } from '../../i18n/en';
 import { locale as spanish } from '../../i18n/es';
 import { FuseTranslationLoaderService } from '../../../../../core/services/translation-loader.service';
-
 //////////// Other Services ////////////
 import { DrawDetailService } from '../draw-detail.service';
+import { CdkTextareaAutosize } from '@angular/cdk/text-field';
+import { ConfirmationDialogComponent } from '../../dialog/dialog.component';
+import { FormControl } from '@angular/forms';
 
 @Component({
-// tslint:disable-next-line: component-selector
+  // tslint:disable-next-line: component-selector
   selector: 'pyxis-draw-detail-approvement',
   templateUrl: './approvement.component.html',
   styleUrls: ['./approvement.component.scss']
 })
-// tslint:disable-next-line:class-name
 export class DrawDetailApprovementComponent implements OnInit, OnDestroy {
-  // Subject to unsubscribe
+  @Input('draw') selectedDraw;
   private ngUnsubscribe = new Subject();
+  notes = new FormControl('');
 
-
-  detailsOpened = true;
-  resultsOpened = false;
-  approvementOpened = false;
-
-
-  ///////////////////////////////////////////
+  @ViewChild('autosize') autosize: CdkTextareaAutosize;
 
   constructor(
     private translationLoader: FuseTranslationLoaderService,
-    private translate: TranslateService,
-    private formBuilder: FormBuilder,
     public snackBar: MatSnackBar,
+    private ngZone: NgZone,
     private drawDetailService: DrawDetailService,
+    private dialog: MatDialog
   ) {
-      this.translationLoader.loadTranslations(english, spanish);
+    this.translationLoader.loadTranslations(english, spanish);
   }
-
 
   ngOnInit() {
+    console.log('drawId => ', this.selectedDraw.id);
   }
 
-  showSnackBar(message) {
-    this.snackBar.open(this.translationLoader.getTranslate().instant(message),
-      this.translationLoader.getTranslate().instant('SERVICE.CLOSE'), {
-        duration: 2000
-      });
+  approveResults(approve) {
+    of(this.notes.value.trim())
+      .pipe(
+        mergeMap(notes =>
+          !approve && notes.length < 50
+            ? of(false).pipe(tap(() => this.showSnackBar('DRAW_ACCORDION.APPROVEMENT_PANEL.NOTES_REQUIRED', 7000)))
+            : this.showConfirmationDialog$(
+                `DRAW_ACCORDION.APPROVEMENT_PANEL.${approve ? 'APPROVE' : 'REJECT'}_RESULTS_TITLE`,
+                `DRAW_ACCORDION.APPROVEMENT_PANEL.${approve ? 'APPROVE' : 'REJECT'}_RESULTS_MESSAGE`
+              )
+        ),
+        filter(r => r),
+        mergeMap(() => this.drawDetailService.approveResults$(this.selectedDraw.id, approve, this.notes.value.trim() )),
+        tap(r => console.log('Resultado ==> ', r))
+
+
+      )
+      .subscribe();
+  }
+
+  showConfirmationDialog$(dialogTitle, dialogMessage) {
+    return this.dialog
+      .open(ConfirmationDialogComponent, {
+        data: {
+          dialogMessage,
+          dialogTitle
+        }
+      })
+      .afterClosed()
+      .pipe(filter(okButton => okButton));
+  }
+
+  triggerResize() {
+    this.ngZone.onStable
+      .pipe(
+        take(1),
+        takeUntil(this.ngUnsubscribe)
+      )
+      .subscribe(() => this.autosize.resizeToFitContent(true));
+  }
+
+  /**
+   * Show extracted message using the i18n key given as parameter
+   * @param message i18n key
+   * @param duration message duration in millis
+   */
+  showSnackBar(message, duration?) {
+    this.snackBar.open(
+      this.translationLoader.getTranslate().instant(message),
+      this.translationLoader.getTranslate().instant('CLOSE_SNACK_BAR'),
+      {
+        duration: duration || 3000
+      }
+    );
   }
 
   ngOnDestroy() {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
   }
-
 }

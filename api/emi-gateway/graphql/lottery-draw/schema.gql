@@ -1,0 +1,71 @@
+type CommandResponse {
+  "Response code"
+  code: Int
+  "Response message"
+  message: String
+}
+
+type LotteryOption{
+  id: String,
+  name: String
+}
+
+type LotteryDraw{
+  id: String
+}
+
+
+input LotteryDrawFilterInput{
+  businessId: String
+  timestamp: BigInt
+  lotteryId: String
+  drawType: String
+  drawNumber: String
+  active: String
+  approved: String
+  withResults: String
+}
+
+input LotteryDrawPaginationInput {
+  "Page"
+  page: Int!
+  "Count"
+  count: Int!
+  "Sort, default: ASC"
+  sort: Int
+}
+
+input NumberVsSerieInput{
+  series: String!
+  number: String!
+}
+
+input NumberVsSerieInput{
+  name: String!
+  series: String!
+  number: String!
+}
+
+input ConfirmedResultsInput{
+  grandPrize: NumberVsSerieInput
+  secoPrize: [NumberVsSerieInput]
+  twoOfThree: [NumberVsSerieInput]
+}
+
+type Query {
+  "get lottery options"
+  LotteryLoteryOptions: [LotteryOption]
+
+  LotteryDraws(filterInput: LotteryDrawFilterInput, paginationInput: LotteryDrawPaginationInput): [LotteryDraw]
+  LotteryDrawsSize(filterInput: LotteryDrawFilterInput): Int
+}
+
+type Mutation {
+  LotteryDrawConfirmResults(drawId: String!, results: ConfirmedResultsInput ): CommandResponse
+  LotteryDrawApproveResults(drawId: String!, approved: Boolean!, notes: String ): CommandResponse
+
+}
+
+# type Subscription {
+
+# }

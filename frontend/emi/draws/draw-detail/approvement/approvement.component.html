@@ -1,3 +1,22 @@
-<div>
-    pyxis-draw-detail-approvement
+<div fxFlex="100" fxLayout="row wrap">
+
+  <mat-form-field ngClass.xs="text-area-xs" ngClass.xs="text-area-gt-xs" fxFlex="100">
+    <textarea #autosize="cdkTextareaAutosize" matInput
+      cdkAutosizeMinRows="2" cdkAutosizeMaxRows="20"
+      cdkTextareaAutosize maxlength="500" [formControl]="notes"
+      placeholder="{{ 'DRAW_ACCORDION.APPROVEMENT_PANEL.LEAVE_COMMENT' | translate }}"></textarea>
+  </mat-form-field>
+  <div *ngIf="selectedDraw.approved === undefined" class="mb-16" fxFlex="100" fxLayout="row wrap" fxLayoutAlign="space-around center">
+
+    <button fxFlex.xs="45" fxFlex="30" mat-raised-button color="primary" (click)="approveResults(true)">
+      {{ 'DRAW_ACCORDION.APPROVEMENT_PANEL.CONFIRM' | translate }}
+    </button>
+    <button fxFlex.xs="45" fxFlex="30" mat-raised-button color="warn" (click)="approveResults(false)">
+      {{ 'DRAW_ACCORDION.APPROVEMENT_PANEL.REJECT' | translate }}
+    </button>
+
+  </div>
+
+
+
 </div>

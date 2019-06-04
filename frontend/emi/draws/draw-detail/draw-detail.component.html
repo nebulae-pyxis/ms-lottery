@@ -1,75 +1,99 @@
-<div id="draw-detail" class="page-layout carded fullwidth" fusePerfectScrollbar>
+<div id="dashboard-project" class="page-layout simple right-sidenav" fxLayout="row">
 
-  <!-- TOP BACKGROUND -->
-  <div class="top-bg mat-accent-bg"></div>
-  <!-- / TOP BACKGROUND -->
+    <mat-sidenav-container>
 
-  <!-- CENTER -->
-  <div class="center">
+        <!-- CENTER -->
+        <div class="center" fusePerfectScrollbar>
 
-    <!-- HEADER -->
-    <div class="header white-fg" fxLayout="row" fxLayoutAlign="space-between center">
+            <!-- HEADER -->
+            <div class="header mat-accent-bg p-24 pb-0" fxLayout="column" fxLayoutAlign="space-between">
 
-      <!-- APP TITLE -->
-      <div fxLayout="row" fxLayoutAlign="start center">
+                <div fxLayout="row" fxLayoutAlign="space-between start">
+                    <button mat-icon-button fuseMatSidenavToggler="dashboards-right-sidenav" fxHide.gt-md>
+                        <mat-icon>menu</mat-icon>
+                    </button>
 
-        <button class="mr-0 mr-sm-16" mat-icon-button [routerLink]="['../']">
-          <mat-icon>arrow_back</mat-icon>
-        </button>
+                    <!-- <button class="mr-0 mr-sm-16" mat-icon-button [routerLink]="['../']">
+                        <mat-icon>arrow_back</mat-icon>
+                      </button> -->
 
-        <div fxLayout="column" fxLayoutAlign="start start" *fuseIfOnDom>
+                    <div fxLayout="column" fxLayoutAlign="start start" *fuseIfOnDom>
 
-          <div class="h2" *ngIf="service && service._id">
-            <span>{{'SERVICE.DETAIL_HEADER_NAME' | translate}}</span>
-          </div>
+                        <div class="h2" *ngIf="service && service._id">
+                            <span>{{'SERVICE.DETAIL_HEADER_NAME' | translate}}</span>
+                        </div>
 
-          <div class="subtitle secondary-text" *ngIf="service && service._id">
-            <span>ID: {{service._id}}</span>
-          </div>
+                        <div class="subtitle secondary-text" *ngIf="service && service._id">
+                            <span>ID: {{service._id}}</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <!-- / HEADER -->
+
+            <!-- CONTENT -->
+            <div class="content">
+
+                <mat-accordion [multi]="true">
+                    <mat-expansion-panel [expanded]="detailsOpened">
+                        <mat-expansion-panel-header>
+                            <mat-panel-title style="font-size: 24px">
+                                {{ 'DRAW_ACCORDION.GENERAL_INFO_TITTLE' | translate }}
+                            </mat-panel-title>
+                        </mat-expansion-panel-header>
+
+                        <pyxis-draw-detail-general-info [draw]="selectedDraw">
+
+                        </pyxis-draw-detail-general-info>
+
+                    </mat-expansion-panel>
+                    <mat-expansion-panel [expanded]="resultsOpened">
+                        <mat-expansion-panel-header>
+                            <mat-panel-title style="font-size: 24px"> {{ 'DRAW_ACCORDION.RESULTS_TITLE' | translate }}
+                            </mat-panel-title>
+                        </mat-expansion-panel-header>
+
+                        <pyxis-draw-detail-results [draw]="selectedDraw">
+
+                        </pyxis-draw-detail-results>
+
+                    </mat-expansion-panel>
+
+                    <mat-expansion-panel *ngIf="selectedDraw.results && selectedDraw.approved === undefined"
+                        [expanded]="approvementOpened">
+                        <mat-expansion-panel-header>
+                            <mat-panel-title style="font-size: 24px">
+                                {{ 'DRAW_ACCORDION.APPROVEMENT_TITLE' | translate }}
+                            </mat-panel-title>
+                        </mat-expansion-panel-header>
+                        <pyxis-draw-detail-approvement [draw]="selectedDraw">
+                        </pyxis-draw-detail-approvement>
+
+                    </mat-expansion-panel>
+                </mat-accordion>
+            </div>
+            <!-- / CONTENT -->
         </div>
-      </div>
-      <!-- / APP TITLE -->
-    </div>
-    <!-- / HEADER -->
+        <!-- / CENTER -->
 
-    <!-- CONTENT CARD -->
-    <div style class="content-card mat-white-bg" fusePerfectScrollbar>
-      <mat-accordion [multi]="true">
-        <mat-expansion-panel [expanded]="detailsOpened">
-          <mat-expansion-panel-header>
-            <mat-panel-title> {{ 'DRAW_ACCORDION.GENERAL_INFO_TITTLE' | translate }} </mat-panel-title>
-          </mat-expansion-panel-header>
+        <!-- SIDENAV -->
+        <mat-sidenav class="sidenav" align="end" mode="side" opened="true"
+            fuseMatSidenavHelper="dashboards-right-sidenav" mat-is-locked-open="gt-md">
+            <div class="sidenav-content" fusePerfectScrollbar>
 
-          <pyxis-draw-detail-general-info [draw]="selectedDraw" >
+                <!-- WIDGET GROUP -->
+                <div class="widget-group" fxLayout="column" fxFlex="100" *fuseIfOnDom [@animateStagger]="{value:'50'}">
 
-          </pyxis-draw-detail-general-info>
+                    <div class="pt-12 pb-12 pl-8 pr-8" style="font-size: 20px; text-align: center">{{ 'SIDE_PANEL.VERSIONS_TITLE' | translate }}</div>
 
-        </mat-expansion-panel>
-        <mat-expansion-panel [expanded]="resultsOpened">
-          <mat-expansion-panel-header>
-            <mat-panel-title> {{ 'DRAW_ACCORDION.RESULTS_TITLE' | translate }} </mat-panel-title>
-          </mat-expansion-panel-header>
-
-          <pyxis-draw-detail-results [draw]="selectedDraw">
-
-          </pyxis-draw-detail-results>
-
-        </mat-expansion-panel>
-
-        <mat-expansion-panel [expanded]="approvementOpened">
-          <mat-expansion-panel-header>
-            <mat-panel-title> {{ 'DRAW_ACCORDION.APPROVEMENT_TITLE' | translate }} </mat-panel-title>
-          </mat-expansion-panel-header>
-          <pyxis-draw-detail-approvement>
-          </pyxis-draw-detail-approvement>
-
-        </mat-expansion-panel>
-
-
-      </mat-accordion>
-
-    </div>
-    <!-- / CONTENT CARD -->
-  </div>
-  <!-- / CENTER -->
+                    <div class="p-4" *ngFor="let version of versionlist">
+                        <button fxFill mat-stroked-button color="primary">{{ version }} $VERSION_STATE</button>
+                    </div>
+                </div>
+                <!-- / WIDGET GROUP -->
+            </div>
+        </mat-sidenav>
+        <!-- / SIDENAV -->
+    </mat-sidenav-container>
 </div>
