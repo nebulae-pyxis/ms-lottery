@@ -1,0 +1,38 @@
+@import "src/app/core/scss/fuse";
+
+.draw-number {
+  font-size: 25px;
+}
+
+.state-and-icon{
+  margin-bottom: 15px;
+}
+
+.open-draw {
+  color: green;
+}
+
+.closed-draw{
+  color: red;
+}
+.deactived-draw{
+  color: grey;
+}
+.color-green{
+  color: green;
+}
+.color-red{
+  color:red;
+}
+
+
+.link-ref{
+  font-family: helvetica;
+  text-decoration: none;
+  cursor: pointer;
+  // text-transform: uppercase;
+}
+
+.link-ref:hover {
+  text-decoration: underline;
+}

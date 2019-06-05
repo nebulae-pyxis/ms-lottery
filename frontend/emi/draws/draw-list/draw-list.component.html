@@ -1,0 +1,199 @@
+<div id="draw-list" class="page-layout carded left-sidenav" fusePerfectScrollbar>
+    <!-- TOP BACKGROUND -->
+    <div class="top-bg mat-accent-bg"></div>
+    <!-- / TOP BACKGROUND -->
+
+    <mat-sidenav-container>
+        <!-- SIDENAV -->
+        <mat-sidenav class="sidenav" align="start" mode="side" opened="true" fuseMatSidenavHelper="carded-left-sidenav"
+            mat-is-locked-open="gt-md">
+            <!-- SIDENAV HEADER -->
+            <div fxLayout="column" fxLayoutAlign="space-between start" class="header p-24 pb-4" ngClass="mat-accent-bg"
+                ngClass.gt-md="white-fg">
+                <div class="logo" fxFlex fxLayout="row" fxLayoutAlign="start center">
+                    <mat-icon class="logo-icon s-32" *fuseIfOnDom
+                        [@animate]="{ value: '*', params: { delay: '50ms', scale: '0.2' } }">
+                        monetization_on
+                    </mat-icon>
+                    <span class="logo-text" *fuseIfOnDom
+                        [@animate]="{ value: '*', params: { delay: '100ms', x: '-25px' } }">
+                        {{ "DRAWS.HEADER_TITLE" | translate }}
+                    </span>
+                </div>
+
+                <div fxFlex fxFill fxLayout="row" fxLayoutAlign="space-between center">
+                    <span class="mat-title" *fuseIfOnDom
+                        [@animate]="{ value: '*', params: { delay: '100ms', x: '-25px' } }">{{
+                  "DRAWS.FILTERS.TITLE" | translate }}
+                    </span>
+                </div>
+            </div>
+            <!-- / SIDENAV HEADER -->
+
+            <!-- SIDENAV CONTENT -->
+            <div class="content" fusePerfectScrollbar *fuseIfOnDom [@animate]="{ value: '*', params: { y: '50px' } }">
+                <div class="nav mt-20" fxLayout="column">
+
+                    <form style="padding-left: 20px; padding-right: 20px" fxLayout="column" fxLayoutAlign="start"
+                        fxFlex="100" name="form" [formGroup]="filterForm">
+
+                        <mat-form-field>
+                            <input matInput [matDatepicker]="pickerDate"
+                                placeholder="{{'DRAWS.FILTERS.TIMESTAMP' | translate}}" formControlName="timestamp"
+                                [min]="minEndDate" [max]="maxEndDate" (dateChange)="onDateChange()" />
+                            <mat-datepicker-toggle matSuffix [for]="pickerDate"></mat-datepicker-toggle>
+                            <mat-datepicker #pickerDate></mat-datepicker>
+                        </mat-form-field>
+
+
+                        <mat-form-field>
+                            <input type="text" placeholder="{{'DRAWS.FILTERS.LOTTERY' | translate}}" matInput
+                                formControlName="lottery" [matAutocomplete]="auto">
+                            <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
+                                <mat-option *ngFor="let option of filteredLotteries$ | async" [value]="option">
+                                    {{option.name}}
+                                </mat-option>
+                            </mat-autocomplete>
+                        </mat-form-field>
+
+
+                        <mat-form-field>
+                            <mat-label>{{ 'DRAWS.FILTERS.DRAW_TYPE' | translate }}</mat-label>
+                            <mat-select formControlName="type">
+                                <mat-option *ngFor="let type of ['ORDINARY', 'EXTRAORDINARY']" [value]="type">
+                                    {{'DRAWS.FILTERS.DRAW_TYPES.' + type | translate }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+
+                        <mat-form-field>
+                            <input matInput placeholder="{{'DRAWS.FILTERS.DRAW_NUMBER' | translate}}"
+                                formControlName="drawNumber" id="drawNumber" maxlength="10" />
+                        </mat-form-field>
+
+                        <mat-checkbox formControlName="active" fxFlex="100" class="ml-12" fxLayoutAlign="start start">
+                            {{'DRAWS.FILTERS.SHOW_ACTIVED' | translate}}
+                        </mat-checkbox>
+
+                        <mat-checkbox *ngIf="filterForm.get('approved')" fxFlex="100" class="ml-12"
+                            fxLayoutAlign="start start" [checked]="filterForm.get('approved').value == 'true'"
+                            [indeterminate]="filterForm.get('approved').value == 'null'"
+                            (change)="updateThreeStateValue('approved')">
+                            {{ 'DRAWS.FILTERS.APPROVED_STATES.' + filterForm.get('approved').value | translate }}
+                        </mat-checkbox>
+
+                        <mat-checkbox *ngIf="filterForm.get('withResults')" fxFlex="100" class="ml-12"
+                            fxLayoutAlign="start start" [checked]="filterForm.get('withResults').value == 'true'"
+                            [indeterminate]="filterForm.get('withResults').value == 'null'"
+                            (change)="updateThreeStateValue('withResults')">
+                            {{ 'DRAWS.FILTERS.WITH_RESULTS.' + filterForm.get('withResults').value | translate }}
+                        </mat-checkbox>
+
+
+                    </form>
+
+                    <div class="p-24">
+                        <button fxFlex mat-raised-button mat-button class="mat-accent compose-dialog-button"
+                            aria-label="Filter" (click)="resetFilter()">
+                            {{ "DRAWS.FILTERS.RESET_FILTER" | translate }}
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+            <!-- / SIDENAV CONTENT -->
+        </mat-sidenav>
+        <!-- / SIDENAV -->
+
+        <!-- CENTER -->
+        <div class="center">
+            <!-- CONTENT HEADER -->
+            <div class="header" fxLayout="row" fxLayoutAlign="space-between center">
+                <div class="search-wrapper" fxLayout="row" fxLayoutAlign="start center">
+                    <button mat-button class="mat-icon-button sidenav-toggle"
+                        fuseMatSidenavToggler="carded-left-sidenav" fxHide.gt-md aria-label="Toggle Sidenav">
+                        <mat-icon>filter_list</mat-icon>
+                    </button>
+                </div>
+            </div>
+            <!-- / CONTENT HEADER -->
+
+            <!-- CONTENT CARD -->
+            <div class="content-card mat-white-bg">
+
+                <mat-table id="entity-table" class="item-table" #table [dataSource]="dataSource" fusePerfectScrollbar>
+
+                    <!-- LOTTERY NAME COLUMN -->
+                    <ng-container cdkColumnDef="lottery">
+                        <mat-header-cell *cdkHeaderCellDef fxHide fxShow.gt-xs>
+                            {{"DRAWS_TABLE.HEADERS.LOTTERY_NAME" | translate}}</mat-header-cell>
+                        <mat-cell *cdkCellDef="let service" fxHide fxShow.gt-xs>
+                            <span>
+                                {{ service.client.fullname | uppercase }}
+                            </span>
+                        </mat-cell>
+                    </ng-container>
+
+                    <!-- OPENING DATE COLUMN -->
+                    <ng-container cdkColumnDef="openingDate">
+                        <mat-header-cell *cdkHeaderCellDef>{{"DRAWS_TABLE.HEADERS.OPENING_DATE" | translate}}
+                        </mat-header-cell>
+                        <mat-cell *cdkCellDef="let service">
+                            <span> {{ service.timestamp | date: "dd/MM/y HH:mm:ss"}} </span>
+                        </mat-cell>
+                    </ng-container>
+
+
+
+                    <!--  lOTTERY NUMBER COLUMN -->
+                    <ng-container cdkColumnDef="number">
+                        <mat-header-cell *cdkHeaderCellDef>{{"DRAWS_TABLE.HEADERS.NUMBER" | translate}}
+                        </mat-header-cell>
+                        <mat-cell *cdkCellDef="let service">
+                            <span>
+                                {{ service.driver ? service.driver.fullname: ''}}
+                            </span>
+                        </mat-cell>
+                    </ng-container>
+
+                    <!--  License plate Column -->
+                    <ng-container cdkColumnDef="type">
+                        <mat-header-cell *cdkHeaderCellDef>{{"DRAWS_TABLE.HEADERS.TYPE" | translate}}
+                        </mat-header-cell>
+                        <mat-cell *cdkCellDef="let service">
+                            <span>
+                                {{ service.vehicle ? service.vehicle.licensePlate: ''}}
+                            </span>
+                        </mat-cell>
+                    </ng-container>
+
+                    <!--  State Column -->
+                    <ng-container cdkColumnDef="approved">
+                        <mat-header-cell *cdkHeaderCellDef>{{"DRAWS_TABLE.HEADERS.APPROVED_STATE" | translate}}
+                        </mat-header-cell>
+                        <mat-cell *cdkCellDef="let service">
+                            <p>
+                                {{ "SERVICE.SERVICE_STATES."+service.state | translate}}
+                            </p>
+                        </mat-cell>
+                    </ng-container>
+
+                    <mat-header-row *cdkHeaderRowDef="displayedColumns"></mat-header-row>
+
+                    <mat-row *cdkRowDef="let row; columns: displayedColumns" class="selectedElement"
+                        (click)="selectserviceRow(row)"
+                        [ngClass]="{  highlight: selectedService && selectedService._id == row._id }"
+                        [routerLink]="['./']" matRipple>
+                    </mat-row>
+                </mat-table>
+                <mat-paginator #paginator [length]="tableSize" [pageIndex]="tablePage" [pageSize]="tableCount"
+                    [pageSizeOptions]="[5, 10, 25, 100]">
+                </mat-paginator>
+
+            </div>
+            <!-- / CONTENT CARD -->
+        </div>
+        <!-- / CENTER -->
+
+    </mat-sidenav-container>
+</div>

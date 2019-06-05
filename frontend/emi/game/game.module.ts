@@ -47,6 +47,10 @@ import { GameQuotaComponent } from './game-detail/quota/game-quota.component';
 import { FileUploadModule } from 'ng2-file-upload';
 import { ProgressDialogComponent } from './game-detail/quota/general-info/progress-dialog/progress-dialog.component';
 
+import { NoteDialogComponent as NoteDialogComponent2 } from './game-detail/prize-program/approval-info/note-dialog/note-dialog.component';
+import { DialogComponent as ApprovalInfoDialog } from './game-detail/sheet-config/approval-info/dialog/dialog.component';
+import { DialogComponent as ApprovalInfoDialogComponent } from './game-detail/prize-program/approval-info/dialog/dialog.component';
+import { NoteDialogComponent as NoteDialogComponent3 } from './game-detail/sheet-config/approval-info/note-dialog/note-dialog.component';
 
 
 const routes: Routes = [
@@ -79,6 +83,10 @@ const routes: Routes = [
   declarations: [
     ProgressDialogComponent,
     DialogComponent,
+    ApprovalInfoDialogComponent,
+    NoteDialogComponent2,
+    NoteDialogComponent3,
+    ApprovalInfoDialog,
     NoteDialogComponent,
     SecondaryPrizeDialogComponent,
     ApproximationDialogComponent,

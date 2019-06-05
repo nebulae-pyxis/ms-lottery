@@ -1,3 +1,4 @@
+"Response for command execution"
 type CommandResponse {
   "Response code"
   code: Int
@@ -6,151 +7,270 @@ type CommandResponse {
 }
 
 "Lottery Draw"
-type LotteryDraw{
+type LotteryDraw {
+  "Draw Id"
   id: String
+  "Draw Name"
   name: String
+  "Draw number"
   number: String
 }
 
 "Lottery and its opens draws"
 type LotteryOpenDraws {
+  "Lottery Id"
   id: String
+  "Lottery Name"
   name: String
+  "Open draws of the related lottery"
   openDraws: [LotteryDraw]
 }
 
-type LotterySeries{
+"Lottery number series"
+type LotteryNumberSeries {
+  "Series"
   series: String
+  "Available tickets quantity"
   availableTickets: Int
 }
 
+"Terminal info about POS where lottery was selled"
 type LotteryTerminal {
+  "Terminal Id"
   id: String
+  "user id of operator logged in terminal"
   userId: String
+  "username of operator logged in terminal"
   userName: String
 }
 
+"Terminal info about POS where lottery was selled"
 input LotteryTerminalInput {
+  "Terminal Id"
   id: String
+  "user id of operator logged in terminal"
   userId: String
+  "username of operator logged in terminal"
   userName: String
 }
 
-input LotteryTicketInput{
+"Info about lottery ticket "
+input LotteryTicketInput {
+  "Draw Id related to lottery ticket"
   drawId: String!
+  "Ticket number related to lottery ticket"
   ticketNumber: String!
+  "Ticket series related to lottery ticket"
   ticketSeries: String!
-  ticketCount: Int
+  "Ticket quantity"
+  ticketCount: Int!
+  "Client name who buys the ticket"
   clientName: String
-  clientDocumentId: String
-  clientPhoneNumber: BigInt
+  "Client document id who buys the ticket"
+  clientDocumentId: String!
+  "Client phone number who buys the ticket"
+  clientPhoneNumber: BigInt!
+  "transaction ID"
   transactionId: String
-  divipolaCode: String
+  "DANE code e.g: Medellín: 05001, Guarne: 05318"
+  divipolaCode: String!
+  "Terminal that sells tickets"
   terminal: LotteryTerminalInput
 }
 
-input PrizeInput {
-  ticketNumber: String
-  ticketSeries: String
-  ticketId: String
-  prizeId: String
-  prizeName: String
-  prizeTotal: Int
-  prizePayment: Int
-  prizeCalimed: Boolean
-  
-}
-
+"Info about Lottery ticket"
 type LotteryTicket {
+  "Ticket Id"
   id: String
+  "Draw Id related to lottery ticket"
   drawId: String
+  "Lottery ticket number"
   ticketNumber: String
+  "Lottery ticket Series"
   ticketSeries: String
+  "Lottery ticket quantity selled"
   ticketCount: Int
+  "Client name who bought the lottery ticket"
   clientName: String
+  "Document Id client who bought the lottery ticket"
   clientDocumentId: String
+  "Phone number client who bought the lottery ticket"
   clientPhoneNumber: BigInt
+  "Related Transaction Id"
   transactionId: String
+  "Terminal where Lottery ticket were selled"
   terminal: LotteryTerminal
 }
 
+"Lottery main details "
 type Lottery {
+  "Lottery Id"
   id: String
+  "Lotery name"
   name: String
 }
 
+"Lottery prize info"
 type LotteryPrize {
+  "Ticket Number"
   ticketNumber: String
+  "Ticket Series"
   ticketSeries: String
+  "Related Ticket Id"
   ticketId: String
+  "Prize Id"
   prizeId: String
+  "Prime name"
   prizeName: String
+  "Prize total amount"
   prizeTotal: BigInt
+  "prize payment amount"
   prizePayment: BigInt
+  "True if the prize was claimed"
   prizeClaimed: Boolean
-  # terminal is optional
-  terminal: LotteryTerminal 
+  "Terminal where Lottery ticket were selled"
+  terminal: LotteryTerminal
 }
 
-input lotteryClaimPrizeInput{
-  drawId: String
-  documentId: String
-  prizeId: String
-  claimCode: String
+
+"Location object"
+type LotteryLocation {
+  lat: Float
+  lng: Float
+}
+
+"Info about Lottery prize to claim"
+input lotteryClaimPrizeInput {
+  "Draw id"
+  drawId: String!
+  "Client document Id"
+  documentId: String!
+  "Prize Id"
+  prizeId: String!
+  "Code to claim prize"
+  claimCode: String!
+  "Transaction Id"
   transactionId: String
-  divipolaCode: String
+  "DANE code e.g: Medellín: 05001, Guarne: 05318"
+  divipolaCode: String!
+  "Terminal where prize is going to be claimed"
   terminal: LotteryTerminalInput
 }
 
+"Filters to search for Sold tickets"
 input LotterySoldTicketInput {
+  "transaction Id"
   transactionId: String
+  "Draw Id"
   drawId: String
-  fromTimestamp: BigInt
+  "lower limit of time interval where want to search"
+  fromTimestamp: BigInt!
+  "higher limit of time interval where want to search"
   toTimestamp: BigInt
-  page: Int
-  pageSize: Int
+  "Page number of pagination"
+  page: Int!
+  "Items per page in pagination"
+  pageSize: Int!
+  "Terminal filters"
   terminal: LotteryTerminalInput
 }
 
+"Filters to search for redeemed prizes"
 input LotteryRedeemedPrizesInput {
+  "Transaction Id"
   transactionId: String
+  "Draw Id"
   drawId: String
-  fromTimestamp: BigInt
+  "lower limit of time interval where want to search"
+  fromTimestamp: BigInt!
+  "higher limit of time interval where want to search"
   toTimestamp: BigInt
+  "Page number or pagination"
   page: Int
+  "Items per page in pagination"
   pageSize: Int
+  "Terminal Filters"
   terminal: LotteryTerminalInput
 }
 
-type Query {  
-  "Request for Lotteries anf its open draws"
+type Query {
+  "Returns a List of lotteries and its available Number series i.e open draws."
   lotteryOpenDraws: [LotteryOpenDraws] @requireAuth
-  "Request for available series for number"
-  lotteryAvailableSeriesForNumber(drawId: String, number: String): [LotterySeries] @requireAuth
 
-  "query lottery"
-  lotteries: [Lottery] @requireAuth
-  "Query closed lotteries available to claim prize"
-  lotteryClosedDraws(lotteryId: String!): [LotteryDraw] @requireAuth
-  "Gets the Prizes available to claim"
-  lotteryPrizes(drawId: String, documentId: String, claimCode: String): [LotteryPrize] @requireAuth
+  "Returns a List of Lottery number series available according the filters applied"
+  lotteryAvailableNumberSeries(
+    "Draw Id filter want to apply"
+    drawId: String!
+    "Number filter want to apply"
+    number: String!
+  ): [LotteryNumberSeries] @requireAuth
 
-  "query for sold tickets"
-  lotterySoldTickets(input: LotterySoldTicketInput!): [LotteryTicket]
-  "query for bought tickets"
-  lotteryBoughtTickets(drawId: String, documentId: String): [LotteryTicket]
-  "Query for redeemed prizes"
-  lotteryRedeemedPrizes(input: LotteryRedeemedPrizesInput): [LotteryPrize]
-  "query for Calimed prizes"
-  lotteryClaimedPrizes(drawId: String, documentId: String): [LotteryPrize]
+  "Returns a list of lotteries that have open draws"
+  lotteriesWithOpenDraws: [Lottery] @requireAuth
+
+  "Returns a list of closed lotteries draws available to claim prize"
+  lotteryClosedDraws(
+    "Lottery id filter to apply"
+    lotteryId: String!
+  ): [LotteryDraw] @requireAuth
+
+  "Returns list of Prizes available to claim"
+  lotteryPrizesToClaim(
+    "Lotery draw Id"
+    drawId: String!
+    "Client document Id"
+    documentId: String!
+    "Code to claim the prize"
+    claimCode: String
+  ): [LotteryPrize] @requireAuth
+
+  "Returns list of sold lottery tickets"
+  lotterySoldTickets(
+    "Filter input about sold ticket"
+    input: LotterySoldTicketInput!
+  ): [LotteryTicket] @requireAuth
+
+  "Returns list of bought tickets to referred Client in the filters"
+  lotteryBoughtTickets(
+    "Draw id to apply to filter"
+    drawId: String!
+    "Client documentId"
+    documentId: String!
+  ): [LotteryTicket] @requireAuth
+
+  "Returns list of redeemed prizes by POS seller"
+  lotteryRedeemedPrizes(
+    "Filters to query for redeemed prizes"
+    input: LotteryRedeemedPrizesInput!
+  ): [LotteryPrize] @requireAuth
+
+  "Returns list of Claimed prizes by client"
+  lotteryClaimedPrizes(
+    "Draw Id"
+    drawId: String!
+    "Client document Id"
+    documentId: String!
+  ): [LotteryPrize] @requireAuth
 }
 
 type Mutation {
-  "Buy lottery Ticket"
-  lotteryBuyTicket(input: LotteryTicketInput!): LotteryTicket @requireAuth
-  "Claim prize"
-  lotteryClaimPrize(input: lotteryClaimPrizeInput!): LotteryPrize @requireAuth
-  "Re-Send prize caim code"
-  lotteryreSendPrizeClaimCode(drawId: String, documentId: String, terminal: LotteryTerminalInput): CommandResponse @requireAuth
+  "Returns Lottery Ticket confirmation"
+  lotteryBuyTicket(
+    "Info about Ticket to sell"
+    input: LotteryTicketInput!
+  ): LotteryTicket @requireAuth
+  "Lottery prize confirmation"
+  lotteryClaimPrize(
+    "Information neccesary to Claim a lottery Prize"
+    input: lotteryClaimPrizeInput!
+  ): LotteryPrize @requireAuth
+  "Returns ACK about Resend prize claim code command"
+  lotteryResendPrizeClaimCode(
+    "Related draw Id"
+    drawId: String!
+    "Client document Id"
+    documentId: String!
+    "Terminal where operation execute this command"
+    terminal: LotteryTerminalInput
+  ): CommandResponse @requireAuth
 }
-

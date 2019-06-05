@@ -6,6 +6,7 @@ const { LotteryGameSheetConfigCQRS } = require("../../domain/lotteryGameSheetCon
 const { LotteryGameQuotaCQRS } = require("../../domain/lotteryGameQuota");
 const { LotteryGamePrizeProgramCQRS } = require("../../domain/lotteryGamePrizeProgram");
 const { LotteryGameDrawCalendarCQRS } = require("../../domain/lotteryGameDrawCalendar");
+const { LotteryDrawCQRS } =require("../../domain/lotteryDraw");
 const broker = require("../../tools/broker/BrokerFactory")();
 const { of, from } = require("rxjs");
 const jsonwebtoken = require("jsonwebtoken");
@@ -309,10 +310,29 @@ class GraphQlService {
         aggregateType: "LotteryGameQuota",
         messageType: "emigateway.graphql.mutation.RemoveLotteryGameQuotaNumber"
       },
+      // LOTTERY DRAW
+      {
+        aggregateType: "Lottery",
+        messageType: "emigateway.graphql.query.lotteryLoteryOptions"
+      },
+      {
+        aggregateType: "Lottery",
+        messageType: "emigateway.graphql.query.lotteryDraws"
+      },
+      {
+        aggregateType: "Lottery",
+        messageType: "emigateway.graphql.query.lotteryDrawsSize"
+      },
+      {
+        aggregateType: "Lottery",
+        messageType: "emigateway.graphql.query.lotteryDrawConfirmResults"
+      },
+      {
+        aggregateType: "Lottery",
+        messageType: "emigateway.graphql.query.lotteryDrawApproveResults"
+      },
     ];
   }
-
-
   /**
    * returns a map that assocs GraphQL request with its processor
    */
@@ -478,6 +498,28 @@ class GraphQlService {
         fn: LotteryGameQuotaCQRS.removeLotteryGameQuotaNumber$,
         obj: LotteryGameQuotaCQRS
       },
+      // LOTTERY DRAW
+      "emigateway.graphql.query.lotteryLoteryOptions": {
+        fn: LotteryDrawCQRS.lotteryLoteryOptions$,
+        obj: LotteryDrawCQRS
+      },
+      "emigateway.graphql.query.lotteryDraws":{
+        fn: LotteryDrawCQRS.lotteryDraws$,
+        obj: LotteryDrawCQRS
+      },
+      "emigateway.graphql.query.lotteryDrawsSize":{
+        fn: LotteryDrawCQRS.lotteryDrawsSize$,
+        obj: LotteryDrawCQRS
+      },
+      "emigateway.graphql.query.lotteryDrawConfirmResults": {
+        fn: LotteryDrawCQRS.lotteryDrawConfirmResults$,
+        obj: LotteryDrawCQRS
+      },
+      "emigateway.graphql.query.lotteryDrawApproveResults": {
+        fn: LotteryDrawCQRS.lotteryDrawApproveResults$,
+        obj: LotteryDrawCQRS
+      },
+
     };
   }
 }
