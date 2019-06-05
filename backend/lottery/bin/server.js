@@ -13,6 +13,7 @@ const LotteryGameSheetConfigDA = require('./data/LotteryGameSheetConfigDA');
 const LotteryGameDrawCalendarDA = require('./data/LotteryGameDrawCalendarDA');
 const LotteryGamePrizeProgramDA = require('./data/LotteryGamePrizeProgramDA');
 const LotteryDraw = require('./domain/lotteryDraw');
+const Cronjob = require('./domain/cronjob');
 const graphQlService = require('./services/emi-gateway/GraphQlService')();
 const Rx = require('rxjs');
 
@@ -27,6 +28,7 @@ const start = () => {
         LotteryGamePrizeProgramDA.start$(),
         LotteryGameDrawCalendarDA.start$(),
         LotteryDraw.start$,
+        Cronjob.start$,
         graphQlService.start$()
     ).subscribe(
         (evt) => {

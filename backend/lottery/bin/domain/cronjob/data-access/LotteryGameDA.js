@@ -6,7 +6,7 @@ const { CustomError } = require("../../../tools/customError");
 const { map } = require("rxjs/operators");
 const { of, Observable, defer } = require("rxjs");
 
-class DriverDA {
+class LotteryGameDA {
   static start$(mongoDbInstance) {
     return Observable.create(observer => {
       if (mongoDbInstance) {
@@ -31,6 +31,6 @@ class DriverDA {
 
 }
 /**
- * @returns {DriverDA}
+ * @returns {LotteryGameDA}
  */
-module.exports = DriverDA;
+module.exports = LotteryGameDA;

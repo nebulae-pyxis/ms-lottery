@@ -49,5 +49,8 @@ class CustomError extends Error {
     DefaultError,
     INTERNAL_SERVER_ERROR_CODE,
     PERMISSION_DENIED,
-    GAME_SHEET_CONFIG_PENDIG_ERROR
+    GAME_SHEET_CONFIG_PENDIG_ERROR,
+    MISSING_SHEET_TO_OPEN_DRAW: new CustomError('MissingSheetConfig', `searchConfigurationToOpenADraw`, 10120, 'Missing Sheet Config to Open the draw'),
+    MISSING_PRIZE_PROGRAM_TO_OPEN_DRAW: new CustomError('MissingPrizeProgram', `searchConfigurationToOpenADraw`, 10121, 'Missing Prize Program to Open the draw'),
+    MISSING_QUOTA_CONFIG_TO_OPEN_DRAW: new CustomError('MissingQuotaConfig', `searchConfigurationToOpenADraw`, 10122, 'Missing Quota Config to Open the draw'),
   } 

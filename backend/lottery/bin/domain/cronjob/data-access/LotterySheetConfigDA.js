@@ -1,12 +1,13 @@
 "use strict";
 
 let mongoDB = undefined;
-const COLLECTION_NAME = "LotteryDraws";
+const COLLECTION_NAME = "LotteryGameSheetConfig";
 const { CustomError } = require("../../../tools/customError");
 const { map } = require("rxjs/operators");
 const { of, Observable, defer } = require("rxjs");
 
-class DriverDA {
+class LotterySheetConfigDA {
+
   static start$(mongoDbInstance) {
     return Observable.create(observer => {
       if (mongoDbInstance) {
@@ -29,8 +30,26 @@ class DriverDA {
     return defer(() => collection.findOne(query,{projection}));
   }
 
+  static findValidConfigurationToOpenDraw$(lotteryId, gameId, drawNumber){
+    const collection = mongoDB.db.collection(COLLECTION_NAME);
+    return defer(() => collection.find({
+      revoked: false,
+      approved: "APPROVED", lotteryId, gameId, 
+      validFromDraw: { $lte: drawNumber },
+      $or: [
+        { validUntilDraw: null },
+        { validUntilDraw: { $gte: drawNumber } }
+      ]      
+    })
+    .sort({ version: -1 })
+    .limit(1)
+    .toArray()
+    )
+
+  }
+
 }
 /**
- * @returns {DriverDA}
+ * @returns {LotterySheetConfigDA}
  */
-module.exports = DriverDA;
+module.exports = LotterySheetConfigDA;

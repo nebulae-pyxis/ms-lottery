@@ -3,6 +3,7 @@ const { of, from, concat } = require("rxjs");
 const eventSourcing = require("../../tools/EventSourcing")();
 const { LotteryES } = require("../../domain/lottery");
 const { LotteryGameES } = require("../../domain/lotterygame");
+const { CronjobES } = require("../../domain/cronjob");
 const { LotteryGameSheetConfigES } = require("../../domain/lotteryGameSheetConfig");
 const { LotteryGamePrizeProgramES } = require("../../domain/lotteryGamePrizeProgram");
 const { LotteryGameDrawCalendarES } = require("../../domain/lotteryGameDrawCalendar");
@@ -203,6 +204,11 @@ class EventStoreService {
         fn: LotteryGameDrawCalendarES.handleLotteryGameDrawCalendarRevoked$,
         obj: LotteryGameDrawCalendarES
       },
+      // CRONJOB
+      LotteryCheckDrawsToOpen: {
+        fn: CronjobES.handleLotteryCheckDrawsToOpen$,
+        obj: CronjobES
+      },
     };
   }
 
@@ -288,6 +294,10 @@ class EventStoreService {
         aggregateType: "LotteryGameDrawCalendar",
         eventType: "LotteryGameDrawCalendarRevoked"
       },
+      {
+        aggregateType: "Cronjob",
+        eventType: "LotteryCheckDrawsToOpen"
+      }
     ]
   }
 }
