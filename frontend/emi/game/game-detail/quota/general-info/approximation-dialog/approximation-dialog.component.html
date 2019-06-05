@@ -1,0 +1,67 @@
+<h1 mat-dialog-title>{{data.dialogTitle | translate}}</h1>
+<form name="approximationForm" [formGroup]="approximationForm" class="w-100-p" fxLayout="column"
+            class="mat-white-bg mr-24 mb-24">
+            <mat-form-field fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
+              <input autocomplete="off" matInput name="name" formControlName="name" maxlength="100"
+                placeholder="{{'LOTTERY.DETAILS.PRIZE_PROGRAM.NAME' | translate}}">
+              <mat-error *ngIf="approximationForm.hasError('required', ['name'])">
+                {{'LOTTERY.LOTTERY_FIELD_REQUIRED' | translate}}
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
+              <mat-label>{{'LOTTERY.DETAILS.PRIZE_PROGRAM.APPROXIMATION_TO' | translate}}</mat-label>
+              <mat-select [(value)]="selectedApproximationTo">
+                <mat-option value="GRAND_PRIZE">{{'LOTTERY.DETAILS.PRIZE_PROGRAM.GRAND_PRIZE' | translate}}</mat-option>
+                <mat-option value="SECONDARY_PRIZE">{{'LOTTERY.DETAILS.PRIZE_PROGRAM.SECONDARY_PRICES' | translate}}</mat-option>
+                <mat-option value="TWO_OUT_OF_THREE">{{'LOTTERY.DETAILS.PRIZE_PROGRAM.TWO_OUT_OF_THREE' | translate}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+              <mat-form-field fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
+                <mat-label>{{'LOTTERY.DETAILS.PRIZE_PROGRAM.NUMBER_MASK_TYPE' | translate}}</mat-label>
+                <mat-select [(value)]="selectedNumberMaskType">
+                  <mat-option value="REGEX">{{'LOTTERY.DETAILS.PRIZE_PROGRAM.REGEX' | translate}}</mat-option>
+                  <mat-option value="REVERSED">{{'LOTTERY.DETAILS.PRIZE_PROGRAM.REVERSED' | translate}}</mat-option>
+                  <mat-option value="ANY">{{'LOTTERY.DETAILS.PRIZE_PROGRAM.ANY' | translate}}</mat-option>
+                  <mat-option value="SAME">{{'LOTTERY.DETAILS.PRIZE_PROGRAM.SAME' | translate}}</mat-option>
+                  <mat-option value="UNORDERED">{{'LOTTERY.DETAILS.PRIZE_PROGRAM.UNORDERED' | translate}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field *ngIf="selectedNumberMaskType === 'REGEX'" fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
+                <input autocomplete="off" matInput name="numberMaskRegex" formControlName="numberMaskRegex" maxlength="100"
+                  placeholder="{{'LOTTERY.DETAILS.PRIZE_PROGRAM.NUMBER_MASK_REGEX' | translate}}">
+              </mat-form-field>
+
+              <mat-form-field fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
+                <mat-label>{{'LOTTERY.DETAILS.PRIZE_PROGRAM.SERIE_MASK_TYPE' | translate}}</mat-label>
+                <mat-select [(value)]="selectedSerialMaskType">
+                  <mat-option value="ANY">{{'LOTTERY.DETAILS.PRIZE_PROGRAM.ANY' | translate}}</mat-option>
+                  <mat-option value="SAME">{{'LOTTERY.DETAILS.PRIZE_PROGRAM.SAME' | translate}}</mat-option>
+                </mat-select>
+              </mat-form-field>
+
+            <mat-form-field fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
+              <input matInput name="totalPrize" formControlName="totalPrize" autocomplete="off" maxlength="15"
+                placeholder="{{'LOTTERY.DETAILS.PRIZE_PROGRAM.TOTAL_PRIZE' | translate}}" currencyMask
+                [options]="{ prefix: '$ ', thousands: '.', precision: '0', align: 'left' }" [(ngModel)]="totalPrize">
+              <mat-error *ngIf="approximationForm.hasError('required', ['totalPrize'])">
+                {{'LOTTERY.LOTTERY_FIELD_REQUIRED' | translate}}
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
+              <input matInput name="paymentPrize" formControlName="paymentPrize" autocomplete="off" maxlength="15"
+                placeholder="{{'LOTTERY.DETAILS.PRIZE_PROGRAM.TOTAL_PAYMENT' | translate}}" currencyMask
+                [options]="{ prefix: '$ ', thousands: '.', precision: '0', align: 'left' }" [(ngModel)]="paymentPrize">
+              <mat-error *ngIf="approximationForm.hasError('required', ['paymentPrize'])">
+                {{'LOTTERY.LOTTERY_FIELD_REQUIRED' | translate}}
+              </mat-error>
+            </mat-form-field>
+          </form>
+<mat-dialog-actions>
+  <button mat-raised-button [disabled]="approximationForm.invalid" (click)="pushButton(true)">Ok</button>
+  <button mat-raised-button mat-dialog-close color="warn"
+    (click)="pushButton(false)">{{'LOTTERY.CANCEL' | translate}}</button>
+</mat-dialog-actions>

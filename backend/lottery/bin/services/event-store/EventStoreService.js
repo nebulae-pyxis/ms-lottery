@@ -5,6 +5,7 @@ const { LotteryES } = require("../../domain/lottery");
 const { LotteryGameES } = require("../../domain/lotterygame");
 const { CronjobES } = require("../../domain/cronjob");
 const { LotteryGameSheetConfigES } = require("../../domain/lotteryGameSheetConfig");
+const { LotteryGameQuotaES } = require("../../domain/lotteryGameQuota");
 const { LotteryGamePrizeProgramES } = require("../../domain/lotteryGamePrizeProgram");
 const { LotteryGameDrawCalendarES } = require("../../domain/lotteryGameDrawCalendar");
 const { map, switchMap, filter, mergeMap, concatMap } = require('rxjs/operators');
@@ -209,6 +210,32 @@ class EventStoreService {
         fn: CronjobES.handleLotteryCheckDrawsToOpen$,
         obj: CronjobES
       },
+      // QUOTA
+      LotteryGameQuotaCreated: {
+        fn: LotteryGameQuotaES.handleLotteryGameQuotaCreated$,
+        obj: LotteryGameQuotaES
+      },
+      LotteryGameQuotaUpdated: {
+        fn: LotteryGameQuotaES.handleLotteryGameQuotaUpdated$,
+        obj: LotteryGameQuotaES
+      },
+      LotteryGameQuotaApproved: {
+        fn: LotteryGameQuotaES.handleLotteryGameQuotaApproved$,
+        obj: LotteryGameQuotaES
+      },
+      LotteryGameQuotaRevoked: {
+        fn: LotteryGameQuotaES.handleLotteryGameQuotaRevoked$,
+        obj: LotteryGameQuotaES
+      },
+      // QUOTA NUMBER
+      LotteryGameQuotaNumberCreated: {
+        fn: LotteryGameQuotaES.handleLotteryGameQuotaNumberCreated$,
+        obj: LotteryGameQuotaES
+      },
+      LotteryGameQuotaNumberRemoved: {
+        fn: LotteryGameQuotaES.handleLotteryGameQuotaNumberRemoved$,
+        obj: LotteryGameQuotaES
+      },
     };
   }
 
@@ -297,7 +324,33 @@ class EventStoreService {
       {
         aggregateType: "Cronjob",
         eventType: "LotteryCheckDrawsToOpen"
-      }
+      },
+      // QUOTA
+      {
+        aggregateType: "LotteryGameQuota",
+        eventType: "LotteryGameQuotaCreated"
+      },
+      {
+        aggregateType: "LotteryGameQuota",
+        eventType: "LotteryGameQuotaUpdated"
+      },
+      {
+        aggregateType: "LotteryGameQuota",
+        eventType: "LotteryGameQuotaApproved"
+      },
+      {
+        aggregateType: "LotteryGameQuota",
+        eventType: "LotteryGameQuotaRevoked"
+      },
+      // QUOTA NUMBER
+      {
+        aggregateType: "LotteryGameQuota",
+        eventType: "LotteryGameQuotaNumberCreated"
+      },
+      {
+        aggregateType: "LotteryGameQuota",
+        eventType: "LotteryGameQuotaNumberRemoved"
+      },
     ]
   }
 }

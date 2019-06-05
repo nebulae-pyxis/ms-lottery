@@ -40,6 +40,8 @@ type LotteryGameDrawCalendar {
   template: Template
   "Date calendar"
   dateCalendar: [DateCalendar]
+  validFromTimestamp: BigInt,
+  validUntilTimestamp: BigInt
   "Lottery id"
   lotteryId: String
   "game id"
@@ -116,6 +118,8 @@ input DateCalendarInput {
 }
 
 input LotteryGameDrawCalendarInput {
+  validFromTimestamp: BigInt,
+  validUntilTimestamp: BigInt
   "Template used to create the date calendar"
   template: TemplateInput
   "Date calendar"

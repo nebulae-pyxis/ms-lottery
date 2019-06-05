@@ -40,6 +40,7 @@ import { GameDetailService } from './game-detail.service';
 import { Location } from '@angular/common';
 import { PrizeProgramService } from './prize-program/prize-program.service';
 import { DrawCalendarService } from './draw-calendar/draw-calendar.service';
+import { QuotaService } from './quota/quota.service';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -67,6 +68,7 @@ export class GameDetailComponent implements OnInit, OnDestroy {
     private gameDetailservice: GameDetailService,
     private prizeProgramService: PrizeProgramService,
     private drawCalendarService: DrawCalendarService,
+    private quotaService: QuotaService,
     private route: ActivatedRoute,
     private location: Location
   ) {
@@ -98,6 +100,9 @@ export class GameDetailComponent implements OnInit, OnDestroy {
                 break;
               case 'draw-calendar':
                 this.selectedTab = 3;
+                break;
+              case 'quota':
+                this.selectedTab = 4;
                 break;
             }
           }
@@ -145,9 +150,14 @@ export class GameDetailComponent implements OnInit, OnDestroy {
           (this.prizeProgramService.selectedPrizeProgramChanged$.value ? '/' + this.prizeProgramService.selectedPrizeProgramChanged$.value._id : '')
         );
         break;
-        case 3:
-          this.updateGameRoute(['id'], 'draw-calendar' +
-            (this.drawCalendarService.selectedDrawCalendarChanged$.value ? '/' + this.drawCalendarService.selectedDrawCalendarChanged$.value._id : '')
+      case 3:
+        this.updateGameRoute(['id'], 'draw-calendar' +
+          (this.drawCalendarService.selectedDrawCalendarChanged$.value ? '/' + this.drawCalendarService.selectedDrawCalendarChanged$.value._id : '')
+        );
+        break;
+        case 4:
+          this.updateGameRoute(['id'], 'quota' +
+            (this.quotaService.selectedQuotaChanged$.value ? '/' + this.quotaService.selectedQuotaChanged$.value._id : '')
           );
           break;
     }

@@ -1,0 +1,164 @@
+type CommandResponse {
+  "Response code"
+  code: Int
+  "Response message"
+  message: String
+}
+
+type LotteryGameQuota {
+  "Sheet config ID"
+  _id: ID!
+  "Draw consecutive"
+  validFromDraw: Int
+  "Draw consecutive"
+  validUntilDraw: Int
+  "Lottery id"
+  lotteryId: String
+  "game id"
+  gameId: String
+  "Config sheet approved"
+  approved: String
+  "Config sheet approved"
+  approvedNotes: String
+  "Config sheet approved"
+  approvedUsername: String
+  "Approved timestamp"
+  approvedTimestamp: BigInt
+  "Config sheet revoked"
+  revoked: Boolean
+  "Config sheet revoked notes"
+  revokedNotes: String
+  "Config sheet revoked timestamp"
+  revokedTimestamp: BigInt
+  "Config sheet revoked user name"
+  revokedUsername: String
+  "Config sheet version"
+  version: Int
+  "Creation timestamp"
+  creationTimestamp: BigInt
+  "Creator username"
+  creationUsername: String
+  "Creator user id"
+  creationUserId: String
+  "Modification timestamp"
+  editionTimestamp: BigInt
+  "Modifier user id"
+  editionUserId: String
+  "Modifier username"
+  editionUsername: String
+}
+
+type LotteryGameQuotaNumber {
+  lotteryId: String
+  gameId: String
+  quotaId: String
+  number: String
+  series: [String]
+}
+
+type LotteryGameQuotaNumberOperationResponse {
+  completed: Boolean
+  action: String
+}
+
+input LotteryGameQuotaFilterInput {
+  "Name"
+  name: String
+  "Sheet config version"
+  quotaVersion: String
+  "Lottery id"
+  lotteryId: String
+  "game id"
+  gameId: String
+}
+
+input LotteryGameQuotaInput {
+  "Draw consecutive"
+  validFromDraw: Int
+  "Draw consecutive"
+  validUntilDraw: Int
+  "Lottery Id"
+  lotteryId: String
+  "game id"
+  gameId: String
+  "Quota state"
+  approved: String
+}
+
+input LotteryGameQuotaNumberInput {
+  lotteryId: String
+  gameId: String
+  quotaId: String
+  number: String
+  series: [String]
+}
+
+input LotteryGameQuotaNumberListInput {
+  quotaId: String
+  lotteryId: String,
+  gameId: String
+}
+
+
+type Query {
+  "Get sheet configs filtered "
+  LotteryGameQuotaList(
+    filterInput: LotteryGameQuotaFilterInput!
+  ): [LotteryGameQuota]
+
+  "Get Game by its id"
+  LotteryGameQuota(
+    id: String
+    filterInput: LotteryGameQuotaFilterInput
+  ): LotteryGameQuota
+
+
+  LotteryGameQuotaNumberList(
+    filterInput: LotteryGameQuotaNumberListInput
+  ): LotteryGameQuotaNumber
+
+  LotteryGameQuotaNumberListSize(
+    filterInput: LotteryGameQuotaNumberListInput
+  ): LotteryGameQuotaNumber
+
+}
+
+type Mutation {
+  "Create a new Game"
+  CreateLotteryGameQuota(
+    input: LotteryGameQuotaInput!
+  ): CommandResponse
+  "Update the sheet config"
+  UpdateLotteryGameQuota(
+    id: ID!
+    input: LotteryGameQuotaInput!
+  ): CommandResponse
+  "Approve the sheet config"
+  ApproveLotteryGameQuota(
+    id: ID!
+    approved: String
+    approvedNotes: String
+  ): CommandResponse
+  "Revoke the sheet config"
+  RevokeLotteryGameQuota(
+    id: ID!
+    revoked: Boolean
+    revokedNotes: String
+  ): CommandResponse
+  CreateLotteryGameQuota(
+    input: LotteryGameQuotaInput!
+  ): CommandResponse
+  CreateLotteryGameQuotaNumber(
+    input: [LotteryGameQuotaNumberInput], lotteryId: String, gameId: String, quotaId: String
+  ): CommandResponse
+  RemoveLotteryGameQuotaNumber(
+    quotaId: String!
+  ): CommandResponse
+}
+
+type Subscription {
+  "This events is triggered when a Game is created or updated"
+  LotteryGameQuotaUpdatedSubscription: LotteryGameQuota
+  "This events is triggered when a QuotaNumber is created or removed"
+  LotteryGameQuotaNumberUpdatedSubscription: LotteryGameQuotaNumberOperationResponse
+}

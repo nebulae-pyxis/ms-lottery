@@ -19,6 +19,8 @@ export const LotteryGameDrawCalendarList = gql`
         id
         drawState
       }
+      validFromTimestamp
+      validUntilTimestamp
       creationTimestamp
       creationUsername
       creationUserId
@@ -57,6 +59,8 @@ export const LotteryGameDrawCalendar = gql`
         id
         drawState
       }
+      validFromTimestamp
+      validUntilTimestamp
     creationTimestamp
     creationUsername
     creationUserId
@@ -133,6 +137,8 @@ export const LotteryGameDrawCalendarUpdatedSubscription = gql`
         id
         drawState
       }
+      validFromTimestamp
+      validUntilTimestamp
     creationTimestamp
     creationUsername
     creationUserId

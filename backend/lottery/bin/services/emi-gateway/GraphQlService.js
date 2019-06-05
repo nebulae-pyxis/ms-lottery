@@ -3,6 +3,7 @@
 const { LotteryCQRS } = require("../../domain/lottery");
 const { LotteryGameCQRS } = require("../../domain/lotterygame");
 const { LotteryGameSheetConfigCQRS } = require("../../domain/lotteryGameSheetConfig");
+const { LotteryGameQuotaCQRS } = require("../../domain/lotteryGameQuota");
 const { LotteryGamePrizeProgramCQRS } = require("../../domain/lotteryGamePrizeProgram");
 const { LotteryGameDrawCalendarCQRS } = require("../../domain/lotteryGameDrawCalendar");
 const { LotteryDrawCQRS } =require("../../domain/lotteryDraw");
@@ -275,6 +276,40 @@ class GraphQlService {
         aggregateType: "LotteryGameDrawCalendar",
         messageType: "emigateway.graphql.mutation.RevokeLotteryGameDrawCalendar"
       },
+      // QUOTA
+      {
+        aggregateType: "LotteryGameQuota",
+        messageType: "emigateway.graphql.query.LotteryGameQuota"
+      },
+      {
+        aggregateType: "LotteryGameQuota",
+        messageType: "emigateway.graphql.query.LotteryGameQuotaList"
+      },
+      {
+        aggregateType: "LotteryGameQuota",
+        messageType: "emigateway.graphql.mutation.CreateLotteryGameQuota"
+      },
+      {
+        aggregateType: "LotteryGameQuota",
+        messageType: "emigateway.graphql.mutation.UpdateLotteryGameQuota"
+      },
+      {
+        aggregateType: "LotteryGameQuota",
+        messageType: "emigateway.graphql.mutation.ApproveLotteryGameQuota"
+      },
+      {
+        aggregateType: "LotteryGameQuota",
+        messageType: "emigateway.graphql.mutation.RevokeLotteryGameQuota"
+      },
+      // QUOTA NUMBER
+      {
+        aggregateType: "LotteryGameQuota",
+        messageType: "emigateway.graphql.mutation.CreateLotteryGameQuotaNumber"
+      },
+      {
+        aggregateType: "LotteryGameQuota",
+        messageType: "emigateway.graphql.mutation.RemoveLotteryGameQuotaNumber"
+      },
       // LOTTERY DRAW
       {
         aggregateType: "Lottery",
@@ -427,6 +462,41 @@ class GraphQlService {
       "emigateway.graphql.mutation.RevokeLotteryGameDrawCalendar": {
         fn: LotteryGameDrawCalendarCQRS.revokeLotteryGameDrawCalendar$,
         obj: LotteryGameDrawCalendarCQRS
+      },
+      // QUOTA
+      "emigateway.graphql.query.LotteryGameQuota": {
+        fn: LotteryGameQuotaCQRS.getLotteryGameQuota$,
+        obj: LotteryGameQuotaCQRS
+      },
+      "emigateway.graphql.query.LotteryGameQuotaList": {
+        fn: LotteryGameQuotaCQRS.getLotteryGameQuotaList$,
+        obj: LotteryGameQuotaCQRS
+      },
+      "emigateway.graphql.mutation.CreateLotteryGameQuota": {
+        fn: LotteryGameQuotaCQRS.createLotteryGameQuota$,
+        obj: LotteryGameQuotaCQRS
+      },
+      "emigateway.graphql.mutation.UpdateLotteryGameQuota": {
+        fn: LotteryGameQuotaCQRS.updateLotteryGameQuota$,
+        obj: LotteryGameQuotaCQRS
+      },
+      "emigateway.graphql.mutation.ApproveLotteryGameQuota": {
+        fn: LotteryGameQuotaCQRS.approveLotteryGameQuota$,
+        obj: LotteryGameQuotaCQRS
+      },
+      "emigateway.graphql.mutation.RevokeLotteryGameQuota": {
+        fn: LotteryGameQuotaCQRS.revokeLotteryGameQuota$,
+        obj: LotteryGameQuotaCQRS
+      },
+      // QUOTA NUMBER
+      "emigateway.graphql.mutation.CreateLotteryGameQuotaNumber": {
+        fn: LotteryGameQuotaCQRS.createLotteryGameQuotaNumber$,
+        obj: LotteryGameQuotaCQRS
+      },
+      // QUOTA NUMBER
+      "emigateway.graphql.mutation.RemoveLotteryGameQuotaNumber": {
+        fn: LotteryGameQuotaCQRS.removeLotteryGameQuotaNumber$,
+        obj: LotteryGameQuotaCQRS
       },
       // LOTTERY DRAW
       "emigateway.graphql.query.lotteryLoteryOptions": {

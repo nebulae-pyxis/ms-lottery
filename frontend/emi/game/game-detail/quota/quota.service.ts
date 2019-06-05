@@ -3,36 +3,43 @@ import { Observable, BehaviorSubject, of, Subject, from } from 'rxjs';
 import { startWith, tap, mergeMap, map, reduce } from 'rxjs/operators';
 import { GatewayService } from '../../../../../api/gateway.service';
 import {
-  LotteryGameDrawCalendarList,
-  LotteryGameDrawCalendar,
-  CreateLotteryGameDrawCalendar,
-  UpdateLotteryGameDrawCalendar,
-  ApproveLotteryGameDrawCalendar,
-  RevokeLotteryGameDrawCalendar,
-  LotteryGameDrawCalendarUpdatedSubscription
-} from '../../gql/draw-calendar.js';
+  LotteryGameQuotaList,
+  LotteryGameQuota,
+  CreateLotteryGameQuota,
+  UpdateLotteryGameQuota,
+  ApproveLotteryGameQuota,
+  RevokeLotteryGameQuota,
+  CreateLotteryGameQuotaNumber,
+  RemoveLotteryGameQuotaNumber,
+  LotteryGameQuotaUpdatedSubscription,
+  LotteryGameQuotaNumberUpdatedSubscription
+} from '../../gql/quota.js';
 import { Router, ActivatedRoute } from '@angular/router';
+import { HttpClient, HttpParams, HttpRequest, HttpEvent } from '@angular/common/http';
 
 import { Location } from '@angular/common';
 
 @Injectable({
   providedIn: 'root',
 })
-export class DrawCalendarService {
+export class QuotaService {
 
   lastOperation = null;
 
-  drawCalendar = null;
-  notifyDrawCalendarUpdated$ = new Subject();
-  selectedDrawCalendarChanged$ = new BehaviorSubject(undefined);
-  template;
-  validUntilTimestamp;
-  validFromTimestamp;
-  templateFormValid$ = new BehaviorSubject(false);
-  dateList: any[];
+  quota = null;
+  notifyQuotaUpdated$ = new Subject();
+  selectedQuotaChanged$ = new BehaviorSubject(undefined);
+  grandPrize;
+  grandPrizeFormValid$ = new BehaviorSubject(false);
+  twoOutOfThree;
+  secondaryPrices = [];
+  approximations = [];
+  fileQuotaList = [];
+  currentUploadProgress$ = new BehaviorSubject(0);
 
   constructor(private gateway: GatewayService, private location: Location,
-    private route: ActivatedRoute) {
+    private route: ActivatedRoute,
+    private http: HttpClient) {
 
   }
 
@@ -43,7 +50,7 @@ export class DrawCalendarService {
     return of('CREATE').pipe(
       tap(operation => {
         this.lastOperation = operation;
-        this.drawCalendar = game;
+        this.quota = game;
       })
     );
   }
@@ -55,7 +62,7 @@ export class DrawCalendarService {
     return of('UPDATE').pipe(
       tap(operation => {
         this.lastOperation = operation;
-        this.drawCalendar = game;
+        this.quota = game;
       })
     );
   }
@@ -67,15 +74,15 @@ export class DrawCalendarService {
     return of('').pipe(
       tap(() => {
         this.lastOperation = null;
-        this.drawCalendar = null;
+        this.quota = null;
       })
     );
   }
 
   /* #region  PRIZE PROGRAM CQRS */
-  lotteryGameDrawCalendarList$(filterInput) {
+  lotteryGameQuotaList$(filterInput) {
     return this.gateway.apollo.query<any>({
-      query: LotteryGameDrawCalendarList,
+      query: LotteryGameQuotaList,
       variables: {
         filterInput
       },
@@ -84,9 +91,9 @@ export class DrawCalendarService {
     });
   }
 
-  lotteryGameDrawCalendar$(id, filterInput) {
+  lotteryGameQuota$(id, filterInput) {
     return this.gateway.apollo.query<any>({
-      query: LotteryGameDrawCalendar,
+      query: LotteryGameQuota,
       variables: {
         id,
         filterInput
@@ -96,9 +103,9 @@ export class DrawCalendarService {
     });
   }
 
-  createLotteryGameDrawCalendar$(input) {
+  createLotteryGameQuota$(input) {
     return this.gateway.apollo.mutate<any>({
-      mutation: CreateLotteryGameDrawCalendar,
+      mutation: CreateLotteryGameQuota,
       variables: {
         input
       },
@@ -106,9 +113,9 @@ export class DrawCalendarService {
     });
   }
 
-  updateLotteryGameDrawCalendar$(id, input) {
+  updateLotteryGameQuota$(id, input) {
     return this.gateway.apollo.mutate<any>({
-      mutation: UpdateLotteryGameDrawCalendar,
+      mutation: UpdateLotteryGameQuota,
       variables: {
         id,
         input
@@ -117,9 +124,9 @@ export class DrawCalendarService {
     });
   }
 
-  approveLotteryGameDrawCalendar$(id, approved, approvedNotes) {
+  approveLotteryGameQuota$(id, approved, approvedNotes) {
     return this.gateway.apollo.mutate<any>({
-      mutation: ApproveLotteryGameDrawCalendar,
+      mutation: ApproveLotteryGameQuota,
       variables: {
         id,
         approved,
@@ -129,9 +136,9 @@ export class DrawCalendarService {
     });
   }
 
-  revokeLotteryGameDrawCalendar$(id, revoked, revokedNotes) {
+  revokeLotteryGameQuota$(id, revoked, revokedNotes) {
     return this.gateway.apollo.mutate<any>({
-      mutation: RevokeLotteryGameDrawCalendar,
+      mutation: RevokeLotteryGameQuota,
       variables: {
         id,
         revoked,
@@ -140,20 +147,52 @@ export class DrawCalendarService {
       errorPolicy: 'all'
     });
   }
+
+  createLotteryGameQuotaNumber$(input, lotteryId, gameId, quotaId) {
+    return this.gateway.apollo.mutate<any>({
+      mutation: CreateLotteryGameQuotaNumber,
+      variables: {
+        input,
+        lotteryId,
+        gameId,
+        quotaId
+      },
+      errorPolicy: 'all'
+    });
+  }
+
+  removeLotteryGameQuotaNumber$(quotaId) {
+    return this.gateway.apollo.mutate<any>({
+      mutation: RemoveLotteryGameQuotaNumber,
+      variables: {
+        quotaId: quotaId
+      },
+      errorPolicy: 'all'
+    });
+  }
   /* #endregion */
 
 
   notifymsentityUpdated(filterData) {
-    this.notifyDrawCalendarUpdated$.next(filterData);
+    this.notifyQuotaUpdated$.next(filterData);
   }
 
   /**
  * Event triggered when a lotteryGame is created, updated or deleted.
  */
-  subscribeLotteryGameDrawCalendarUpdatedSubscription$(): Observable<any> {
+  subscribeLotteryGameQuotaUpdatedSubscription$(): Observable<any> {
     return this.gateway.apollo
       .subscribe({
-        query: LotteryGameDrawCalendarUpdatedSubscription
+        query: LotteryGameQuotaUpdatedSubscription
+      });
+  }
+  /**
+* Event triggered when a lotteryGame is created, updated or deleted.
+*/
+  subscribeLotteryGameQuotaNumberUpdatedSubscription$(): Observable<any> {
+    return this.gateway.apollo
+      .subscribe({
+        query: LotteryGameQuotaNumberUpdatedSubscription
       });
   }
 
