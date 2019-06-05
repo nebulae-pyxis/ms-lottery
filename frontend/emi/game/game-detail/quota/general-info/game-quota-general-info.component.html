@@ -1,0 +1,106 @@
+<form name="gameGeneralInfoForm" [formGroup]="gameGeneralInfoForm" class="w-100-p" fxLayout="column"
+  class="mat-white-bg mr-24 mb-24">
+
+  <mat-form-field fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
+    <input autocomplete="off" matInput name="validFromDraw" formControlName="validFromDraw" maxlength="15"
+      placeholder="{{'LOTTERY.DETAILS.CONFIG_SHEET.VALID_FROM_DRAW' | translate}}">
+    <mat-error *ngIf="gameGeneralInfoForm.hasError('required', ['validFromDraw'])">
+      {{'LOTTERY.LOTTERY_FIELD_REQUIRED' | translate}}
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
+    <input autocomplete="off" matInput name="validUntilDraw" formControlName="validUntilDraw" maxlength="15"
+      placeholder="{{'LOTTERY.DETAILS.CONFIG_SHEET.VALID_UNTIL_DRAW' | translate}}">
+  </mat-form-field>
+
+  <div *ngIf="tableSize < 1" ng2FileDrop [ngClass]="{'nv-file-over': hasBaseDropZoneOver}" fxLayout="column" (onFileDrop)="fileDroped($event)" (fileOver)="fileOverBase($event)"
+    [uploader]="uploader" class="well my-drop-zone" style="text-align: center; height: 150px;">
+    <span *ngIf="(!uploadingFile || hasBaseDropZoneOver)" style="color: #6e6e6e; font-size: 14px; margin-top: 20px">
+    {{ "LOTTERY.DETAILS.QUOTA.UPLOAD_FILE_MESSAGE" | translate}}
+    </span>
+
+    <label *ngIf="!uploadingFile || hasBaseDropZoneOver" style="margin-top: 20px" class="fileContainer">
+      <button mat-raised-button>{{ "LOTTERY.DETAILS.QUOTA.EXPLORE_FILES" | translate}}</button>
+      <input type="file" accept=".txt" (change)="fileUpload($event)" />
+    </label>
+
+    <mat-progress-spinner *ngIf="uploadingFile && !hasBaseDropZoneOver" style="align-self: center; margin-top: 20px" color="primary" mode="indeterminate">
+    </mat-progress-spinner>
+
+  </div>
+
+  <mat-table
+          *ngIf="tableSize > 0"
+          id="entity-table"
+          class="item-table"
+          #table
+          [dataSource]="dataSource"
+          fusePerfectScrollbar
+        >
+
+          <!-- Last modification timestamp Column -->
+          <ng-container cdkColumnDef="number">
+              <mat-header-cell *cdkHeaderCellDef fxHide fxShow.gt-xs >{{
+                "LOTTERY.DETAILS.QUOTA.NUMBER" | translate
+              }}</mat-header-cell>
+              <mat-cell *cdkCellDef="let element" fxHide fxShow.gt-xs>
+                <p class="text-truncate">
+                  {{ element.number }}
+                </p>
+              </mat-cell>
+          </ng-container>
+
+          <!-- Modifier user Column -->
+          <ng-container cdkColumnDef="series">
+              <mat-header-cell *cdkHeaderCellDef fxHide fxShow.gt-xs>{{
+                "LOTTERY.DETAILS.QUOTA.SERIES" | translate
+              }}</mat-header-cell>
+              <mat-cell *cdkCellDef="let element" fxHide fxShow.gt-xs>
+                <p class="text-truncate">{{  element.series.join(', ') }}</p>
+              </mat-cell>
+          </ng-container>
+
+
+          <mat-header-row *cdkHeaderRowDef="displayedColumns"></mat-header-row>
+
+          <mat-row
+            *cdkRowDef="let row; columns: displayedColumns"
+            class="selectedElement"
+            (click)="selectQuotaNumberRow(row)"
+            [ngClass]="{
+              highlight:
+              selectedQuotaNumber &&
+              selectedQuotaNumber.number == row.number
+            }"
+            matRipple
+          >
+          </mat-row>
+        </mat-table>
+        <mat-paginator
+          [ngStyle]="{'visibility: hidden': tableSize > 0}"
+          #paginator
+          [length]="tableSize"
+          [pageIndex]="tablePage"
+          [pageSize]="tableCount"
+          [pageSizeOptions]="[5, 10, 25, 100]"
+        >
+        </mat-paginator>
+
+
+  <div class="mt-16" *ngIf="isGeneralInfoButtonsAllowed()">
+    <button mat-raised-button style="margin-right: 10px" [disabled]="gameGeneralInfoForm.invalid || tableSize < 1"
+      (click)="createQuota()" *ngIf="showSaveButton">
+      {{'LOTTERY.UPDATE' | translate}}
+    </button>
+    <button mat-raised-button style="margin-right: 10px" [disabled]="gameGeneralInfoForm.invalid || tableSize < 1"
+      (click)="clearSelectedFile()" *ngIf="showSaveButton && tableSize > 1">
+      {{'LOTTERY.DETAILS.QUOTA.UPLOAD_ANOTHER_FILE' | translate}}
+    </button>
+    <button mat-raised-button (click)="duplicateSelected()" style="margin-right: 10px" color="primary"
+      *ngIf="showDuplicateButton">
+      {{'LOTTERY.DETAILS.CONFIG_SHEET.DUPLICATE' | translate}}
+    </button>
+  </div>
+
+</form>

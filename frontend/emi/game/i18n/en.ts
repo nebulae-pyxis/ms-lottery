@@ -21,7 +21,8 @@ export const locale = {
           GENERAL_INFO: 'General Info',
           SHEET_CONFIG: 'Sheet config',
           PRIZE_PROGRAM: 'Prize program',
-          DRAW_CALENDAR: 'Draw calendar'
+          DRAW_CALENDAR: 'Draw calendar',
+          QUOTA: 'Quota'
         },
         GENERAL_INFO: 'General Info',
         PROGRAM: 'Program',
@@ -141,8 +142,17 @@ export const locale = {
           OPEN: 'Open',
           CLOSED: 'Closed',
           DEACTIVATED: 'Deactivated',
-          DATE_LIST: 'Date calendar'
-
+          DATE_LIST: 'Date calendar',
+          VALID_FROM_DATE: 'Valid from date',
+          VALID_UNTIL_DATE: 'Valid until date'
+        },
+        QUOTA: {
+          UPLOAD_ANOTHER_FILE: 'Upload another file',
+          SERIES: 'Series',
+          NUMBER: 'Number',
+          UPLOAD_FILE_MESSAGE: 'Drag and drop the Quota file here, or select a file.',
+          EXPLORE_FILES: 'EXPLORE FILES',
+          UPLOADING_TITTLE: 'Save quota',
         }
       },
       LOTTERY_FIELD_REQUIRED: 'this field is required',
@@ -161,7 +171,8 @@ export const locale = {
       CLOSE: 'Close',
       WAIT_OPERATION: 'Operation in process, in case of not receiving an answer, verify if the changes made were applied successfully.',
       SELECT_BUSINESS: 'You must select a business unit before performing the creation.',
-      ERROR_OPERATION: 'Error performing operation'
+      ERROR_OPERATION: 'Error performing operation',
+      SAVE_MESSAGE: 'This process can take a few minutes, are you sure you want to continue?'
     },
     ERRORS: {
       1: 'Internal server error',

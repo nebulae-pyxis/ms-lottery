@@ -1,0 +1,12 @@
+<h1 mat-dialog-title>{{data.dialogTitle | translate}}</h1>
+Guardando información, esto puede tomar varios minutos
+<div fxLayout="row" style="margin-top: 20px" >
+  <mat-progress-bar
+          style="width: 70%; margin-top: 6px"
+          color="warn"
+          mode="buffer"
+          [value]="value">
+</mat-progress-bar>
+<span style="margin-left: 10px"> {{value}}%</span>
+</div>
+

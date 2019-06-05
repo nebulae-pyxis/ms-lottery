@@ -1,0 +1,33 @@
+.my-drop-zone {
+  background-color: #f1f1f1
+}
+.nv-file-over {
+  background-color: #fff391
+} /* Default class applied to drop zones on over */
+.another-file-over-class {
+  background-color: #4d4b4b
+}
+
+.fileContainer {
+  overflow: hidden;
+  position: relative;
+}
+
+.fileContainer [type=file] {
+  cursor: inherit;
+  display: block;
+  font-size: 999px;
+  filter: alpha(opacity=0);
+  min-height: 100%;
+  min-width: 100%;
+  opacity: 0;
+  position: absolute;
+  right: 0;
+  text-align: right;
+  top: 0;
+}
+
+.mat-upload-button-color {
+  background-color: rgb(160, 150, 150);
+  color: rgb(0, 0, 0);
+}

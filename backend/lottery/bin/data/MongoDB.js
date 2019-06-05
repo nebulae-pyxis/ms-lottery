@@ -50,8 +50,23 @@ class MongoDB {
    */
   createIndexes$() {
     return Observable.create(async observer => {
-      //observer.next('Creating index for DB_NAME.COLLECTION_NAME => ({ xxxx: 1 })  ');
-      //await this.db.collection('COLLECTION_NAME').createIndex( { xxxx: 1});
+      observer.next('Creating index for lottery.Lottery => ({ _id: 1, creationTimestamp: 1})  ');
+      await this.db.collection('Lottery').createIndex({ _id: 1, creationTimestamp: 1 });
+      
+      observer.next('Creating index for lottery.LotteryGame => ({ _id: 1, creationTimestamp: 1})  ');
+      await this.db.collection('LotteryGame').createIndex( { _id: 1, creationTimestamp: 1});
+
+      observer.next('Creating index for lottery.LotteryGameDrawCalendar => ({ gameId: 1 })  ');
+      await this.db.collection('LotteryGameDrawCalendar').createIndex({ gameId: 1 });
+      
+      observer.next('Creating index for lottery.LotteryGamePrizeProgram => ({ gameId: 1 })  ');
+      await this.db.collection('LotteryGamePrizeProgram').createIndex({ gameId: 1 });
+      
+      observer.next('Creating index for lottery.LotteryGameSheetConfig => ({ gameId: 1 })  ');
+      await this.db.collection('LotteryGameSheetConfig').createIndex({ gameId: 1 });
+      
+      observer.next('Creating index for lottery.LotteryGameSheetConfig => ({ gameId: 1 })  ');
+      await this.db.collection('LotteryGameSheetConfig').createIndex( { creationTimestamp: 1});
 
       observer.next("All indexes created");
       observer.complete();

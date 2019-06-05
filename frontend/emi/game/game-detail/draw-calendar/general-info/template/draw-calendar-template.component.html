@@ -1,5 +1,30 @@
 <form name="templateForm" [formGroup]="templateForm" class="w-100-p" fxLayout="column" class="mat-white-bg mr-24 mb-24">
 
+
+  <mat-form-field>
+    <input matInput [matDatepicker]="validFromTimestamp"
+      placeholder="{{'LOTTERY.DETAILS.DRAW_CALENDAR.VALID_FROM_DATE' | translate}}"
+      (ngModelChange)="validFromTimestampChanged($event)"
+      formControlName="validFromTimestamp" />
+    <mat-datepicker-toggle matSuffix [for]="validFromTimestamp"></mat-datepicker-toggle>
+    <mat-datepicker [twelveHour]="true" type="datetime" #validFromTimestamp></mat-datepicker>
+    <mat-error *ngIf="templateForm.hasError('required', ['validFromTimestamp'])">
+      {{'LOTTERY.LOTTERY_FIELD_REQUIRED' | translate}}
+    </mat-error>
+  </mat-form-field>
+
+  <mat-form-field>
+    <input matInput [matDatepicker]="validUntilTimestamp"
+      placeholder="{{'LOTTERY.DETAILS.DRAW_CALENDAR.VALID_UNTIL_DATE' | translate}}"
+      (ngModelChange)="validUntilTimestampChanged($event)"
+      formControlName="validUntilTimestamp" />
+    <mat-datepicker-toggle matSuffix [for]="validUntilTimestamp"></mat-datepicker-toggle>
+    <mat-datepicker [twelveHour]="true" type="datetime" #validUntilTimestamp></mat-datepicker>
+    <mat-error *ngIf="templateForm.hasError('required', ['validUntilTimestamp'])">
+      {{'LOTTERY.LOTTERY_FIELD_REQUIRED' | translate}}
+    </mat-error>
+  </mat-form-field>
+
   <mat-form-field fxFlex.gt-xs="100" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
     <input autocomplete="off" matInput name="openDrawDaysBefore" formControlName="openDrawDaysBefore" maxlength="3"
       (keypress)="numberOnly($event)"

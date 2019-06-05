@@ -100,7 +100,9 @@ export class DrawCalendarTemplateComponent implements OnInit, OnDestroy {
       openDrawTime: new FormControl('', [Validators.required]),
       closeDrawMinutesBefore: new FormControl('', [Validators.required]),
       deactivateDrawMonthsAfter: new FormControl('', [Validators.required]),
-      deactivateDrawtime: new FormControl('', [Validators.required])
+      deactivateDrawtime: new FormControl('', [Validators.required]),
+      validFromTimestamp: new FormControl('', [Validators.required]),
+      validUntilTimestamp: new FormControl('', [Validators.required])
     });
   }
 
@@ -119,6 +121,20 @@ export class DrawCalendarTemplateComponent implements OnInit, OnDestroy {
       console.log('se envia nuevo form: ', !this.templateForm.invalid);
       this.drawCalendarService.templateFormValid$.next(!this.templateForm.invalid);
     });
+  }
+
+  validFromTimestampChanged(event) {
+    if (this.templateForm.controls['validFromTimestamp'].value) {
+      this.drawCalendarService.validFromTimestamp = this.templateForm.controls['validFromTimestamp'].value.valueOf();
+      this.templateChanged.next(undefined);
+    }
+  }
+
+  validUntilTimestampChanged(event) {
+    if (this.templateForm.controls['validUntilTimestamp'].value) {
+      this.drawCalendarService.validUntilTimestamp = this.templateForm.controls['validUntilTimestamp'].value.valueOf();
+    this.templateChanged.next(undefined);
+    }
   }
 
   openDrawDaysBeforeChanged(event) {
@@ -164,18 +180,23 @@ export class DrawCalendarTemplateComponent implements OnInit, OnDestroy {
     this.drawCalendarService.selectedDrawCalendarChanged$.pipe(
       debounceTime(300)
     ).subscribe(drawCalendar => {
+      console.log('from: ' + drawCalendar.validFromTimestamp + ' until: ' + drawCalendar.validUntilTimestamp);
       if (drawCalendar && drawCalendar.template) {
         this.templateForm.controls['openDrawDaysBefore'].setValue(drawCalendar.template.openDrawDaysBefore);
         this.templateForm.controls['openDrawTime'].setValue(moment(drawCalendar.template.openDrawTime, 'HH:mm'));
         this.templateForm.controls['closeDrawMinutesBefore'].setValue(drawCalendar.template.closeDrawMinutesBefore);
         this.templateForm.controls['deactivateDrawMonthsAfter'].setValue(drawCalendar.template.deactivateDrawMonthsAfter);
         this.templateForm.controls['deactivateDrawtime'].setValue(moment(drawCalendar.template.deactivateDrawtime, 'HH:mm'));
+        this.templateForm.controls['validFromTimestamp'].setValue(moment(drawCalendar.validFromTimestamp));
+        this.templateForm.controls['validUntilTimestamp'].setValue(moment(drawCalendar.validUntilTimestamp));
       } else {
         this.templateForm.controls['openDrawDaysBefore'].setValue(undefined);
         this.templateForm.controls['openDrawTime'].setValue(undefined);
         this.templateForm.controls['closeDrawMinutesBefore'].setValue(undefined);
         this.templateForm.controls['deactivateDrawMonthsAfter'].setValue(undefined);
         this.templateForm.controls['deactivateDrawtime'].setValue(undefined);
+        this.templateForm.controls['validFromTimestamp'].setValue(undefined);
+        this.templateForm.controls['validUntilTimestamp'].setValue(undefined);
         // TODO: HERE reset all properties of the prize program
       }
     });

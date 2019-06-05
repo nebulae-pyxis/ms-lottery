@@ -40,6 +40,12 @@ import { DrawCalendarService } from './game-detail/draw-calendar/draw-calendar.s
 import { DrawCalendarTemplateComponent } from './game-detail/draw-calendar/general-info/template/draw-calendar-template.component';
 import { DrawCalendarDateListComponent } from './game-detail/draw-calendar/general-info/date-list/draw-calendar-date-list.component';
 import { DateListDialogComponent } from './game-detail/draw-calendar/general-info/date-list/date-list-dialog/date-list-dialog.component';
+import { GameQuotaApprovalInfoComponent } from './game-detail/quota/approval-info/game-quota-approval-info.component';
+import { GameQuotaGeneralInfoComponent } from './game-detail/quota/general-info/game-quota-general-info.component';
+import { GameQuotaMetadataComponent } from './game-detail/quota/metadata/game-quota-metada.component';
+import { GameQuotaComponent } from './game-detail/quota/game-quota.component';
+import { FileUploadModule } from 'ng2-file-upload';
+import { ProgressDialogComponent } from './game-detail/quota/general-info/progress-dialog/progress-dialog.component';
 
 
 
@@ -67,9 +73,11 @@ const routes: Routes = [
     SharedModule,
     RouterModule.forChild(routes),
     FuseWidgetModule,
-    CurrencyMaskModule
+    CurrencyMaskModule,
+    FileUploadModule
   ],
   declarations: [
+    ProgressDialogComponent,
     DialogComponent,
     NoteDialogComponent,
     SecondaryPrizeDialogComponent,
@@ -96,9 +104,15 @@ const routes: Routes = [
     PrizeProgramSecondaryPrizeComponent,
     PrizeProgramApproximationComponent,
     DrawCalendarTemplateComponent,
-    DrawCalendarDateListComponent
+    DrawCalendarDateListComponent,
+    GameQuotaApprovalInfoComponent,
+    GameQuotaGeneralInfoComponent,
+    GameQuotaMetadataComponent,
+    GameQuotaComponent
   ],
-  entryComponents: [DialogComponent,
+  entryComponents: [
+    ProgressDialogComponent,
+    DialogComponent,
     NoteDialogComponent,
     SecondaryPrizeDialogComponent,
     SecoDetailDialogComponent,

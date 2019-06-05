@@ -6,7 +6,8 @@ import {
   ViewChild,
   ElementRef,
   Input,
-  HostListener
+  HostListener,
+  ChangeDetectorRef
 } from '@angular/core';
 
 import {
@@ -51,17 +52,19 @@ import { FuseTranslationLoaderService } from '../../../../../../core/services/tr
 
 //////////// Others ////////////
 import { DialogComponent } from '../../../dialog/dialog.component';
-import { DrawCalendarService } from '../draw-calendar.service';
+import { QuotaService } from '../quota.service';
+import { NoteDialogComponent } from '../../../note-dialog/note-dialog.component';
+import { DatePipe } from '@angular/common';
 import { KeycloakService } from 'keycloak-angular';
 
 @Component({
   // tslint:disable-next-line:component-selector
-  selector: 'game-draw-calendar-general-info',
-  templateUrl: './game-draw-calendar-general-info.component.html',
-  styleUrls: ['./game-draw-calendar-general-info.component.scss']
+  selector: 'game-quota-approval-info',
+  templateUrl: './game-quota-approval-info.component.html',
+  styleUrls: ['./game-quota-approval-info.component.scss']
 })
 // tslint:disable-next-line:class-name
-export class GameDrawCalendarGeneralInfoComponent implements OnInit, OnDestroy {
+export class GameQuotaApprovalInfoComponent implements OnInit, OnDestroy {
   // Subject to unsubscribe
   private ngUnsubscribe = new Subject();
 
@@ -70,23 +73,19 @@ export class GameDrawCalendarGeneralInfoComponent implements OnInit, OnDestroy {
   lotteryId;
   // Stream of filtered client by auto-complete text
   queriedLotteriesByAutocomplete$: Observable<any[]>;
+  lotteryName = 'test';
   timeoutMessage = null;
   heightContent;
   selectedType;
-  ticketPrice;
-  showSaveButton = true;
-  showDuplicateButton = false;
-  templateFormValid = false;
-
-  @Input('game') game: any;
-  @Input('selectedDrawCalendar') selectedDrawCalendar: any;
+  @Input('selectedQuota') selectedQuota: any;
 
   constructor(
     private translationLoader: FuseTranslationLoaderService,
     private translate: TranslateService,
     public snackBar: MatSnackBar,
     private dialog: MatDialog,
-    private drawCalendarService: DrawCalendarService,
+    private quotaService: QuotaService,
+    private datePipe: DatePipe,
     private keycloakService: KeycloakService
   ) {
     this.translationLoader.loadTranslations(english, spanish);
@@ -94,125 +93,108 @@ export class GameDrawCalendarGeneralInfoComponent implements OnInit, OnDestroy {
 
 
   ngOnInit() {
-    this.gameGeneralInfoForm = new FormGroup({
-      ticketsPerSheet: new FormControl('', [Validators.required]),
-      ticketPrice: new FormControl('', [Validators.required]),
-      validFromDraw: new FormControl('', [Validators.required]),
-      validUntilDraw: new FormControl(''),
-    });
-    this.subuscribeToSelectedDrawCalendarChange();
-    this.subscribeGameDrawCalendarUpdated();
-    this.subscribeToDrawCalendarTemplateFormChanged();
+    this.initializeForm();
+    this.subscribeToSelectedVersion();
+    this.subscribeGameQuotaUpdated();
   }
 
-  numberOnly(event): boolean {
-    const charCode = (event.which) ? event.which : event.keyCode;
-    if (charCode > 31 && (charCode < 48 || charCode > 57)) {
-      return false;
-    }
-    return true;
-  }
-
-  isGeneralInfoButtonsAllowed() {
+  isApproveButtonsAllowed() {
     const roles = this.keycloakService.getUserRoles()
-      .filter(role => role === 'PLATFORM-ADMIN' || role === 'LOTTERY-ADMIN');
+      .filter(role => role === 'PLATFORM-ADMIN' || role === 'LOTTERY-APPROVER');
     return  roles && roles.length > 0;
   }
 
-  subuscribeToSelectedDrawCalendarChange() {
-    this.drawCalendarService.selectedDrawCalendarChanged$.subscribe(drawCalendar => {
-      if (drawCalendar) {
-        this.showSaveButton = !drawCalendar.approved || drawCalendar.approved === 'NOT_APPROVED';
-        this.showDuplicateButton = drawCalendar.approved === 'APPROVED';
-        this.gameGeneralInfoForm.controls['ticketsPerSheet'].setValue(drawCalendar.ticketsPerSheet);
-        this.gameGeneralInfoForm.controls['ticketPrice'].setValue(drawCalendar.ticketPrice);
-        this.gameGeneralInfoForm.controls['validFromDraw'].setValue(drawCalendar.validFromDraw);
-        this.gameGeneralInfoForm.controls['validUntilDraw'].setValue(drawCalendar.validUntilDraw);
-      } else {
-        this.gameGeneralInfoForm.controls['ticketsPerSheet'].setValue('');
-        this.gameGeneralInfoForm.controls['ticketPrice'].setValue('');
-        this.gameGeneralInfoForm.controls['validFromDraw'].setValue('');
-        this.gameGeneralInfoForm.controls['validUntilDraw'].setValue('');
-        this.showSaveButton = true;
-        this.showDuplicateButton = false;
-      }
-      this.selectedDrawCalendar = drawCalendar;
-    });
-  }
-
-  subscribeToDrawCalendarTemplateFormChanged() {
-    this.drawCalendarService.templateFormValid$.subscribe(valid => {
-      console.log('valido: ', valid);
-      this.templateFormValid = valid;
-    });
-  }
-  subscribeGameDrawCalendarUpdated() {
-    this.drawCalendarService.subscribeLotteryGameDrawCalendarUpdatedSubscription$()
+  subscribeGameQuotaUpdated() {
+    this.quotaService.subscribeLotteryGameQuotaUpdatedSubscription$()
       .pipe(
-        map(subscription => subscription.data.LotteryGameDrawCalendarUpdatedSubscription),
+        map(subscription => subscription.data.LotteryGameQuotaUpdatedSubscription),
         takeUntil(this.ngUnsubscribe)
       )
       .subscribe((game: any) => {
-        this.showSnackBar('LOTTERY.DETAILS.CONFIG_SHEET.OPERATION_COMPLETED');
         clearTimeout(this.timeoutMessage);
       });
   }
 
-  createDrawCalendar() {
-    if (this.selectedDrawCalendar && this.selectedDrawCalendar.approved === 'NOT_APPROVED') {
-      this.showConfirmationDialog$('LOTTERY.UPDATE_MESSAGE', 'LOTTERY.UPDATE_TITLE').pipe(
-        tap(ok => this.showWaitOperationMessage()),
-        mergeMap(() => {
-          const drawCalendar = {
-            template: this.drawCalendarService.template,
-            dateCalendar: this.drawCalendarService.dateList,
-            validUntilTimestamp: this.drawCalendarService.validUntilTimestamp,
-            validFromTimestamp: this.drawCalendarService.validFromTimestamp,
-            gameId: this.game._id,
-            lotteryId: this.game.generalInfo.lotteryId
-          };
-          return this.drawCalendarService.updateLotteryGameDrawCalendar$(this.selectedDrawCalendar._id, drawCalendar);
-        }),
-        mergeMap(resp => this.graphQlAlarmsErrorHandler$(resp)),
-        filter((resp: any) => !resp.errors || resp.errors.length === 0),
-        takeUntil(this.ngUnsubscribe)
-      )
-        .subscribe(result => { },
-          error => {
-            this.showErrorOperationMessage();
-            console.log('Error ==> ', error);
-          });
-    } else {
-      console.log('entra a crear');
-      this.showConfirmationDialog$('LOTTERY.CREATE_MESSAGE', 'LOTTERY.CREATE_TITLE').pipe(
-        tap(ok => this.showWaitOperationMessage()),
-        mergeMap(() => {
-          const drawCalendar = {
-            template: this.drawCalendarService.template,
-            dateCalendar: this.drawCalendarService.dateList,
-            gameId: this.game._id,
-            validUntilTimestamp: this.drawCalendarService.validFromTimestamp,
-            validFromTimestamp: this.drawCalendarService.validUntilTimestamp,
-            lotteryId: this.game.generalInfo.lotteryId
-          };
-          return this.drawCalendarService.createLotteryGameDrawCalendar$(drawCalendar);
-        }),
-        mergeMap(resp => this.graphQlAlarmsErrorHandler$(resp)),
-        filter((resp: any) => !resp.errors || resp.errors.length === 0),
-        takeUntil(this.ngUnsubscribe)
-      )
-        .subscribe(result => { },
-          error => {
-            this.showErrorOperationMessage();
-            console.log('Error ==> ', error);
-          });
-     }
+
+  initializeForm() {
+    this.gameGeneralInfoForm = new FormGroup({
+      approved: new FormControl(''),
+      approvedIn: new FormControl(''),
+      approvalUsername: new FormControl(''),
+      approvalNotes: new FormControl(''),
+      revokedIn: new FormControl(''),
+      revokedUsername: new FormControl(''),
+      revokedNotes: new FormControl(''),
+    });
+  }
+  subscribeToSelectedVersion() {
+    this.quotaService.selectedQuotaChanged$.subscribe(quota => {
+      if (quota) {
+        this.gameGeneralInfoForm.controls['approved'].setValue(
+          this.translationLoader.getTranslate().instant(quota && quota.revoked ? 'LOTTERY.DETAILS.CONFIG_SHEET.REVOKED'
+            : !quota.approved ? 'LOTTERY.DETAILS.CONFIG_SHEET.PENDING'
+            : 'LOTTERY.DETAILS.CONFIG_SHEET.' + quota.approved)
+        );
+        this.gameGeneralInfoForm.controls['approvedIn'].setValue(this.datePipe.transform(quota.approvedTimestamp, 'short'));
+        this.gameGeneralInfoForm.controls['approvalUsername'].setValue(quota.approvedUsername);
+        this.gameGeneralInfoForm.controls['approvalNotes'].setValue(quota.approvedNotes);
+        this.gameGeneralInfoForm.controls['revokedIn'].setValue(this.datePipe.transform(quota.revokedTimestamp, 'short'));
+        this.gameGeneralInfoForm.controls['revokedUsername'].setValue(quota.revokedUsername);
+        this.gameGeneralInfoForm.controls['revokedNotes'].setValue(quota.revokedNotes);
+        this.selectedQuota = quota;
+      }
+    });
   }
 
-  duplicateSelected() {
-    this.drawCalendarService.dateList = [];
-    const currentDrawCalendar = this.drawCalendarService.selectedDrawCalendarChanged$.getValue();
-    this.drawCalendarService.selectedDrawCalendarChanged$.next({template: currentDrawCalendar.template});
+  declineQuota() {
+    this.showNoteDialog$('LOTTERY.DETAILS.CONFIG_SHEET.DECLINE_MESSAGE', 'LOTTERY.DETAILS.CONFIG_SHEET.DECLINE_TITTLE')
+      .pipe(
+        tap(ok => this.showWaitOperationMessage()),
+        mergeMap(result => {
+          return this.quotaService.approveLotteryGameQuota$(this.selectedQuota._id, 'NOT_APPROVED', result.notes);
+        }),
+        mergeMap(resp => this.graphQlAlarmsErrorHandler$(resp)),
+        filter((resp: any) => !resp.errors || resp.errors.length === 0),
+        takeUntil(this.ngUnsubscribe)
+      ).subscribe(result => { },
+        error => {
+          this.showErrorOperationMessage();
+          console.log('Error ==> ', error);
+        });
+  }
+
+  approveQuota() {
+    this.showConfirmationDialog$('LOTTERY.DETAILS.CONFIG_SHEET.APPROVE_MESSAGE', 'LOTTERY.DETAILS.CONFIG_SHEET.APPROVE_TITTLE')
+      .pipe(
+        tap(ok => this.showWaitOperationMessage()),
+        mergeMap(() => {
+          return this.quotaService.approveLotteryGameQuota$(this.selectedQuota._id, 'APPROVED', '');
+        }),
+        mergeMap(resp => this.graphQlAlarmsErrorHandler$(resp)),
+        filter((resp: any) => !resp.errors || resp.errors.length === 0),
+        takeUntil(this.ngUnsubscribe)
+      ).subscribe(result => { },
+        error => {
+          this.showErrorOperationMessage();
+          console.log('Error ==> ', error);
+        });
+  }
+
+  revokeQuota() {
+    this.showNoteDialog$('LOTTERY.DETAILS.CONFIG_SHEET.REVOKE_MESSAGE', 'LOTTERY.DETAILS.CONFIG_SHEET.REVOKE_TITTLE')
+      .pipe(
+        tap(ok => this.showWaitOperationMessage()),
+        mergeMap(result => {
+          return this.quotaService.revokeLotteryGameQuota$(this.selectedQuota._id, true, result.notes);
+        }),
+        mergeMap(resp => this.graphQlAlarmsErrorHandler$(resp)),
+        filter((resp: any) => !resp.errors || resp.errors.length === 0),
+        takeUntil(this.ngUnsubscribe)
+      ).subscribe(result => { },
+        error => {
+          this.showErrorOperationMessage();
+          console.log('Error ==> ', error);
+        });
   }
 
   showWaitOperationMessage() {
@@ -240,6 +222,21 @@ export class GameDrawCalendarGeneralInfoComponent implements OnInit, OnDestroy {
       .afterClosed()
       .pipe(
         filter(okButton => okButton),
+      );
+  }
+
+  showNoteDialog$(dialogMessage, dialogTitle) {
+    return this.dialog
+      // Opens confirm dialog
+      .open(NoteDialogComponent, {
+        data: {
+          dialogMessage,
+          dialogTitle
+        }
+      })
+      .afterClosed()
+      .pipe(
+        filter(result => result && result.okButton),
       );
   }
 

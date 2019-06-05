@@ -21,7 +21,8 @@ export const locale = {
           GENERAL_INFO: 'Información General',
           SHEET_CONFIG: 'Config de billete',
           PRIZE_PROGRAM: 'Programa de premios',
-          DRAW_CALENDAR: 'Calendario de sorteos'
+          DRAW_CALENDAR: 'Calendario de sorteos',
+          QUOTA: 'Cuota'
         },
         GENERAL_INFO: 'Información General',
         PROGRAM: 'Programa',
@@ -157,8 +158,18 @@ export const locale = {
           OPEN: 'Abierto',
           CLOSED: 'Cerrado',
           DEACTIVATED: 'Desactivado',
-          DATE_LIST: 'Fecha de sorteos'
-
+          DATE_LIST: 'Fecha de sorteos',
+          VALID_FROM_DATE: 'Válido desde la fecha',
+          VALID_UNTIL_DATE: 'Válido hasta la fecha'
+        },
+        QUOTA: {
+          UPLOAD_ANOTHER_FILE: 'Subir otro archivo',
+          UPLOADING_TITTLE: 'Guardando cuota',
+          SERIES: 'Series',
+          NUMBER: 'Número',
+          UPLOAD_FILE_MESSAGE: 'Arrastra y suelta aquí el archivo de cuotas, o selecciona un archivo.',
+          EXPLORE_FILES: 'EXPLORAR ARCHIVOS',
+          SAVE_MESSAGE: 'Este proceso puede tomar varios minutos, ¿Está seguro que desea continuar?'
         }
       },
       LOTTERY_FIELD_REQUIRED: 'Este campo es requerido',

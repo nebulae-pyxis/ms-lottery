@@ -2,12 +2,12 @@
 
 let mongoDB = undefined;
 //const mongoDB = require('./MongoDB')();
-const CollectionName = "LotteryGameDrawCalendar";
+const CollectionName = "LotteryGameQuota";
 const { CustomError } = require("../tools/customError");
 const { map, tap, mergeMap, toArray, first } = require("rxjs/operators");
 const { of, Observable, defer, from } = require("rxjs");
 
-class LotteryGameDrawCalendarDA {
+class LotteryGameQuotaDA {
   static start$(mongoDbInstance) {
     return Observable.create(observer => {
       if (mongoDbInstance) {
@@ -24,7 +24,7 @@ class LotteryGameDrawCalendarDA {
   /**
    * Gets an user by its id
    */
-  static getLotteryGameDrawCalendar$(id) {
+  static getLotteryGameQuota$(id) {
     const collection = mongoDB.db.collection(CollectionName);
 
     const query = {
@@ -34,7 +34,7 @@ class LotteryGameDrawCalendarDA {
     return defer(() => collection.findOne(query));
   }
 
-  static getLotteryGameDrawCalendarList$(filter) {
+  static getLotteryGameQuotaList$(filter) {
     const collection = mongoDB.db.collection(CollectionName);
 
     const query = {
@@ -70,7 +70,7 @@ class LotteryGameDrawCalendarDA {
     return mongoDB.extractAllFromMongoCursor$(cursor);
   }
 
-  static getLastVersionDrawCalendar(gameId) { 
+  static getLastVersionQuota(gameId) { 
     const collection = mongoDB.db.collection(CollectionName);
     const cursor = collection
       .find({ gameId })
@@ -85,14 +85,14 @@ class LotteryGameDrawCalendarDA {
    * Creates a new LotteryGame
    * @param {*} lotteryGame lotteryGame to create
    */
-  static createLotteryGameDrawCalendar$(drawCalendar, userInfo) {
-    return this.getLastVersionDrawCalendar(drawCalendar.gameId).pipe(
-      mergeMap(lastDrawCalendar => {
-        const version = lastDrawCalendar && lastDrawCalendar.version ? lastDrawCalendar.version + 1 : 1;
-        drawCalendar.version = version;
-        drawCalendar.approved = 'PENDING';
+  static createLotteryGameQuota$(configSheet, userInfo) {
+    return this.getLastVersionQuota(configSheet.gameId).pipe(
+      mergeMap(lastQuota => {
+        const version = lastQuota && lastQuota.version ? lastQuota.version + 1 : 1;
+        configSheet.version = version;
+        configSheet.approved = 'NOT_APPROVED';
         const collection = mongoDB.db.collection(CollectionName);
-        return defer(() => collection.insertOne(drawCalendar));
+        return defer(() => collection.insertOne(configSheet));
       })
     )
   }
@@ -100,24 +100,21 @@ class LotteryGameDrawCalendarDA {
   /**
 * modifies the general info of the indicated LotteryGame 
 * @param {*} id  LotteryGame ID
-* @param {*} LotteryGameDrawCalendar  New general information of the LotteryGame
+* @param {*} LotteryGameQuota  New general information of the LotteryGame
 */
-  static updateLotteryGameDrawCalendar$(id, lotteryGameDrawCalendar) {
+  static updateLotteryGameQuota$(id, lotteryGameQuota) {
     const collection = mongoDB.db.collection(CollectionName);
-    console.log('element to update: ',lotteryGameDrawCalendar);
     return defer(() =>
       collection.findOneAndUpdate(
         { _id: id },
         {
           $set: {
-            validFromTimestamp: lotteryGameDrawCalendar.validFromTimestamp,
-            validUntilTimestamp: lotteryGameDrawCalendar.validUntilTimestamp,
-            template: lotteryGameDrawCalendar.template,
-            dateCalendar: lotteryGameDrawCalendar.dateCalendar,
-            editionTimestamp: lotteryGameDrawCalendar.editionTimestamp,
-            editionUserId: lotteryGameDrawCalendar.editionUserId,
-            editionUsername: lotteryGameDrawCalendar.editionUsername,
-            approved: 'PENDING'
+            validFromDraw: lotteryGameQuota.validFromDraw,
+            validUntilDraw: lotteryGameQuota.validUntilDraw,
+            editionTimestamp: lotteryGameQuota.editionTimestamp,
+            editionUserId: lotteryGameQuota.editionUserId,
+            editionUsername: lotteryGameQuota.editionUsername,
+            approved: lotteryGameQuota.approved
           }
         }, {
           returnOriginal: false
@@ -131,9 +128,9 @@ class LotteryGameDrawCalendarDA {
   /**
   * modifies the general info of the indicated LotteryGame 
   * @param {*} id  LotteryGame ID
-  * @param {*} LotteryGameDrawCalendar  New general information of the LotteryGame
+  * @param {*} LotteryGameQuota  New general information of the LotteryGame
   */
-  static approveLotteryGameDrawCalendar$({ id, approved, approvedUserId, approvedUsername,
+  static approveLotteryGameQuota$({ id, approved, approvedUserId, approvedUsername,
     approvedNotes, editionUserId, editionUsername, editionTimestamp }) {
     const collection = mongoDB.db.collection(CollectionName);
 
@@ -163,9 +160,9 @@ class LotteryGameDrawCalendarDA {
   /**
 * modifies the general info of the indicated LotteryGame 
 * @param {*} id  LotteryGame ID
-* @param {*} LotteryGameDrawCalendar  New general information of the LotteryGame
+* @param {*} LotteryGameQuota  New general information of the LotteryGame
 */
-  static revokeLotteryGameDrawCalendar$({ id, revoked, revokedUserId, revokedUsername,
+  static revokeLotteryGameQuota$({ id, revoked, revokedUserId, revokedUsername,
     revokedNotes, editionUserId, editionUsername, editionTimestamp }) {
     const collection = mongoDB.db.collection(CollectionName);
 
@@ -196,6 +193,6 @@ class LotteryGameDrawCalendarDA {
 
 }
 /**
- * @returns {LotteryGameDrawCalendarDA}
+ * @returns {LotteryGameQuotaDA}
  */
-module.exports = LotteryGameDrawCalendarDA;
+module.exports = LotteryGameQuotaDA;
