@@ -22,6 +22,7 @@ class CronJobEsHelper {
   static searchConfigurationToOpenADraw$(drawCalendar) {
 
     return from(drawCalendar.dateCalendar).pipe(
+      tap(r => console.log("--------------------")),
       map(dateCalendar => ({ ...drawCalendar, dateCalendar })),
       mergeMap(calendar =>
         forkJoin(
@@ -41,7 +42,7 @@ class CronJobEsHelper {
         )
       ),
       catchError(err => {
-        // TODO
+        // TODO 
         console.log(" ====> ", err);
         return of(null);
       }),
