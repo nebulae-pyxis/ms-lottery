@@ -81,7 +81,8 @@
       }
     ],
     "preBuildCommands": [
-      "npm install --save ngx-mask"
+      "npm install --save ngx-mask",
+      "npm install ng2-file-upload"
     ],
     "environmentVars": {}
   }
