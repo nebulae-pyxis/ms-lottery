@@ -7,6 +7,7 @@ const LotteryGameDA = require("./LotteryGameDA");
 const LotterySheetConfigDA = require("./LotterySheetConfigDA");
 const LotteryPrizeProgramDA = require("./LotteryPrizeProgramDA");
 const LotteryQuotaDA = require("./LotteryQuotaDA");
+const LotteryDA = require("./LotteryDA");
 
 module.exports = {
   /**
@@ -18,7 +19,8 @@ module.exports = {
     LotteryGameDA.start$(),
     LotterySheetConfigDA.start$(),
     LotteryPrizeProgramDA.start$(),
-    LotteryQuotaDA.start$()
+    LotteryQuotaDA.start$(),
+    LotteryDA.start$()
   ),
   LotteryCalendarDA,
   LotteryDrawDA,
@@ -26,6 +28,5 @@ module.exports = {
   LotterySheetConfigDA,
   LotteryPrizeProgramDA,
   LotteryQuotaDA,
-
-  
+  LotteryDA  
 };

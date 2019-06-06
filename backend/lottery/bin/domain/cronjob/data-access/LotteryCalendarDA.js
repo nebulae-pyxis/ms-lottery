@@ -31,12 +31,12 @@ class LotteryCalendarDA {
     return defer(() =>
       collection
         .find({ 
-            "revoked": false,
+            revoked: false,
             "dateCalendar.openingDatetime": { $lte: currentDate },
             "dateCalendar.closingDatetime": { $gt: currentDate },
             "dateCalendar.drawState": { $eq: null },
-            "approved": true,
-            "validFromTimestamp": { $lte: currentDate },
+            approved: "APPROVED",
+            validFromTimestamp: { $lte: currentDate },
             $or: [
               { validUntilTimestamp: null },
               { validUntilTimestamp: { gt: currentDate } }

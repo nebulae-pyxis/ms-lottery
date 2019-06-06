@@ -206,8 +206,8 @@ class EventStoreService {
         obj: LotteryGameDrawCalendarES
       },
       // CRONJOB
-      LotteryCheckDrawsToOpen: {
-        fn: CronjobES.handleLotteryCheckDrawsToOpen$,
+      LotteryCheckDrawsToUpdateState: {
+        fn: CronjobES.handleLotteryCheckDrawsToUpdateState$,
         obj: CronjobES
       },
       // QUOTA
@@ -323,7 +323,7 @@ class EventStoreService {
       },
       {
         aggregateType: "Cronjob",
-        eventType: "LotteryCheckDrawsToOpen"
+        eventType: "LotteryCheckDrawsToUpdateState"
       },
       // QUOTA
       {

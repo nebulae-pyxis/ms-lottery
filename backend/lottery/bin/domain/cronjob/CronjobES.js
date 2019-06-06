@@ -1,12 +1,13 @@
 "use strict";
 // RXJS
-const { of, interval, forkJoin, from } = require("rxjs");
+const { of, interval, forkJoin, from, concat } = require("rxjs");
 const { take, mergeMap, catchError, map, toArray, filter, delay, tap } = require("rxjs/operators");
 // Data access
-const CalendarDA = require("./data-access/LotteryCalendarDA");
-const DrawDA = require("./data-access/LotteryDrawDA");
-const GameDA = require("./data-access/LotteryGameDA");
-const SheetConfigDA = require("./data-access/LotterySheetConfigDA");
+const { LotteryCalendarDA, LotteryDrawDA, LotteryGameDA,
+  LotteryPrizeProgramDA, LotteryQuotaDA, LotterySheetConfigDA,
+  LotteryDA
+} = require("./data-access");
+
 //Tools
 const broker = require("../../tools/broker/BrokerFactory")();
 const Crosscutting = require("../../tools/Crosscutting");
@@ -29,7 +30,7 @@ class CronjobES {
           new Event({
             aggregateType: "Cronjob",
             aggregateId: '1qw2-e3r4-4r3e-2w1r',
-            eventType: "LotteryCheckDrawsToOpen",
+            eventType: "LotteryCheckDrawsToUpdateState",
             eventTypeVersion: 1,
             user: "SYSTEM_TEST",
             data: { }
@@ -40,24 +41,51 @@ class CronjobES {
     .subscribe()
   }
 
-  handleLotteryCheckDrawsToOpen$({ aid, data, user, timestamp }) {
-    console.log("handleLotteryCheckDrawsToOpen$.....", aid, data, user);
-    return CalendarDA.findDrawsToOpen$(timestamp).pipe(
-      // tap(x => console.log(x)),
-      map(calendars =>
-        calendars.map(c => ({
-          ...c,
-          dateCalendar: c.dateCalendar.filter(
-            dateCalendar =>
-              dateCalendar.openingDatetime <= timestamp &&
-              dateCalendar.closingDatetime > timestamp &&
-              !dateCalendar.drawState
-          )
-        }))
-      ),
-      mergeMap(calendars => from(calendars)),
-      mergeMap(calendar => CronjobESHelper.searchConfigurationToOpenADraw$(calendar))
-    );
+  handleLotteryCheckDrawsToUpdateState$({ timestamp }){
+    return concat(
+      this.checkDrawsToOpen$( timestamp),
+      this.checkDrawsToClose$(timestamp),
+      this.checkDrawsToExpire$(timestamp)
+    )
+  }
+
+  checkDrawsToOpen$(timestamp) {
+    console.log("handleLotteryCheckDrawsToOpen$.....");
+
+    return LotteryDA.findActiveLotteries$()
+    .pipe(
+      tap(l => console.log("LOTTERIES FOUND ==> ", l))
+    )
+
+
+
+
+
+
+    // return CalendarDA.findDrawsToOpen$(timestamp).pipe(
+    //   tap(x => console.log("$$$$$$$$$$", x.length, "$$$$$$$$$$$$$$")),
+    //   map(calendars =>
+    //     calendars.map(c => ({
+    //       ...c,
+    //       dateCalendar: c.dateCalendar.filter(
+    //         dateCalendar =>
+    //           dateCalendar.openingDatetime <= timestamp &&
+    //           dateCalendar.closingDatetime > timestamp &&
+    //           !dateCalendar.drawState
+    //       )
+    //     }))
+    //   ),
+    //   mergeMap(calendars => from(calendars)),
+    //   mergeMap(calendar => CronjobESHelper.searchConfigurationToOpenADraw$(calendar))
+    // );
+  }
+
+  checkDrawsToClose$(timestamp){
+    return of(timestamp)
+  }
+
+  checkDrawsToExpire$(timestamp){
+    return of(timestamp)
   }
 
   // handleDriverBlockAdded$({ aid, data, user }) {
