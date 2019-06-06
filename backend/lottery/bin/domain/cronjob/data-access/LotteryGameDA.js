@@ -1,7 +1,7 @@
 "use strict";
 
 let mongoDB = undefined;
-const COLLECTION_NAME = "LotteryDraws";
+const COLLECTION_NAME = "LotteryGame";
 const { CustomError } = require("../../../tools/customError");
 const { map } = require("rxjs/operators");
 const { of, Observable, defer } = require("rxjs");
@@ -27,6 +27,13 @@ class LotteryGameDA {
     const collection = mongoDB.db.collection(COLLECTION_NAME);
     const query = { _id };
     return defer(() => collection.findOne(query,{projection}));
+  }
+
+  static findActiveByLotteryId$(lotteryId){
+    const collection = mongoDB.db.collection(COLLECTION_NAME);
+    return defer(() => collection
+    .find({ state: true, "generalInfo.lotteryId": lotteryId })
+    .toArray())
   }
 
 }
