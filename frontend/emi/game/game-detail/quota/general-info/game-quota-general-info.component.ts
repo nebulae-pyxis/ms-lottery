@@ -248,6 +248,12 @@ export class GameQuotaGeneralInfoComponent implements OnInit, OnDestroy {
         this.showDuplicateButton = false;
       }
       this.selectedQuota = quota;
+      if (quota) {
+        console.log('selected quota: ', quota);
+        this.quotaService.lotteryGameQuotaNumberList$({quotaId: quota._id}).subscribe(val => {
+          console.log('Val tamaño: ', val);
+        });
+      }
     });
   }
   subscribeGameQuotaUpdated() {

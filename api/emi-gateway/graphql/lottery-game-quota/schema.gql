@@ -115,12 +115,11 @@ type Query {
 
   LotteryGameQuotaNumberList(
     filterInput: LotteryGameQuotaNumberListInput
-  ): LotteryGameQuotaNumber
+  ): [LotteryGameQuotaNumber]
 
   LotteryGameQuotaNumberListSize(
-    filterInput: LotteryGameQuotaNumberListInput
-  ): LotteryGameQuotaNumber
-
+    filterInput: LotteryGameQuotaNumberListInput, page: Int, count: Int
+  ): Int
 }
 
 type Mutation {
