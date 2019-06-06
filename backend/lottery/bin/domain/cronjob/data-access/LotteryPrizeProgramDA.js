@@ -20,7 +20,7 @@ class LotteryPrizeProgramDA {
     });
   }
 
-  static findValidConfigurationToOpenDraw$(lotteryId, gameId, drawNumber){
+  static findValidConfigurationToOpenDraw$(lotteryId, gameId, drawNumber){    
     const collection = mongoDB.db.collection(COLLECTION_NAME);
     return defer(() =>
       collection

@@ -8,6 +8,7 @@ const { LotteryGameSheetConfigES } = require("../../domain/lotteryGameSheetConfi
 const { LotteryGameQuotaES } = require("../../domain/lotteryGameQuota");
 const { LotteryGamePrizeProgramES } = require("../../domain/lotteryGamePrizeProgram");
 const { LotteryGameDrawCalendarES } = require("../../domain/lotteryGameDrawCalendar");
+const { LotteryDrawES } = require("../../domain/lotteryDraw");
 const { map, switchMap, filter, mergeMap, concatMap } = require('rxjs/operators');
 /**
  * Singleton instance
@@ -140,7 +141,6 @@ class EventStoreService {
         fn: LotteryES.handleLotteryStateUpdated$,
         obj: LotteryES
       },
-
       //GAME
       LotteryGameCreated: {
         fn: LotteryGameES.handleLotteryGameCreated$,
@@ -236,6 +236,11 @@ class EventStoreService {
         fn: LotteryGameQuotaES.handleLotteryGameQuotaNumberRemoved$,
         obj: LotteryGameQuotaES
       },
+      // LOTTERY DRAW
+      LotteryDrawStateUpdated: {
+        fn: LotteryDrawES.handleLotteryDrawStateUpdated$,
+        obj: LotteryDrawES
+      }
     };
   }
 
@@ -351,6 +356,11 @@ class EventStoreService {
         aggregateType: "LotteryGameQuota",
         eventType: "LotteryGameQuotaNumberRemoved"
       },
+      // LOTTERY DRAW
+      {
+        aggregateType: "LotteryDraw",
+        eventType: "LotteryDrawStateUpdated"
+      }
     ]
   }
 }

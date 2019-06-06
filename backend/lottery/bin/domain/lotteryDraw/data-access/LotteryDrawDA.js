@@ -6,7 +6,7 @@ const { CustomError } = require("../../../tools/customError");
 const { map } = require("rxjs/operators");
 const { of, Observable, defer } = require("rxjs");
 
-class DriverDA {
+class LotteryDrawDA {
   static start$(mongoDbInstance) {
     return Observable.create(observer => {
       if (mongoDbInstance) {
@@ -26,11 +26,22 @@ class DriverDA {
   static findById$(_id, projection = undefined) {
     const collection = mongoDB.db.collection(COLLECTION_NAME);
     const query = { _id };
-    return defer(() => collection.findOne(query,{projection}));
+    return defer(() => collection.findOne(query, { projection }));
   }
 
+  static insertOne$(draw) {
+    const collection = mongoDB.db.collection(COLLECTION_NAME);
+    return defer(() => collection.insertOne(draw));
+  }
+
+  static updateState$(drawId, state) {
+    const collection = mongoDB.db.collection(COLLECTION_NAME);
+    return defer(() =>
+      collection.updateOne({ _id: drawId }, { $set: { state } })
+    );
+  }
 }
 /**
- * @returns {DriverDA}
+ * @returns {LotteryDrawDA}
  */
-module.exports = DriverDA;
+module.exports = LotteryDrawDA;

@@ -54,31 +54,14 @@ class CronjobES {
       mergeMap(lotteries => from(lotteries)),
       mergeMap(lottery => LotteryGameDA.findActiveByLotteryId$(lottery._id)),
       mergeMap(games => from(games)),
-      tap(game => console.log(`CHECKING DRAWS TO OPEND FOR: [${game.generalInfo.name}] GAME ` )),
+      // tap(game => console.log(`CHECKING DRAWS TO OPEND FOR: [${game.generalInfo.name}] GAME ` )),
       map(game => game._id),
       mergeMap(gameId => LotteryCalendarDA.findCalendarWithDrawsToOpen$(timestamp, gameId)),
-      tap(x => console.log("<<<", x, ">>>")),
+      // tap(x => console.log("<<<", x, ">>>")),
+      filter(foundCalendar => foundCalendar != null),
+      mergeMap(calendar => CronjobESHelper.searchConfigurationToOpenADraw$(calendar)),
       
-      /**
-       * calendars.map(c => ({
-          ...c,
-          dateCalendar: c.dateCalendar.filter(
-            dateCalendar =>
-              dateCalendar.openingDatetime <= timestamp &&
-              dateCalendar.closingDatetime > timestamp &&
-              !dateCalendar.drawState
-          )
-        }))
-       */
-
-
     );
-
-
-
-     
-      // mergeMap(calendars => from(calendars)),
-      // mergeMap(calendar => CronjobESHelper.searchConfigurationToOpenADraw$(calendar))
   }
 
   checkDrawsToClose$(timestamp){

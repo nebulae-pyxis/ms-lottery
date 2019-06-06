@@ -1,7 +1,7 @@
 "use strict";
 
 let mongoDB = undefined;
-const COLLECTION_NAME = "LotteryQuota";
+const COLLECTION_NAME = "LotteryGameQuota";
 const { map } = require("rxjs/operators");
 const { Observable, defer } = require("rxjs");
 

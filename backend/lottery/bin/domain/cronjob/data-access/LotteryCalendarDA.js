@@ -41,7 +41,7 @@ class LotteryCalendarDA {
             validFromTimestamp: { $lte: currentDate },
             $or: [
               { validUntilTimestamp: null },
-              { validUntilTimestamp: { gt: currentDate } }
+              { validUntilTimestamp: { $gt: currentDate } }
             ]
           },
           {

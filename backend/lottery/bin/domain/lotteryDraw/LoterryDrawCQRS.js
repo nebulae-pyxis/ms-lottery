@@ -40,6 +40,7 @@ class LotteryDrawCQRS {
         catchError(err => GraphqlResponseTools.handleError$(err, true))
       );
   }
+  
   lotteryDraws$({ root, args, jwt }, authToken) {
     // console.log("lotteryDraws$ ==> ", args);
     const requiredRoles = ["PLATFORM-ADMIN"];

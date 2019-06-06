@@ -20,21 +20,20 @@ const {
 
 class CronJobEsHelper {
   static searchConfigurationToOpenADraw$(drawCalendar) {
-
     return from(drawCalendar.dateCalendar).pipe(
-      tap(r => console.log("--------------------")),
+      // tap(r => console.log("searchConfigurationToOpenADraw$ ==> ", r)),
       map(dateCalendar => ({ ...drawCalendar, dateCalendar })),
       mergeMap(calendar =>
         forkJoin(
           of(calendar),
           LotteryDrawDA.findLastVersionByGameId$(calendar.gameId),
-          LotteryGameDA.findById$(calendar.gameId)
+          LotteryGameDA.findById$(calendar.gameId, { "generalInfo.name": 1 })
         )
       ),
-      mergeMap(([calendar, nextDrawNumber, gameName]) =>
+      mergeMap(([calendar, nextDrawNumber, game]) =>
         forkJoin(
           of(calendar),
-          of(gameName),
+          of( ((game || {}).generalInfo || {}).name ),
           of(nextDrawNumber),
           this.searchSheetConfig$(calendar, nextDrawNumber),
           this.searchPrizeProgram$(calendar, nextDrawNumber),
@@ -42,14 +41,16 @@ class CronJobEsHelper {
         )
       ),
       catchError(err => {
-        // TODO 
+        // TODO
         console.log(" ====> ", err);
         return of(null);
       }),
       filter(r => r),
       mergeMap(([calendar, gameName, nextDrawNumber, sheet, prize, quota]) =>
-        this.buildCompleteDrawObject$(calendar, gameName, nextDrawNumber, sheet, prize, quota )
-      )
+        this.buildCompleteDrawObject$(calendar, gameName, nextDrawNumber, sheet, prize, quota)
+      ),
+      mergeMap(drawToOpen => this.createEventToOpenDraw$(drawToOpen)),
+      mergeMap(event => eventSourcing.eventStore.emitEvent$(event))
     );
   }
 
@@ -98,8 +99,7 @@ class CronJobEsHelper {
     );
   }
 
-  static buildCompleteDrawObject$(calendar, gameName, nextDrawNumber, sheet, prize, quota ) {
-
+  static buildCompleteDrawObject$( calendar, gameName, nextDrawNumber, sheet, prize, quota ) {
     const allSecondaryPrizes = prize.secondaryPrices.reduce(
       (acc, current, i) => [
         ...acc,
@@ -113,12 +113,12 @@ class CronJobEsHelper {
     );
     const allTwoOutOfThree = {
       name: prize.twoOutOfThree.name,
-      pairs: new Array(3).fill({ number: "", series: "" })
+      pairs: new Array(3).fill({ number: "", series: null })
     };
 
     return of({ allSecondaryPrizes, allTwoOutOfThree }).pipe(
-      map(blankPrixes => ({
-        _id: uuidv4(),
+      map(blankPrizes => ({
+        _id: calendar.dateCalendar.id,
         lotteryId: calendar.lotteryId,
         gameId: calendar.gameId,
         gameName: gameName,
@@ -140,8 +140,8 @@ class CronJobEsHelper {
             number: "",
             series: ""
           },
-          secondaryPrizes: blankPrixes.allSecondaryPrizes,
-          TwoOutOfThree: blankPrixes.allTwoOutOfThree
+          secondaryPrizes: blankPrizes.allSecondaryPrizes,
+          TwoOutOfThree: blankPrizes.allTwoOutOfThree
         },
         approved: null,
         approvedTimestamp: null,
@@ -151,8 +151,24 @@ class CronJobEsHelper {
         openFromTimestamp: calendar.dateCalendar.openingDatetime,
         openUntilTimestamp: calendar.dateCalendar.closingDatetime
       })),
-      tap(draw => console.log(JSON.stringify(draw))),
-      mergeMap(draw => LotteryDrawDA.insertDraw$(draw))
+      // tap(draw => console.log(JSON.stringify(draw)))
+      // mergeMap(draw => LotteryDrawDA.insertDraw$(draw))
+    );
+  }
+
+  static createEventToOpenDraw$(draw) {
+    return of(
+      new Event({
+        aggregateType: "LotteryDraw",
+        aggregateId: draw._id,
+        eventType: "LotteryDrawStateUpdated",
+        eventTypeVersion: 1,
+        user: "SYSTEM",
+        data: {
+          state: "OPEN",
+          draw
+        }
+      })
     );
   }
 }
