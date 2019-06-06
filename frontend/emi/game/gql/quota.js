@@ -52,6 +52,24 @@ export const LotteryGameQuota = gql`
   }
 `;
 
+export const LotteryGameQuotaNumberList = gql`
+  query LotteryGameQuotaNumberList($filterInput: LotteryGameQuotaNumberListInput) {
+    LotteryGameQuotaNumberList(filterInput: $filterInput) {
+      lotteryId
+      gameId
+      quotaId
+      number
+      series
+    }
+  }
+`;
+
+export const LotteryGameQuotaNumberListSize = gql`
+  query LotteryGameQuotaNumberListSize($filterInput: LotteryGameQuotaNumberListInput!) {
+    LotteryGameQuotaNumberListSize(filterInput: $filterInput)
+  }
+`;
+
 export const CreateLotteryGameQuota = gql`
   mutation CreateLotteryGameQuota($input: LotteryGameQuotaInput!) {
     CreateLotteryGameQuota(input: $input) {
@@ -87,7 +105,7 @@ export const RevokeLotteryGameQuota = gql`
     }
   }
 `;
- // QUOTA NUMBER
+// QUOTA NUMBER
 export const CreateLotteryGameQuotaNumber = gql`
   mutation CreateLotteryGameQuotaNumber($input: [LotteryGameQuotaNumberInput], $lotteryId: String, $gameId: String, $quotaId: String) {
     CreateLotteryGameQuotaNumber(input: $input, lotteryId: $lotteryId, gameId: $gameId, quotaId: $quotaId) {

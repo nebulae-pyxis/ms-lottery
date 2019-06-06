@@ -12,7 +12,9 @@ import {
   CreateLotteryGameQuotaNumber,
   RemoveLotteryGameQuotaNumber,
   LotteryGameQuotaUpdatedSubscription,
-  LotteryGameQuotaNumberUpdatedSubscription
+  LotteryGameQuotaNumberUpdatedSubscription,
+  LotteryGameQuotaNumberListSize,
+  LotteryGameQuotaNumberList
 } from '../../gql/quota.js';
 import { Router, ActivatedRoute } from '@angular/router';
 import { HttpClient, HttpParams, HttpRequest, HttpEvent } from '@angular/common/http';
@@ -97,6 +99,28 @@ export class QuotaService {
       variables: {
         id,
         filterInput
+      },
+      fetchPolicy: 'network-only',
+      errorPolicy: 'all'
+    });
+  }
+
+  lotteryGameQuotaNumberListSize$(input) {
+    return this.gateway.apollo.query<any>({
+      query: LotteryGameQuotaNumberListSize,
+      variables: {
+        filterInput: input
+      },
+      fetchPolicy: 'network-only',
+      errorPolicy: 'all'
+    });
+  }
+
+  lotteryGameQuotaNumberList$(input) {
+    return this.gateway.apollo.query<any>({
+      query: LotteryGameQuotaNumberList,
+      variables: {
+        input
       },
       fetchPolicy: 'network-only',
       errorPolicy: 'all'

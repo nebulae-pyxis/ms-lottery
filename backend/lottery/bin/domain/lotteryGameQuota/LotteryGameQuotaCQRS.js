@@ -10,7 +10,7 @@ const broker = require("../../tools/broker/BrokerFactory")();
 const MATERIALIZED_VIEW_TOPIC = "materialized-view-updates";
 const GraphqlResponseTools = require('../../tools/GraphqlResponseTools');
 const RoleValidator = require("../../tools/RoleValidator");
-const { take, mergeMap, catchError, map, toArray } = require('rxjs/operators');
+const { take, mergeMap, catchError, map, toArray, tap } = require('rxjs/operators');
 const {
   CustomError,
   DefaultError,
@@ -257,6 +257,7 @@ class LotteryGameQuotaCQRS {
   }
 
   getLotteryGameQuotaNumberListSize$({ args }, authToken) {
+    console.log('llgan args: ', args);
     return RoleValidator.checkPermissions$(
       authToken.realm_access.roles,
       "LotteryGameQuota",
@@ -269,7 +270,7 @@ class LotteryGameQuotaCQRS {
 
         return LotteryGameQuotaNumberDA.getLotteryGameQuotaNumberListSize$(filterInput);
       }),
-      toArray(),
+      tap(result => console.log('resultado de consulta: ',result)),
       mergeMap(rawResponse => GraphqlResponseTools.buildSuccessResponse$(rawResponse)),
       catchError(err => {
         console.error(err);

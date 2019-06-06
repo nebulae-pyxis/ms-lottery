@@ -22,5 +22,17 @@
         "type": "graphql",        
         "src": "api/emi-gateway/graphql/lottery-game-prize-program",
         "preBuildCommands": []
+    },
+    {
+        "name": "lottery-game-draw-calendar",
+        "type": "graphql",        
+        "src": "api/emi-gateway/graphql/lottery-game-draw-calendar",
+        "preBuildCommands": []
+    },
+    {
+        "name": "lottery-game-quota",
+        "type": "graphql",        
+        "src": "api/emi-gateway/graphql/lottery-game-quota",
+        "preBuildCommands": []
     }
 ]

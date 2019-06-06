@@ -304,6 +304,14 @@ class GraphQlService {
       // QUOTA NUMBER
       {
         aggregateType: "LotteryGameQuota",
+        messageType: "emigateway.graphql.query.LotteryGameQuotaNumberListSize"
+      },
+      {
+        aggregateType: "LotteryGameQuota",
+        messageType: "emigateway.graphql.query.LotteryGameQuotaNumberListSize"
+      },
+      {
+        aggregateType: "LotteryGameQuota",
         messageType: "emigateway.graphql.mutation.CreateLotteryGameQuotaNumber"
       },
       {
@@ -493,9 +501,16 @@ class GraphQlService {
         fn: LotteryGameQuotaCQRS.createLotteryGameQuotaNumber$,
         obj: LotteryGameQuotaCQRS
       },
-      // QUOTA NUMBER
       "emigateway.graphql.mutation.RemoveLotteryGameQuotaNumber": {
         fn: LotteryGameQuotaCQRS.removeLotteryGameQuotaNumber$,
+        obj: LotteryGameQuotaCQRS
+      },
+      "emigateway.graphql.query.LotteryGameQuotaNumberListSize": {
+        fn: LotteryGameQuotaCQRS.getLotteryGameQuotaNumberListSize$,
+        obj: LotteryGameQuotaCQRS
+      },
+      "emigateway.graphql.query.LotteryGameQuotaNumberList": {
+        fn: LotteryGameQuotaCQRS.getLotteryGameQuotaNumberList$,
         obj: LotteryGameQuotaCQRS
       },
       // LOTTERY DRAW
