@@ -26,11 +26,13 @@ class LotteryCalendarDA {
     return defer(() => collection.findOne(query, { projection }));
   }
 
-  static findDrawsToOpen$(currentDate) {
+  static findCalendarWithDrawsToOpen$(currentDate, gameId) {
     const collection = mongoDB.db.collection(COLLECTION_NAME);
     return defer(() =>
       collection
-        .find({ 
+        .find(
+          {
+            gameId,
             revoked: false,
             "dateCalendar.openingDatetime": { $lte: currentDate },
             "dateCalendar.closingDatetime": { $gt: currentDate },
@@ -39,13 +41,29 @@ class LotteryCalendarDA {
             validFromTimestamp: { $lte: currentDate },
             $or: [
               { validUntilTimestamp: null },
-              { validUntilTimestamp: { gt: currentDate } }
+              { validUntilTimestamp: { $gt: currentDate } }
             ]
-
           },
-          { projection: { dateCalendar: 1, lotteryId: 1, gameId: 1, version: 1  } }
+          {
+            projection: { dateCalendar: 1, lotteryId: 1, gameId: 1, version: 1 }
+          }
         )
+        .sort({ version: -1 })
+        .limit(1)
         .toArray()
+    ).pipe(
+      map(results =>
+        results.length == 0
+          ? null
+          : {
+              ...results[0],
+              dateCalendar: results[0].dateCalendar.filter(item =>
+                item.openingDatetime <= currentDate &&
+                item.closingDatetime > currentDate &&
+                item.drawState == null
+              )
+            }
+      )
     );
   }
 }

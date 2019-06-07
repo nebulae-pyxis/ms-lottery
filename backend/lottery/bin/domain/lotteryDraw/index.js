@@ -3,19 +3,19 @@
 const Rx = require('rxjs');
 const LotteryDrawCQRS = require("./LoterryDrawCQRS")();
 const LotteryDrawES = require("./LoteryDrawES")();
-const LotteryDrawDA = require("./data-access/LotteryDrawDA");
+const DataAccess = require("./data-access");
 
 module.exports = {
   /**
    * domain start workflow
    */
-  start$: Rx.concat(LotteryDrawDA.start$()),
+  start$: DataAccess.start$ ,
   /**
-   * @returns {DriverCQRS}
+   * @returns {LotteryDraw}
    */
   LotteryDrawCQRS,
   /**
-   * @returns {DriverES}
+   * @returns {LotteryDrawES}
    */
   LotteryDrawES,
 };

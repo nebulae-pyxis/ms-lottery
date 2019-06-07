@@ -39,11 +39,6 @@ class LotteryDrawDA {
     )
   }
 
-  static insertDraw$(draw){
-    const collection = mongoDB.db.collection(COLLECTION_NAME);
-    return defer(() => collection.insertOne(draw) )
-
-  }
 
 }
 /**

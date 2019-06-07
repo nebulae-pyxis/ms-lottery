@@ -1,12 +1,11 @@
 "use strict";
 
 let mongoDB = undefined;
-const COLLECTION_NAME = "LotteryGame";
-const { CustomError } = require("../../../tools/customError");
+const COLLECTION_NAME = "LotteryGameDrawCalendar";
 const { map } = require("rxjs/operators");
 const { of, Observable, defer } = require("rxjs");
 
-class LotteryGameDA {
+class LotteryCalendarDA {
   static start$(mongoDbInstance) {
     return Observable.create(observer => {
       if (mongoDbInstance) {
@@ -23,19 +22,18 @@ class LotteryGameDA {
   static findById$(_id, projection = undefined) {
     const collection = mongoDB.db.collection(COLLECTION_NAME);
     const query = { _id };
-    return defer(() => collection.findOne(query,{projection}));
-  }
-  
-  
-  static findActiveByLotteryId$(lotteryId){
-    const collection = mongoDB.db.collection(COLLECTION_NAME);
-    return defer(() => collection
-    .find({ state: true, "generalInfo.lotteryId": lotteryId })
-    .toArray())
+    return defer(() => collection.findOne(query, { projection }));
   }
 
+  static updateDrawStateInCalendar$(calendarId, drawId, state){
+    const collection = mongoDB.db.collection(COLLECTION_NAME);
+    return defer(() => collection.updateOne(
+      { _id: calendarId, "dateCalendar.id": drawId },
+      { $set: { "dateCalendar.$.drawState": state } }  
+      ))
+  }
 }
 /**
- * @returns {LotteryGameDA}
+ * @returns {LotteryCalendarDA}
  */
-module.exports = LotteryGameDA;
+module.exports = LotteryCalendarDA;
