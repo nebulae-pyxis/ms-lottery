@@ -14,7 +14,7 @@
       placeholder="{{'LOTTERY.DETAILS.CONFIG_SHEET.VALID_UNTIL_DRAW' | translate}}">
   </mat-form-field>
 
-  <div *ngIf="tableSize < 1" ng2FileDrop [ngClass]="{'nv-file-over': hasBaseDropZoneOver}" fxLayout="column" (onFileDrop)="fileDroped($event)" (fileOver)="fileOverBase($event)"
+  <div *ngIf="tableSize < 1 && userAllowedToUpdateInfo" ng2FileDrop [ngClass]="{'nv-file-over': hasBaseDropZoneOver}" fxLayout="column" (onFileDrop)="fileDroped($event)" (fileOver)="fileOverBase($event)"
     [uploader]="uploader" class="well my-drop-zone" style="text-align: center; height: 150px;">
     <span *ngIf="(!uploadingFile || hasBaseDropZoneOver)" style="color: #6e6e6e; font-size: 14px; margin-top: 20px">
     {{ "LOTTERY.DETAILS.QUOTA.UPLOAD_FILE_MESSAGE" | translate}}
@@ -88,7 +88,7 @@
         </mat-paginator>
 
 
-  <div class="mt-16" *ngIf="isGeneralInfoButtonsAllowed()">
+  <div class="mt-16" *ngIf="userAllowedToUpdateInfo">
     <button mat-raised-button style="margin-right: 10px" [disabled]="gameGeneralInfoForm.invalid || tableSize < 1"
       (click)="createQuota()" *ngIf="showSaveButton">
       {{'LOTTERY.UPDATE' | translate}}

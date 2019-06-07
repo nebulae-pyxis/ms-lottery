@@ -119,8 +119,8 @@ export const RevokeLotteryGameDrawCalendar = gql`
 `;
 
 export const LotteryGameDrawCalendarUpdatedSubscription = gql`
-  subscription{
-    LotteryGameDrawCalendarUpdatedSubscription{
+  subscription($gameId: String){
+    LotteryGameDrawCalendarUpdatedSubscription(gameId: $gameId){
       _id
     	template {
         openDrawDaysBefore

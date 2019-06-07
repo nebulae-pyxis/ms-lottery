@@ -80,6 +80,7 @@ export class GamePrizeProgramGeneralInfoComponent implements OnInit, OnDestroy {
   showDuplicateButton = false;
   prizeClaimThreshold;
   grandPrizeFormValid = false;
+  userAllowedToUpdateInfo = false;
 
   @Input('game') game: any;
   @Input('selectedPrizeProgram') selectedPrizeProgram: any;
@@ -97,6 +98,7 @@ export class GamePrizeProgramGeneralInfoComponent implements OnInit, OnDestroy {
 
 
   ngOnInit() {
+    this.userAllowedToUpdateInfo = this.keycloakService.getUserRoles(true).some(role => role === 'LOTTERY-ADMIN' || role === 'PLATFORM-ADMIN');
     this.buildForm();
     this.subuscribeToSelectedPrizeProgramChange();
     this.subscribeGamePrizeProgramUpdated();
@@ -115,6 +117,7 @@ export class GamePrizeProgramGeneralInfoComponent implements OnInit, OnDestroy {
       validFromDraw: new FormControl('', [Validators.required]),
       validUntilDraw: new FormControl(''),
     });
+    !this.userAllowedToUpdateInfo ? this.gameGeneralInfoForm.disable() : this.gameGeneralInfoForm.enable();
   }
 
   numberOnly(event): boolean {

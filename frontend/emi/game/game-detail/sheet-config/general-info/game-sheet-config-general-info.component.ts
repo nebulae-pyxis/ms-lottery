@@ -77,6 +77,7 @@ export class GameSheetConfigGeneralInfoComponent implements OnInit, OnDestroy {
   ticketPrice;
   showSaveButton = true;
   showDuplicateButton = false;
+  userAllowedToUpdateInfo = false;
 
   @Input('game') game: any;
   @Input('selectedConfigSheet') selectedConfigSheet: any;
@@ -94,12 +95,14 @@ export class GameSheetConfigGeneralInfoComponent implements OnInit, OnDestroy {
 
 
   ngOnInit() {
+    this.userAllowedToUpdateInfo = this.keycloakService.getUserRoles(true).some(role => role === 'LOTTERY-ADMIN' || role === 'PLATFORM-ADMIN');
     this.gameGeneralInfoForm = new FormGroup({
       ticketsPerSheet: new FormControl('', [Validators.required]),
       ticketPrice: new FormControl('', [Validators.required]),
       validFromDraw: new FormControl('', [Validators.required]),
       validUntilDraw: new FormControl(''),
     });
+    !this.userAllowedToUpdateInfo ? this.gameGeneralInfoForm.disable() : this.gameGeneralInfoForm.enable();
     this.subuscribeToSelectedSheetConfigChange();
     this.subscribeGameSheetConfigUpdated();
   }
@@ -110,12 +113,6 @@ export class GameSheetConfigGeneralInfoComponent implements OnInit, OnDestroy {
       return false;
     }
     return true;
-  }
-
-  isGeneralInfoButtonsAllowed() {
-    const roles = this.keycloakService.getUserRoles()
-      .filter(role => role === 'PLATFORM-ADMIN' || role === 'LOTTERY-ADMIN');
-    return  roles && roles.length > 0;
   }
 
   subuscribeToSelectedSheetConfigChange() {

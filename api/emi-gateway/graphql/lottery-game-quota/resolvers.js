@@ -74,6 +74,7 @@ module.exports = {
                 ).toPromise();
         },
         LotteryGameQuotaNumberList(root, args, context) {
+            console.log('llega: ', args);
             return RoleValidator.checkPermissions$(context.authToken.realm_access.roles,
                 'ms-' + 'Lottery',
                 'LotteryGameQuota',

@@ -27,6 +27,10 @@ function getResponseFromBackEnd$(response) {
     );
 }
 
+function verifyUserRoles(context) { 
+    return context.authToken.realm_access.roles.some(role => role === 'LOTTERY-ADMIN' || role === 'PLATFORM-ADMIN' || 'LOTTERY-APPROVER');
+}
+
 
 module.exports = {
 
@@ -174,7 +178,7 @@ module.exports = {
                     return pubsub.asyncIterator("LotteryGameUpdatedSubscription");
                 },
                 (payload, variables, context, info) => {
-                    return true;
+                    return verifyUserRoles(context) && payload.LotteryGameUpdatedSubscription._id === variables.gameId;
                 }
             )
         }

@@ -52,6 +52,7 @@ import {
 } from '@coachcare/datepicker';
 import * as moment from 'moment';
 import { MAT_MOMENT_DATE_FORMATS } from '../../my-date-format';
+import { KeycloakService } from 'keycloak-angular';
 
 
 @Component({
@@ -78,17 +79,20 @@ export class DrawCalendarTemplateComponent implements OnInit, OnDestroy {
   // Stream of filtered client by auto-complete text
   queriedLotteriesByAutocomplete$: Observable<any[]>;
   templateChanged = new Subject();
+  userAllowedToUpdateInfo = false;
 
   constructor(
     private translationLoader: FuseTranslationLoaderService,
     public snackBar: MatSnackBar,
     private drawCalendarService: DrawCalendarService,
+    private keycloakService: KeycloakService
   ) {
     this.translationLoader.loadTranslations(english, spanish);
   }
 
 
   ngOnInit() {
+    this.userAllowedToUpdateInfo = this.keycloakService.getUserRoles(true).some(role => role === 'LOTTERY-ADMIN' || role === 'PLATFORM-ADMIN');
     this.buildForm();
     this.subuscribeToSelectedDrawCalendarChange();
     this.listenFormaChanges();
@@ -104,6 +108,7 @@ export class DrawCalendarTemplateComponent implements OnInit, OnDestroy {
       validFromTimestamp: new FormControl('', [Validators.required]),
       validUntilTimestamp: new FormControl('', [Validators.required])
     });
+    !this.userAllowedToUpdateInfo ? this.templateForm.disable() : this.templateForm.enable();
   }
 
   numberOnly(event): boolean {
@@ -180,7 +185,6 @@ export class DrawCalendarTemplateComponent implements OnInit, OnDestroy {
     this.drawCalendarService.selectedDrawCalendarChanged$.pipe(
       debounceTime(300)
     ).subscribe(drawCalendar => {
-      console.log('from: ' + drawCalendar.validFromTimestamp + ' until: ' + drawCalendar.validUntilTimestamp);
       if (drawCalendar && drawCalendar.template) {
         this.templateForm.controls['openDrawDaysBefore'].setValue(drawCalendar.template.openDrawDaysBefore);
         this.templateForm.controls['openDrawTime'].setValue(moment(drawCalendar.template.openDrawTime, 'HH:mm'));

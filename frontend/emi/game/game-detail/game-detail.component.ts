@@ -78,7 +78,6 @@ export class GameDetailComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.loadgame();
-    this.subscribeGameUpdated();
     this.stopWaitingOperation();
   }
 
@@ -113,26 +112,23 @@ export class GameDetailComponent implements OnInit, OnDestroy {
             map(res => res.data.LotteryGame)
           ) : of(null)
         ),
-        takeUntil(this.ngUnsubscribe)
-      )
-      .subscribe((game: any) => {
-        this.game = game;
-        this.pageType = (game && game._id) ? 'edit' : 'new';
-      }, e => console.log(e));
-  }
-
-  subscribeGameUpdated() {
-    this.gameDetailservice.subscribeLotteryGameUpdatedSubscription$()
-      .pipe(
-        map(subscription => {
-          return subscription.data.LotteryGameUpdatedSubscription;
+        mergeMap(game => {
+          this.game = game;
+          this.gameDetailservice.selectedGame = game;
+          this.pageType = (game && game._id) ? 'edit' : 'new';
+          return this.gameDetailservice.subscribeLotteryGameUpdatedSubscription$()
+          .pipe(
+            map(subscription => {
+              return subscription.data.LotteryGameUpdatedSubscription;
+            })
+          );
         }),
         takeUntil(this.ngUnsubscribe)
       )
       .subscribe((game: any) => {
         this.gameDetailservice.notifymsentityUpdated(game);
         this.checkIfEntityHasBeenUpdated(game);
-      });
+      }, e => console.log(e));
   }
 
   onTabChange(event) {

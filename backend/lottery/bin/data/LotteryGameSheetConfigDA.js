@@ -91,6 +91,7 @@ class LotteryGameSheetConfigDA {
         const version = lastConfigSheet && lastConfigSheet.version ? lastConfigSheet.version + 1 : 1;
         configSheet.version = version;
         configSheet.approved = 'PENDING';
+        configSheet.revoked = false;
         const collection = mongoDB.db.collection(CollectionName);
         return defer(() => collection.insertOne(configSheet));
       })

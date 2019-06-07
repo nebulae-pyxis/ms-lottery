@@ -51,6 +51,7 @@ import { SecondaryPrizeDialogComponent } from './secondary-prize-dialog/secondar
 import { v4 as uuid } from 'uuid';
 import { DialogComponent } from '../../../../dialog/dialog.component';
 import {animate, state, style, transition, trigger} from '@angular/animations';
+import { KeycloakService } from 'keycloak-angular';
 
 
 @Component({
@@ -88,18 +89,22 @@ export class PrizeProgramSecondaryPrizeComponent implements OnInit, OnDestroy {
   withSerie = true;
   selectedSecondaryPrize;
   showManageButtons = false;
+  userAllowedToUpdateInfo = false;
+
   @ViewChild('serieSlide') ref: ElementRef;
   constructor(
     private translationLoader: FuseTranslationLoaderService,
     public snackBar: MatSnackBar,
     private dialog: MatDialog,
     private prizeProgramService: PrizeProgramService,
+    private keycloakService: KeycloakService
   ) {
     this.translationLoader.loadTranslations(english, spanish);
   }
 
 
   ngOnInit() {
+    this.userAllowedToUpdateInfo = this.keycloakService.getUserRoles(true).some(role => role === 'LOTTERY-ADMIN' || role === 'PLATFORM-ADMIN');
     this.subuscribeToSelectedPrizeProgramChange();
     this.secondaryPrizeForm = new FormGroup({
       name: new FormControl('', [Validators.required]),
@@ -107,6 +112,7 @@ export class PrizeProgramSecondaryPrizeComponent implements OnInit, OnDestroy {
       totalPrize: new FormControl('', [Validators.required]),
       paymentPrize: new FormControl('', [Validators.required]),
     });
+    !this.userAllowedToUpdateInfo ? this.secondaryPrizeForm.disable() : this.secondaryPrizeForm.enable();
   }
 
   createSecondaryPrize() {
@@ -233,7 +239,7 @@ export class PrizeProgramSecondaryPrizeComponent implements OnInit, OnDestroy {
   subuscribeToSelectedPrizeProgramChange() {
     this.prizeProgramService.selectedPrizeProgramChanged$
       .subscribe(prizeProgram => {
-        if (!prizeProgram || (prizeProgram && (!prizeProgram.approved || prizeProgram.approved === 'NOT_APPROVED'))) {
+        if (this.userAllowedToUpdateInfo && (!prizeProgram || (prizeProgram && (!prizeProgram.approved || prizeProgram.approved === 'NOT_APPROVED')))) {
           this.showManageButtons = true;
           this.displayedColumns = [
             'name',

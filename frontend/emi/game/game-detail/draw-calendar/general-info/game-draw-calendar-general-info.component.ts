@@ -77,6 +77,7 @@ export class GameDrawCalendarGeneralInfoComponent implements OnInit, OnDestroy {
   showSaveButton = true;
   showDuplicateButton = false;
   templateFormValid = false;
+  userAllowedToUpdateInfo = false;
 
   @Input('game') game: any;
   @Input('selectedDrawCalendar') selectedDrawCalendar: any;
@@ -94,12 +95,7 @@ export class GameDrawCalendarGeneralInfoComponent implements OnInit, OnDestroy {
 
 
   ngOnInit() {
-    this.gameGeneralInfoForm = new FormGroup({
-      ticketsPerSheet: new FormControl('', [Validators.required]),
-      ticketPrice: new FormControl('', [Validators.required]),
-      validFromDraw: new FormControl('', [Validators.required]),
-      validUntilDraw: new FormControl(''),
-    });
+    this.userAllowedToUpdateInfo = this.keycloakService.getUserRoles(true).some(role => role === 'LOTTERY-ADMIN' || role === 'PLATFORM-ADMIN');
     this.subuscribeToSelectedDrawCalendarChange();
     this.subscribeGameDrawCalendarUpdated();
     this.subscribeToDrawCalendarTemplateFormChanged();
@@ -124,15 +120,7 @@ export class GameDrawCalendarGeneralInfoComponent implements OnInit, OnDestroy {
       if (drawCalendar) {
         this.showSaveButton = !drawCalendar.approved || drawCalendar.approved === 'NOT_APPROVED';
         this.showDuplicateButton = drawCalendar.approved === 'APPROVED';
-        this.gameGeneralInfoForm.controls['ticketsPerSheet'].setValue(drawCalendar.ticketsPerSheet);
-        this.gameGeneralInfoForm.controls['ticketPrice'].setValue(drawCalendar.ticketPrice);
-        this.gameGeneralInfoForm.controls['validFromDraw'].setValue(drawCalendar.validFromDraw);
-        this.gameGeneralInfoForm.controls['validUntilDraw'].setValue(drawCalendar.validUntilDraw);
       } else {
-        this.gameGeneralInfoForm.controls['ticketsPerSheet'].setValue('');
-        this.gameGeneralInfoForm.controls['ticketPrice'].setValue('');
-        this.gameGeneralInfoForm.controls['validFromDraw'].setValue('');
-        this.gameGeneralInfoForm.controls['validUntilDraw'].setValue('');
         this.showSaveButton = true;
         this.showDuplicateButton = false;
       }
@@ -142,7 +130,6 @@ export class GameDrawCalendarGeneralInfoComponent implements OnInit, OnDestroy {
 
   subscribeToDrawCalendarTemplateFormChanged() {
     this.drawCalendarService.templateFormValid$.subscribe(valid => {
-      console.log('valido: ', valid);
       this.templateFormValid = valid;
     });
   }
@@ -191,8 +178,8 @@ export class GameDrawCalendarGeneralInfoComponent implements OnInit, OnDestroy {
             template: this.drawCalendarService.template,
             dateCalendar: this.drawCalendarService.dateList,
             gameId: this.game._id,
-            validUntilTimestamp: this.drawCalendarService.validFromTimestamp,
-            validFromTimestamp: this.drawCalendarService.validUntilTimestamp,
+            validUntilTimestamp: this.drawCalendarService.validUntilTimestamp,
+            validFromTimestamp: this.drawCalendarService.validFromTimestamp,
             lotteryId: this.game.generalInfo.lotteryId
           };
           return this.drawCalendarService.createLotteryGameDrawCalendar$(drawCalendar);

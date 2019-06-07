@@ -53,8 +53,8 @@ export const LotteryGameQuota = gql`
 `;
 
 export const LotteryGameQuotaNumberList = gql`
-  query LotteryGameQuotaNumberList($filterInput: LotteryGameQuotaNumberListInput) {
-    LotteryGameQuotaNumberList(filterInput: $filterInput) {
+  query LotteryGameQuotaNumberList($filterInput: LotteryGameQuotaNumberListInput, $page: Int, $count: Int) {
+    LotteryGameQuotaNumberList(filterInput: $filterInput, page: $page, count: $count) {
       lotteryId
       gameId
       quotaId

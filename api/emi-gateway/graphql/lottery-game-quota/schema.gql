@@ -114,11 +114,11 @@ type Query {
 
 
   LotteryGameQuotaNumberList(
-    filterInput: LotteryGameQuotaNumberListInput
+    filterInput: LotteryGameQuotaNumberListInput, page: Int, count: Int
   ): [LotteryGameQuotaNumber]
 
   LotteryGameQuotaNumberListSize(
-    filterInput: LotteryGameQuotaNumberListInput, page: Int, count: Int
+    filterInput: LotteryGameQuotaNumberListInput
   ): Int
 }
 

@@ -38,7 +38,7 @@
 
       <mat-form-field fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
         <mat-label>{{'LOTTERY.DETAILS.GAME_TYPE' | translate}}</mat-label>
-        <mat-select [(value)]="selectedType">
+        <mat-select [disabled]="!userAllowedToUpdateInfo" [(value)]="selectedType">
           <mat-option value="ORDINARY">{{'LOTTERY.DETAILS.ORDINARY' | translate}}</mat-option>
           <mat-option value="EXTRAORDINARY">{{'LOTTERY.DETAILS.EXTRAORDINARY' | translate}}</mat-option>
         </mat-select>
@@ -55,7 +55,7 @@
       </mat-form-field>
 
 
-      <div class="mt-16">
+      <div *ngIf="userAllowedToUpdateInfo" class="mt-16">
         <button mat-raised-button *ngIf="pageType === 'new'" (click)="createGame()"
           [disabled]="gameGeneralInfoForm.invalid || gameGeneralInfoForm.pristine">
           {{'LOTTERY.CREATE' | translate}}

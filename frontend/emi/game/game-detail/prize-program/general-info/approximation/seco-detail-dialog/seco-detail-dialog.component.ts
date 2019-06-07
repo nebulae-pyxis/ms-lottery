@@ -3,6 +3,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Observable, iif, of, from } from 'rxjs';
 import { debounceTime, distinctUntilChanged, tap, filter, mergeMap, toArray } from 'rxjs/operators';
+import { KeycloakService } from 'keycloak-angular';
 
 export interface DialogData {
   dialogTitle: string;
@@ -23,8 +24,10 @@ export class SecoDetailDialogComponent implements OnInit {
   selectedSeco;
   queriedSecosByAutocomplete$: Observable<any[]>;
   secoList = [];
+  userAllowedToUpdateInfo = false;
 
-  constructor(private dialogRef: MatDialogRef<SecoDetailDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: DialogData) {
+  constructor(private dialogRef: MatDialogRef<SecoDetailDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: DialogData) {
 
   }
 

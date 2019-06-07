@@ -52,6 +52,7 @@ import { v4 as uuid } from 'uuid';
 import { DialogComponent } from '../../../../dialog/dialog.component';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { SecoDetailDialogComponent } from './seco-detail-dialog/seco-detail-dialog.component';
+import { KeycloakService } from 'keycloak-angular';
 
 
 @Component({
@@ -91,6 +92,7 @@ export class PrizeProgramApproximationComponent implements OnInit, OnDestroy {
   selectedNumberMaskType = 'SAME';
   selectedSerialMaskType = 'ANY';
   selectedApproximationTo = 'GRAND_PRIZE';
+  userAllowedToUpdateInfo = false;
   approximationsTolds;
   @ViewChild('serieSlide') ref: ElementRef;
   constructor(
@@ -98,20 +100,26 @@ export class PrizeProgramApproximationComponent implements OnInit, OnDestroy {
     public snackBar: MatSnackBar,
     private dialog: MatDialog,
     private prizeProgramService: PrizeProgramService,
+    private keycloakService: KeycloakService
   ) {
     this.translationLoader.loadTranslations(english, spanish);
   }
 
 
   ngOnInit() {
+    this.userAllowedToUpdateInfo = this.keycloakService.getUserRoles(true).some(role => role === 'LOTTERY-ADMIN' || role === 'PLATFORM-ADMIN');
     this.subuscribeToSelectedPrizeProgramChange();
     this.approximationForm = new FormGroup({
       order: new FormControl('', [Validators.required]),
       name: new FormControl('', [Validators.required]),
       numberMaskRegex: new FormControl('', []),
+      serieMaskType: new FormControl('', []),
+      numberMaskType: new FormControl('', []),
+      approximationTo: new FormControl('', []),
       totalPrize: new FormControl('', [Validators.required]),
       paymentPrize: new FormControl('', [Validators.required]),
     });
+    !this.userAllowedToUpdateInfo ? this.approximationForm.disable() : this.approximationForm.enable();
   }
 
   createApproximation() {
@@ -219,7 +227,7 @@ export class PrizeProgramApproximationComponent implements OnInit, OnDestroy {
           dialogTitle: 'LOTTERY.CREATE_TITLE',
           currentSecos: this.approximationsTolds,
           availableSecos: this.prizeProgramService.secondaryPrices,
-          showManageItems: this.showManageButtons
+          showManageItems: this.showManageButtons && this.userAllowedToUpdateInfo
         },
         width: '400px',
         minHeight: '350px',
@@ -251,7 +259,7 @@ export class PrizeProgramApproximationComponent implements OnInit, OnDestroy {
   subuscribeToSelectedPrizeProgramChange() {
     this.prizeProgramService.selectedPrizeProgramChanged$
       .subscribe(prizeProgram => {
-        if (!prizeProgram || (prizeProgram && (!prizeProgram.approved || prizeProgram.approved === 'NOT_APPROVED'))) {
+        if (this.userAllowedToUpdateInfo && (!prizeProgram || (prizeProgram && (!prizeProgram.approved || prizeProgram.approved === 'NOT_APPROVED')))) {
           this.showManageButtons = true;
           this.displayedColumns = [
             'name',

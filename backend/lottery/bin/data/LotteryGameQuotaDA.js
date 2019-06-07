@@ -91,6 +91,7 @@ class LotteryGameQuotaDA {
         const version = lastQuota && lastQuota.version ? lastQuota.version + 1 : 1;
         configSheet.version = version;
         configSheet.approved = 'NOT_APPROVED';
+        configSheet.revoked = false;
         const collection = mongoDB.db.collection(CollectionName);
         return defer(() => collection.insertOne(configSheet));
       })

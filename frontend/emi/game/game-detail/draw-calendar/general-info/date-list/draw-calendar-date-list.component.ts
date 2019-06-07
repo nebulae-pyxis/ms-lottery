@@ -54,6 +54,7 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 import { MAT_DATE_LOCALE, DateAdapter, MomentDateAdapter, MAT_DATE_FORMATS } from '@coachcare/datepicker';
 import { MAT_MOMENT_DATE_FORMATS } from '../../my-date-format';
 import * as moment from 'moment';
+import { KeycloakService } from 'keycloak-angular';
 
 
 @Component({
@@ -98,18 +99,21 @@ export class DrawCalendarDateListComponent implements OnInit, OnDestroy {
   withSerie = true;
   selectedDateList;
   showManageButtons = false;
+  userAllowedToUpdateInfo = false;
   @ViewChild('serieSlide') ref: ElementRef;
   constructor(
     private translationLoader: FuseTranslationLoaderService,
     public snackBar: MatSnackBar,
     private dialog: MatDialog,
     private drawCalendarService: DrawCalendarService,
+    private keycloakService: KeycloakService
   ) {
     this.translationLoader.loadTranslations(english, spanish);
   }
 
 
   ngOnInit() {
+    this.userAllowedToUpdateInfo = this.keycloakService.getUserRoles(true).some(role => role === 'LOTTERY-ADMIN' || role === 'PLATFORM-ADMIN');
     this.subuscribeToSelectedDrawCalendarChange();
     this.dateListForm = new FormGroup({
       openingDatetime: new FormControl('', [Validators.required]),
@@ -117,6 +121,7 @@ export class DrawCalendarDateListComponent implements OnInit, OnDestroy {
       drawingDatetime: new FormControl('', [Validators.required]),
       deactivationDatetime: new FormControl('', [Validators.required]),
     });
+    !this.userAllowedToUpdateInfo ? this.dateListForm.disable() : this.dateListForm.enable();
   }
 
   createDateList() {
@@ -159,8 +164,7 @@ export class DrawCalendarDateListComponent implements OnInit, OnDestroy {
             openingDatetime: this.dateListForm.controls['openingDatetime'].value.valueOf(),
             closingDatetime: this.dateListForm.controls['closingDatetime'].value.valueOf(),
             drawingDatetime: this.dateListForm.controls['drawingDatetime'].value.valueOf(),
-            deactivationDatetime: this.dateListForm.controls['deactivationDatetime'].value.valueOf(),
-            drawState: 'OPEN',
+            deactivationDatetime: this.dateListForm.controls['deactivationDatetime'].value.valueOf()
           });
           dateList.sort((a, b) => {
             return (a as any).drawingDatetime > (b as any).drawingDatetime ? 1 : -1;
@@ -244,7 +248,7 @@ export class DrawCalendarDateListComponent implements OnInit, OnDestroy {
   subuscribeToSelectedDrawCalendarChange() {
     this.drawCalendarService.selectedDrawCalendarChanged$
       .subscribe(drawCalendar => {
-        if (!drawCalendar || (drawCalendar && (!drawCalendar.approved || drawCalendar.approved === 'NOT_APPROVED'))) {
+        if (this.userAllowedToUpdateInfo && (!drawCalendar || (drawCalendar && (!drawCalendar.approved || drawCalendar.approved === 'NOT_APPROVED')))) {
           this.displayedColumns = [
             'drawingDatetime',
             'drawState',

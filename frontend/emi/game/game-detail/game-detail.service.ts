@@ -33,6 +33,8 @@ export class GameDetailService {
 
   selectedConfigSheetChanged$ = new BehaviorSubject(undefined);
 
+  selectedGame;
+
   constructor(private gateway: GatewayService, private location: Location,
     private route: ActivatedRoute) {
 
@@ -167,7 +169,10 @@ export class GameDetailService {
   subscribeLotteryGameUpdatedSubscription$(): Observable<any> {
     return this.gateway.apollo
       .subscribe({
-        query: LotteryGameUpdatedSubscription
+        query: LotteryGameUpdatedSubscription,
+        variables: {
+          gameId: this.selectedGame._id
+        },
       });
   }
 
@@ -177,7 +182,10 @@ export class GameDetailService {
   subscribeLotteryGameSheetConfigUpdatedSubscription$(): Observable<any> {
     return this.gateway.apollo
       .subscribe({
-        query: LotteryGameSheetConfigUpdatedSubscription
+        query: LotteryGameSheetConfigUpdatedSubscription,
+        variables: {
+          gameId: this.selectedGame._id
+        },
       });
   }
   /* #endregion */

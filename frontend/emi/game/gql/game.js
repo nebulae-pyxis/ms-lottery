@@ -193,8 +193,8 @@ export const RevokeLotteryGameSheetConfig = gql`
 
 // SUBSCRIPTION
 export const LotteryGameSheetConfigUpdatedSubscription = gql`
-  subscription{
-    LotteryGameSheetConfigUpdatedSubscription{
+  subscription($gameId: String){
+    LotteryGameSheetConfigUpdatedSubscription(gameId: $gameId){
       _id
     	validFromDraw
     validUntilDraw
@@ -222,8 +222,8 @@ export const LotteryGameSheetConfigUpdatedSubscription = gql`
 `;
 
 export const LotteryGameUpdatedSubscription = gql`
-  subscription{
-    LotteryGameUpdatedSubscription{
+  subscription($gameId: String){
+    LotteryGameUpdatedSubscription(gameId: $gameId){
       _id
       generalInfo {
         name

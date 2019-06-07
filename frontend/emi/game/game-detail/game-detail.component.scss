@@ -1,0 +1,7 @@
+::ng-deep .mat-input-element:disabled {
+  color: #444;
+}
+
+::ng-deep .mat-white-bg .mat-select-disabled .mat-select-value, .mat-white-bg .mat-select-arrow, .mat-white-bg .mat-select-trigger{
+  color: #444;
+}

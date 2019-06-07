@@ -20,6 +20,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { HttpClient, HttpParams, HttpRequest, HttpEvent } from '@angular/common/http';
 
 import { Location } from '@angular/common';
+import { GameDetailService } from '../game-detail.service';
 
 @Injectable({
   providedIn: 'root',
@@ -41,7 +42,9 @@ export class QuotaService {
 
   constructor(private gateway: GatewayService, private location: Location,
     private route: ActivatedRoute,
-    private http: HttpClient) {
+    private http: HttpClient,
+    // private gameService: GameDetailService
+  ) {
 
   }
 
@@ -116,11 +119,13 @@ export class QuotaService {
     });
   }
 
-  lotteryGameQuotaNumberList$(input) {
+  lotteryGameQuotaNumberList$(input, page, count) {
     return this.gateway.apollo.query<any>({
       query: LotteryGameQuotaNumberList,
       variables: {
-        input
+        filterInput: input,
+        page,
+        count
       },
       fetchPolicy: 'network-only',
       errorPolicy: 'all'
@@ -207,7 +212,10 @@ export class QuotaService {
   subscribeLotteryGameQuotaUpdatedSubscription$(): Observable<any> {
     return this.gateway.apollo
       .subscribe({
-        query: LotteryGameQuotaUpdatedSubscription
+        query: LotteryGameQuotaUpdatedSubscription,
+        // variables: {
+        //   gameId: this.gameService.selectedGame._id
+        // }
       });
   }
   /**
@@ -216,7 +224,10 @@ export class QuotaService {
   subscribeLotteryGameQuotaNumberUpdatedSubscription$(): Observable<any> {
     return this.gateway.apollo
       .subscribe({
-        query: LotteryGameQuotaNumberUpdatedSubscription
+        query: LotteryGameQuotaNumberUpdatedSubscription,
+        // variables: {
+        //   gameId: this.gameService.selectedGame._id
+        // }
       });
   }
 

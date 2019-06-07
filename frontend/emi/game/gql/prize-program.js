@@ -152,8 +152,8 @@ export const RevokeLotteryGamePrizeProgram = gql`
 
 // SUBSCRIPTION
 export const LotteryGamePrizeProgramUpdatedSubscription = gql`
-  subscription{
-    LotteryGamePrizeProgramUpdatedSubscription{
+  subscription($gameId: String){
+    LotteryGamePrizeProgramUpdatedSubscription(gameId: $gameId){
     _id
     prizeClaimThreshold
     validFromDraw

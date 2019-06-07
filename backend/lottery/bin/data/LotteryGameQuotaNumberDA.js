@@ -22,7 +22,7 @@ class LotteryGameQuotaNumberDA {
     });
   }
 
-  static getLotteryGameQuotaNumberList$(filter) {
+  static getLotteryGameQuotaNumberList$(filter, page, count) {
     const collection = mongoDB.db.collection(CollectionName);
 
     const query = {
@@ -41,6 +41,8 @@ class LotteryGameQuotaNumberDA {
 
     const cursor = collection
       .find(query)
+      .skip(count * page)
+      .limit(count)
       .sort({ number: 1 });
 
     return mongoDB.extractAllFromMongoCursor$(cursor);

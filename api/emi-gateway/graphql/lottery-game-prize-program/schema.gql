@@ -232,5 +232,5 @@ type Mutation {
 
 type Subscription {
   "This events is triggered when a Game is created or updated"
-  LotteryGamePrizeProgramUpdatedSubscription: LotteryGamePrizeProgram
+  LotteryGamePrizeProgramUpdatedSubscription(gameId: String): LotteryGamePrizeProgram
 }

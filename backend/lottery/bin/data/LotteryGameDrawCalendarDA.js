@@ -91,6 +91,7 @@ class LotteryGameDrawCalendarDA {
         const version = lastDrawCalendar && lastDrawCalendar.version ? lastDrawCalendar.version + 1 : 1;
         drawCalendar.version = version;
         drawCalendar.approved = 'PENDING';
+        drawCalendar.revoked = false;
         const collection = mongoDB.db.collection(CollectionName);
         return defer(() => collection.insertOne(drawCalendar));
       })
@@ -104,7 +105,6 @@ class LotteryGameDrawCalendarDA {
 */
   static updateLotteryGameDrawCalendar$(id, lotteryGameDrawCalendar) {
     const collection = mongoDB.db.collection(CollectionName);
-    console.log('element to update: ',lotteryGameDrawCalendar);
     return defer(() =>
       collection.findOneAndUpdate(
         { _id: id },

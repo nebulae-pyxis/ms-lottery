@@ -43,6 +43,7 @@ import { locale as spanish } from '../../../../i18n/es';
 import { FuseTranslationLoaderService } from '../../../../../../../core/services/translation-loader.service';
 
 import { PrizeProgramService } from '../../prize-program.service';
+import { KeycloakService } from 'keycloak-angular';
 
 @Component({
   // tslint:disable-next-line:component-selector
@@ -62,17 +63,20 @@ export class PrizeProgramGrandPrizeComponent implements OnInit, OnDestroy {
   totalPrize;
   paymentPrize;
   grandPrizeChanged = new Subject();
+  userAllowedToUpdateInfo = false;
 
   constructor(
     private translationLoader: FuseTranslationLoaderService,
     public snackBar: MatSnackBar,
     private prizeProgramService: PrizeProgramService,
+    private keycloakService: KeycloakService
   ) {
     this.translationLoader.loadTranslations(english, spanish);
   }
 
 
   ngOnInit() {
+    this.userAllowedToUpdateInfo = this.keycloakService.getUserRoles(true).some(role => role === 'LOTTERY-ADMIN' || role === 'PLATFORM-ADMIN');
     this.buildForm();
     this.subuscribeToSelectedPrizeProgramChange();
     this.listenFormaChanges();
@@ -91,6 +95,7 @@ export class PrizeProgramGrandPrizeComponent implements OnInit, OnDestroy {
       totalPrize: new FormControl('', [Validators.required]),
       paymentPrize: new FormControl('', [Validators.required]),
     });
+    !this.userAllowedToUpdateInfo ? this.prizeProgramForm.disable() : this.prizeProgramForm.enable();
   }
 
   totalPrizeChanged(event) {

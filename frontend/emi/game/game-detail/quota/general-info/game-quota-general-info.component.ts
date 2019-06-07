@@ -108,12 +108,14 @@ export class GameQuotaGeneralInfoComponent implements OnInit, OnDestroy {
   tableSize = 0;
   tablePage = 0;
   tableCount = 10;
+  tableFromDataDatabase = false;
   // Columns to show in the table
   displayedColumns = [
     'number',
     'series',
   ];
   selectedQuotaNumber;
+  userAllowedToUpdateInfo = false;
 
   lastQuotaReceivedFromSubscriber = new BehaviorSubject(undefined);
   lastQuotaNumberReceivedFromSubscriber = new BehaviorSubject(undefined);
@@ -131,16 +133,27 @@ export class GameQuotaGeneralInfoComponent implements OnInit, OnDestroy {
 
 
   ngOnInit() {
+    this.userAllowedToUpdateInfo = this.keycloakService.getUserRoles(true).some(role => role === 'LOTTERY-ADMIN' || role === 'PLATFORM-ADMIN');
     this.gameGeneralInfoForm = new FormGroup({
       validFromDraw: new FormControl('', [Validators.required]),
       validUntilDraw: new FormControl(''),
     });
+    !this.userAllowedToUpdateInfo ? this.gameGeneralInfoForm.disable() : this.gameGeneralInfoForm.enable();
     this.subuscribeToSelectedQuotaChange();
     this.subscribeGameQuotaUpdated();
     this.subscribeToLotteryGameQuotaNumberUpdated();
     this.subscribeToUploaderChange();
     this.paginator.page.pipe(
-      mergeMap(page => this.refreshTable$(this.quotaService.fileQuotaList, page.pageIndex, page.pageSize))
+      mergeMap(page => {
+        return iif(() => this.tableFromDataDatabase,
+          this.quotaService.lotteryGameQuotaNumberList$({ quotaId: this.selectedQuota._id }, page.pageIndex, page.pageSize).pipe(
+            map(result => result.data.LotteryGameQuotaNumberList),
+            tap(quotaNumberList => {
+              this.dataSource.data = quotaNumberList;
+            })
+          ),
+          this.refreshTable$(this.quotaService.fileQuotaList, page.pageIndex, page.pageSize));
+      })
     ).subscribe();
   }
 
@@ -159,12 +172,12 @@ export class GameQuotaGeneralInfoComponent implements OnInit, OnDestroy {
       tap(result => {
         this.uploadingFile = false;
         this.hasBaseDropZoneOver = false;
+        this.tableFromDataDatabase = false;
         this.quotaService.fileQuotaList = result;
         this.tableSize = result.length;
       }),
       mergeMap(result => this.refreshTable$(result, this.tablePage, this.tableCount))
     ).subscribe(val => {
-      console.log('Result: ', val);
     }
     );
   }
@@ -173,8 +186,6 @@ export class GameQuotaGeneralInfoComponent implements OnInit, OnDestroy {
     return of(listToSlice).pipe(
       map(quotaList => quotaList.slice(tablePage * tableCount, (tablePage * tableCount) + tableCount)),
       tap(subList => {
-        console.log('desde: ', tablePage * tableCount);
-        console.log('hasta: ', (tablePage * tableCount) + tableCount);
         this.dataSource.data = subList;
       })
     );
@@ -235,25 +246,34 @@ export class GameQuotaGeneralInfoComponent implements OnInit, OnDestroy {
   }
 
   subuscribeToSelectedQuotaChange() {
-    this.quotaService.selectedQuotaChanged$.subscribe(quota => {
-      if (quota) {
-        this.showSaveButton = !quota.approved || quota.approved === 'NOT_APPROVED';
-        this.showDuplicateButton = quota.approved === 'APPROVED';
-        this.gameGeneralInfoForm.controls['validFromDraw'].setValue(quota.validFromDraw);
-        this.gameGeneralInfoForm.controls['validUntilDraw'].setValue(quota.validUntilDraw);
-      } else {
-        this.gameGeneralInfoForm.controls['validFromDraw'].setValue('');
-        this.gameGeneralInfoForm.controls['validUntilDraw'].setValue('');
-        this.showSaveButton = true;
-        this.showDuplicateButton = false;
-      }
-      this.selectedQuota = quota;
-      if (quota) {
-        console.log('selected quota: ', quota);
-        this.quotaService.lotteryGameQuotaNumberList$({quotaId: quota._id}).subscribe(val => {
-          console.log('Val tamaño: ', val);
-        });
-      }
+    this.quotaService.selectedQuotaChanged$.pipe(
+      tap(quota => {
+        if (quota) {
+          this.showSaveButton = !quota.approved || quota.approved === 'NOT_APPROVED';
+          this.showDuplicateButton = quota.approved === 'APPROVED';
+          this.gameGeneralInfoForm.controls['validFromDraw'].setValue(quota.validFromDraw);
+          this.gameGeneralInfoForm.controls['validUntilDraw'].setValue(quota.validUntilDraw);
+        } else {
+          this.gameGeneralInfoForm.controls['validFromDraw'].setValue('');
+          this.gameGeneralInfoForm.controls['validUntilDraw'].setValue('');
+          this.showSaveButton = true;
+          this.showDuplicateButton = false;
+        }
+        this.selectedQuota = quota;
+      }),
+      filter(quota => quota !== undefined),
+      mergeMap((quota: any) => this.quotaService.lotteryGameQuotaNumberListSize$({ quotaId: quota._id })),
+      filter(result => result.data !== undefined),
+      map(result => result.data.LotteryGameQuotaNumberListSize),
+      filter((tableSize: any) => tableSize !== undefined && (tableSize > 0)),
+      tap(tableSize => {
+        this.tableSize = tableSize;
+      }),
+      mergeMap(() => this.quotaService.lotteryGameQuotaNumberList$({ quotaId: this.selectedQuota._id }, this.tablePage, this.tableCount)),
+      map(result => result.data.LotteryGameQuotaNumberList)
+    ).subscribe(quotaNumberList => {
+      this.tableFromDataDatabase = true;
+      this.dataSource.data = quotaNumberList;
     });
   }
   subscribeGameQuotaUpdated() {
@@ -296,7 +316,6 @@ export class GameQuotaGeneralInfoComponent implements OnInit, OnDestroy {
   }
 
   createQuota() {
-    const initOperationTime = new Date().getTime();
     const message = this.selectedQuota !== undefined && this.selectedQuota.approved === 'NOT_APPROVED' ? 'LOTTERY.DETAILS.QUOTA.SAVE_MESSAGE' : 'LOTTERY.DETAILS.QUOTA.SAVE_MESSAGE';
     const tittle = this.selectedQuota !== undefined && this.selectedQuota.approved === 'NOT_APPROVED' ? 'LOTTERY.UPDATE_TITLE' : 'LOTTERY.CREATE_TITLE';
     this.showConfirmationDialog$(message, tittle).pipe(
@@ -314,8 +333,32 @@ export class GameQuotaGeneralInfoComponent implements OnInit, OnDestroy {
             }),
           );
       }),
-      // if the quota has been persisted succeful open the progressDialog
-      mergeMap(() => this.openProgressDialog()),
+      take(1),
+      mergeMap(() => this.tableFromDataDatabase ? of(undefined) : this.sendFileInfoToTheServer$())
+    ).subscribe(result => {
+    },
+      error => {
+        // restart all varivales (send currentUploadProgress to 100 to close the dialog and to 0 to restart the percentaje)
+        this.quotaService.currentUploadProgress$.next(100);
+        this.quotaService.currentUploadProgress$.next(0);
+        this.lastQuotaReceivedFromSubscriber.next(undefined);
+        this.lastQuotaNumberReceivedFromSubscriber.next(undefined);
+        this.showErrorOperationMessage();
+      },
+      () => {
+        console.log('retorna en el complete');
+        // restart all variables
+        this.quotaService.currentUploadProgress$.next(0);
+        this.lastQuotaReceivedFromSubscriber.next(undefined);
+        this.lastQuotaNumberReceivedFromSubscriber.next(undefined);
+      });
+  }
+
+  sendFileInfoToTheServer$() {
+    console.log('entra a subir el archivo: ', this.tableFromDataDatabase);
+    const initOperationTime = new Date().getTime();
+    // if the quota has been persisted succeful open the progressDialog
+    return this.openProgressDialog().pipe(
       // start listening the quota subscriber to get the quota persisted (with a timeout of 5 second)
       mergeMap(() => {
         return this.lastQuotaReceivedFromSubscriber.pipe(
@@ -415,23 +458,7 @@ export class GameQuotaGeneralInfoComponent implements OnInit, OnDestroy {
           }),
         );
       })
-    ).subscribe(result => {
-      console.log('Subscribe');
-    },
-      error => {
-        // restart all varivales (send currentUploadProgress to 100 to close the dialog and to 0 to restart the percentaje)
-        this.quotaService.currentUploadProgress$.next(100);
-        this.quotaService.currentUploadProgress$.next(0);
-        this.lastQuotaReceivedFromSubscriber.next(undefined);
-        this.lastQuotaNumberReceivedFromSubscriber.next(undefined);
-        this.showErrorOperationMessage();
-      },
-      () => {
-        // restart all variables
-        this.quotaService.currentUploadProgress$.next(0);
-        this.lastQuotaReceivedFromSubscriber.next(undefined);
-        this.lastQuotaNumberReceivedFromSubscriber.next(undefined);
-      });
+    );
   }
 
   buildQuotaObject() {

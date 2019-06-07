@@ -245,7 +245,7 @@ class LotteryGameQuotaCQRS {
       mergeMap(roles => {
         const filterInput = args.filterInput;
 
-        return LotteryGameQuotaNumberDA.getLotteryGameQuotaNumberList$(filterInput);
+        return LotteryGameQuotaNumberDA.getLotteryGameQuotaNumberList$(filterInput, args.page, args.count);
       }),
       toArray(),
       mergeMap(rawResponse => GraphqlResponseTools.buildSuccessResponse$(rawResponse)),
@@ -257,7 +257,6 @@ class LotteryGameQuotaCQRS {
   }
 
   getLotteryGameQuotaNumberListSize$({ args }, authToken) {
-    console.log('llgan args: ', args);
     return RoleValidator.checkPermissions$(
       authToken.realm_access.roles,
       "LotteryGameQuota",
@@ -270,7 +269,6 @@ class LotteryGameQuotaCQRS {
 
         return LotteryGameQuotaNumberDA.getLotteryGameQuotaNumberListSize$(filterInput);
       }),
-      tap(result => console.log('resultado de consulta: ',result)),
       mergeMap(rawResponse => GraphqlResponseTools.buildSuccessResponse$(rawResponse)),
       catchError(err => {
         console.error(err);

@@ -78,6 +78,7 @@ export class GameDetailGeneralInfoComponent implements OnInit, OnDestroy {
   lotteryName = 'test';
   timeoutMessage = null;
   selectedType;
+  userAllowedToUpdateInfo = false;
 
   constructor(
     private translationLoader: FuseTranslationLoaderService,
@@ -90,7 +91,8 @@ export class GameDetailGeneralInfoComponent implements OnInit, OnDestroy {
     private dialog: MatDialog,
     private toolbarService: ToolbarService,
     private location: Location,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private keycloakService: KeycloakService
   ) {
     this.translationLoader.loadTranslations(english, spanish);
   }
@@ -100,6 +102,7 @@ export class GameDetailGeneralInfoComponent implements OnInit, OnDestroy {
     if (this.game && this.game.generalInfo) {
       this.selectedType = this.game.generalInfo.type;
     }
+    this.userAllowedToUpdateInfo = this.keycloakService.getUserRoles(true).some(role => role === 'LOTTERY-ADMIN' || role === 'PLATFORM-ADMIN');
     this.subscribeEventUpdated();
     this.buildForms();
     this.buildLotteryNameFilterCtrl();
@@ -132,6 +135,8 @@ export class GameDetailGeneralInfoComponent implements OnInit, OnDestroy {
     this.gameStateForm = new FormGroup({
       state: new FormControl(this.game ? this.game.state : true)
     });
+    !this.userAllowedToUpdateInfo ? this.gameGeneralInfoForm.disable() : this.gameGeneralInfoForm.enable();
+    !this.userAllowedToUpdateInfo ? this.gameStateForm.disable() : this.gameStateForm.enable();
   }
 
   buildLotteryNameFilterCtrl() {

@@ -14,6 +14,7 @@ import {
 import { Router, ActivatedRoute } from '@angular/router';
 
 import { Location } from '@angular/common';
+import { GameDetailService } from '../game-detail.service';
 
 @Injectable({
   providedIn: 'root',
@@ -32,6 +33,7 @@ export class PrizeProgramService {
   approximations = [];
 
   constructor(private gateway: GatewayService, private location: Location,
+    private gameService: GameDetailService,
     private route: ActivatedRoute) {
 
   }
@@ -153,7 +155,10 @@ export class PrizeProgramService {
   subscribeLotteryGamePrizeProgramUpdatedSubscription$(): Observable<any> {
     return this.gateway.apollo
       .subscribe({
-        query: LotteryGamePrizeProgramUpdatedSubscription
+        query: LotteryGamePrizeProgramUpdatedSubscription,
+        variables: {
+          gameId: this.gameService.selectedGame._id
+        },
       });
   }
 

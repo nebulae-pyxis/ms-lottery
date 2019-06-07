@@ -14,6 +14,7 @@ import {
 import { Router, ActivatedRoute } from '@angular/router';
 
 import { Location } from '@angular/common';
+import { GameDetailService } from '../game-detail.service';
 
 @Injectable({
   providedIn: 'root',
@@ -32,6 +33,7 @@ export class DrawCalendarService {
   dateList: any[];
 
   constructor(private gateway: GatewayService, private location: Location,
+    private gameServie: GameDetailService,
     private route: ActivatedRoute) {
 
   }
@@ -153,7 +155,10 @@ export class DrawCalendarService {
   subscribeLotteryGameDrawCalendarUpdatedSubscription$(): Observable<any> {
     return this.gateway.apollo
       .subscribe({
-        query: LotteryGameDrawCalendarUpdatedSubscription
+        query: LotteryGameDrawCalendarUpdatedSubscription,
+        variables: {
+          gameId: this.gameServie.selectedGame._id
+        }
       });
   }
 

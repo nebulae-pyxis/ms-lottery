@@ -304,7 +304,7 @@ class GraphQlService {
       // QUOTA NUMBER
       {
         aggregateType: "LotteryGameQuota",
-        messageType: "emigateway.graphql.query.LotteryGameQuotaNumberListSize"
+        messageType: "emigateway.graphql.query.LotteryGameQuotaNumberList"
       },
       {
         aggregateType: "LotteryGameQuota",

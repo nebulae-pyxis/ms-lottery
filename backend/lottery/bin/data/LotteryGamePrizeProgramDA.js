@@ -91,6 +91,7 @@ class LotteryGamePrizeProgramDA {
         const version = lastPrizeProgram && lastPrizeProgram.version ? lastPrizeProgram.version + 1 : 1;
         prizeProgram.version = version;
         prizeProgram.approved = 'PENDING';
+        prizeProgram.revoked = false;
         const collection = mongoDB.db.collection(CollectionName);
         return defer(() => collection.insertOne(prizeProgram));
       })
