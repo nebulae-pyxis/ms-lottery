@@ -178,7 +178,7 @@ module.exports = {
                     return pubsub.asyncIterator("LotteryGameUpdatedSubscription");
                 },
                 (payload, variables, context, info) => {
-                    return verifyUserRoles(context) && payload.LotteryGameUpdatedSubscription._id === variables.gameId;
+                    return verifyUserRoles(context);
                 }
             )
         }
@@ -213,7 +213,9 @@ eventDescriptors.forEach(descriptor => {
                     descriptor.onEvent(evt, descriptor);
                 }
                 const payload = {};
-                payload[descriptor.gqlSubscriptionName] = descriptor.dataExtractor ? descriptor.dataExtractor(evt) : evt.data
+                payload[descriptor.gqlSubscriptionName] = descriptor.dataExtractor ? descriptor.dataExtractor(evt) : evt.data;
+                console.log('payload: ', payload);
+                console.log('descriptor.gqlSubscriptionName: ', descriptor.gqlSubscriptionName);
                 pubsub.publish(descriptor.gqlSubscriptionName, payload);
             },
 

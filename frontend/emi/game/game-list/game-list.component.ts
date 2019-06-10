@@ -285,7 +285,9 @@ export class GameListComponent implements OnInit, OnDestroy {
       }),
       takeUntil(this.ngUnsubscribe)
     )
-    .subscribe(([list, size]) => {
+      .subscribe(([list, size]) => {
+        console.log('Lista: ', list);
+        console.log('Size: ', size);
       this.dataSource.data = list;
       this.tableSize = size;
     });

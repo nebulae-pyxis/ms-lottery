@@ -16,13 +16,15 @@
       <mat-form-field fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
         <input matInput name="name" formControlName="name" maxlength="15" placeholder="{{'LOTTERY.DETAILS.NAME' | translate}}">
         <mat-error *ngIf="gameGeneralInfoForm.hasError('required', ['name'])">
-          {{'LOTTERY.NAME_REQUIRED' | translate}}
+          {{'LOTTERY.LOTTERY_FIELD_REQUIRED' | translate}}
         </mat-error>
       </mat-form-field>
 
       <mat-form-field fxFlex.gt-xs="50" fxFlex="100" fxLayout="column" class="pr-8 pl-8">
         <input matInput formControlName="gameLottery"
-          placeholder="{{ 'LOTTERY.DETAILS.LOTTERY' | translate }}"  [matAutocomplete]="auto" cdkFocusInitial>
+          placeholder="{{ 'LOTTERY.DETAILS.LOTTERY' | translate }}"
+            [matAutocomplete]="auto" cdkFocusInitial
+            (blur)="checkLottery()">
 
         <mat-autocomplete panelWidth="200" #auto="matAutocomplete" autoActiveFirstOption
           (optionSelected)='onLotterySelected($event.option.value)' [displayWith]="lotteryDisplayFn">
@@ -32,7 +34,7 @@
           </mat-option>
         </mat-autocomplete>
           <mat-error *ngIf="gameGeneralInfoForm.hasError('required', ['gameLottery'])">
-              {{'GENERATOR.NAME_IS' | translate}} <strong>{{'GENERATOR.REQUIRED' | translate}}</strong>
+            {{'LOTTERY.LOTTERY_FIELD_REQUIRED' | translate}}
           </mat-error>
       </mat-form-field>
 
@@ -50,7 +52,7 @@
           matAutosizeMinRows="1" matAutosizeMaxRows="5" >
         </textarea>
         <mat-error *ngIf="gameGeneralInfoForm.hasError('required', ['description'])">
-          {{'LOTTERY.DESCRIPTION_REQUIRED' | translate}}
+          {{'LOTTERY.LOTTERY_FIELD_REQUIRED' | translate}}
         </mat-error>
       </mat-form-field>
 

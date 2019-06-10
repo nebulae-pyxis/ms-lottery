@@ -174,7 +174,7 @@ module.exports = {
                     return pubsub.asyncIterator("LotteryGameSheetConfigUpdatedSubscription");
                 },
                 (payload, variables, context, info) => {
-                    return verifyUserRoles(context) && payload.LotteryGameSheetConfigUpdatedSubscription.gameId === variables.gameId;
+                    return verifyUserRoles(context);
                 }
             )
         }

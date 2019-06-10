@@ -45,28 +45,28 @@
           </game-general-info>
         </mat-tab>
 
-        <mat-tab label="{{'LOTTERY.DETAILS.TABS.SHEET_CONFIG' | translate}}">
+        <mat-tab *ngIf="game && game._id !== undefined" label="{{'LOTTERY.DETAILS.TABS.SHEET_CONFIG' | translate}}">
           <ng-template matTabContent>
             <game-sheet-config [game]="game" *ngIf="pageType">
             </game-sheet-config>
           </ng-template>
         </mat-tab>
 
-        <mat-tab label="{{'LOTTERY.DETAILS.TABS.PRIZE_PROGRAM' | translate}}">
+        <mat-tab *ngIf="game && game._id !== undefined" label="{{'LOTTERY.DETAILS.TABS.PRIZE_PROGRAM' | translate}}">
           <ng-template matTabContent>
             <game-prize-program [game]="game" *ngIf="pageType">
             </game-prize-program>
           </ng-template>
         </mat-tab>
 
-        <mat-tab label="{{'LOTTERY.DETAILS.TABS.DRAW_CALENDAR' | translate}}">
+        <mat-tab *ngIf="game && game._id !== undefined" label="{{'LOTTERY.DETAILS.TABS.DRAW_CALENDAR' | translate}}">
           <ng-template matTabContent>
             <game-draw-calendar [game]="game" *ngIf="pageType">
             </game-draw-calendar>
           </ng-template>
         </mat-tab>
 
-        <mat-tab label="{{'LOTTERY.DETAILS.TABS.QUOTA' | translate}}">
+        <mat-tab *ngIf="game && game._id !== undefined" label="{{'LOTTERY.DETAILS.TABS.QUOTA' | translate}}">
           <ng-template matTabContent>
             <game-quota [game]="game" *ngIf="pageType">
             </game-quota>

@@ -77,7 +77,7 @@ export class GameDetailGeneralInfoComponent implements OnInit, OnDestroy {
   queriedLotteriesByAutocomplete$: Observable<any[]>;
   lotteryName = 'test';
   timeoutMessage = null;
-  selectedType;
+  selectedType = 'ORDINARY';
   userAllowedToUpdateInfo = false;
 
   constructor(
@@ -127,9 +127,9 @@ export class GameDetailGeneralInfoComponent implements OnInit, OnDestroy {
 
   buildForms() {
     this.gameGeneralInfoForm = new FormGroup({
-      name: new FormControl(this.game ? (this.game.generalInfo || {}).name : ''),
+      name: new FormControl(this.game ? (this.game.generalInfo || {}).name : '', Validators.required),
       description: new FormControl(this.game ? (this.game.generalInfo || {}).description : ''),
-      gameLottery: new FormControl(''),
+      gameLottery: new FormControl('', Validators.required),
     });
 
     this.gameStateForm = new FormGroup({
@@ -137,6 +137,12 @@ export class GameDetailGeneralInfoComponent implements OnInit, OnDestroy {
     });
     !this.userAllowedToUpdateInfo ? this.gameGeneralInfoForm.disable() : this.gameGeneralInfoForm.enable();
     !this.userAllowedToUpdateInfo ? this.gameStateForm.disable() : this.gameStateForm.enable();
+  }
+
+  checkLottery() {
+    if (!this.lotteryId) {
+      this.gameGeneralInfoForm.controls['gameLottery'].setValue(null);
+    }
   }
 
   buildLotteryNameFilterCtrl() {
@@ -194,7 +200,7 @@ export class GameDetailGeneralInfoComponent implements OnInit, OnDestroy {
   }
 
   createGame() {
-    this.showConfirmationDialog$('LOTTERY.CREATE_MESSAGE', 'LOTTERY.CREATE_TITLE')
+      this.showConfirmationDialog$('LOTTERY.CREATE_MESSAGE', 'LOTTERY.CREATE_TITLE')
       .pipe(
         tap(ok => this.showWaitOperationMessage()),
         mergeMap(ok => {
@@ -219,6 +225,7 @@ export class GameDetailGeneralInfoComponent implements OnInit, OnDestroy {
           console.log('Error ==> ', error);
         }
       );
+
   }
 
   updateGameGeneralInfo() {
@@ -248,6 +255,7 @@ export class GameDetailGeneralInfoComponent implements OnInit, OnDestroy {
   }
 
   onLotterySelected(lottery) {
+    console.log('se ejecuta on option Selected: ', lottery);
     this.gameGeneralInfoForm.patchValue({ lottery });
     if (lottery) {
       this.lotteryId = lottery._id;

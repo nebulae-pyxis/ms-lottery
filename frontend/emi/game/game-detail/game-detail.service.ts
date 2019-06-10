@@ -171,7 +171,7 @@ export class GameDetailService {
       .subscribe({
         query: LotteryGameUpdatedSubscription,
         variables: {
-          gameId: this.selectedGame._id
+          gameId: this.selectedGame ? this.selectedGame._id : 'new'
         },
       });
   }
