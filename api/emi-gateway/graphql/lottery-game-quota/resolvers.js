@@ -209,7 +209,7 @@ module.exports = {
                 "CreateLotteryGameQuotaNumber",
                 PERMISSION_DENIED_ERROR_CODE,
                 "Permission denied",
-                ["PLATFORM-ADMIN", "LOTTERY-APPROVER"]
+                ["PLATFORM-ADMIN", "LOTTERY-APPROVER","LOTTERY-ADMIN"]
             ).pipe(
                 mergeMap(() =>
                     context.broker.forwardAndGetReply$(
@@ -230,7 +230,7 @@ module.exports = {
                 "RemoveLotteryGameQuotaNumber",
                 PERMISSION_DENIED_ERROR_CODE,
                 "Permission denied",
-                ["PLATFORM-ADMIN", "LOTTERY-APPROVER"]
+                ["PLATFORM-ADMIN","LOTTERY-ADMIN", "LOTTERY-APPROVER"]
             ).pipe(
                 mergeMap(() =>
                     context.broker.forwardAndGetReply$(

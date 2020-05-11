@@ -54,10 +54,10 @@ class CronjobES {
       mergeMap(lotteries => from(lotteries)),
       mergeMap(lottery => LotteryGameDA.findActiveByLotteryId$(lottery._id)),
       mergeMap(games => from(games)),
-      // tap(game => console.log(`CHECKING DRAWS TO OPEND FOR: [${game.generalInfo.name}] GAME ` )),
+       tap(game => console.log(`CHECKING DRAWS TO OPEND FOR: [${game.generalInfo.name}] GAME ` )),
       map(game => game._id),
       mergeMap(gameId => LotteryCalendarDA.findCalendarWithDrawsToOpen$(timestamp, gameId)),
-      // tap(x => console.log("<<<", x, ">>>")),
+       tap(x => console.log("<<<", x, ">>>")),
       filter(foundCalendar => foundCalendar != null),
       mergeMap(calendar => CronjobESHelper.searchConfigurationToOpenADraw$(calendar)),
       

@@ -87,7 +87,7 @@ module.exports = {
                 "CreateLotteryGameSheetConfig",
                 PERMISSION_DENIED_ERROR_CODE,
                 "Permission denied",
-                ["PLATFORM-ADMIN", "LOTTERY-ADMIN"]
+                ["PLATFORM-ADMIN", "LOTTERY-ADMIN", "LOTTERY-APPROVER"]
             ).pipe(
                 mergeMap(() =>
                     context.broker.forwardAndGetReply$(
@@ -108,7 +108,7 @@ module.exports = {
                 "UpdateLotteryGameSheetConfig",
                 PERMISSION_DENIED_ERROR_CODE,
                 "Permission denied",
-                ["PLATFORM-ADMIN", "LOTTERY-ADMIN"]
+                ["PLATFORM-ADMIN", "LOTTERY-ADMIN", "LOTTERY-APPROVER"]
             ).pipe(
                 mergeMap(() =>
                     context.broker.forwardAndGetReply$(
@@ -129,7 +129,7 @@ module.exports = {
                 "ApproveLotteryGameSheetConfig",
                 PERMISSION_DENIED_ERROR_CODE,
                 "Permission denied",
-                ["PLATFORM-ADMIN", "LOTTERY-APPROVER"]
+                ["PLATFORM-ADMIN", "LOTTERY-ADMIN", "LOTTERY-APPROVER"]
             ).pipe(
                 mergeMap(() =>
                     context.broker.forwardAndGetReply$(
@@ -150,7 +150,7 @@ module.exports = {
                 "RevokeLotteryGameSheetConfig",
                 PERMISSION_DENIED_ERROR_CODE,
                 "Permission denied",
-                ["PLATFORM-ADMIN", "LOTTERY-APPROVER"]
+                ["PLATFORM-ADMIN", "LOTTERY-ADMIN", "LOTTERY-APPROVER"]
             ).pipe(
                 mergeMap(() =>
                     context.broker.forwardAndGetReply$(
